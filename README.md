@@ -7,17 +7,18 @@ Integrates SLIME (the Superior Lisp Interaction Mode for Emacs) with Atom! This 
 Current features of this package:
 
 - Read-eval-print-loop (REPL) for interactive Lisp development
-- Integrated debugger (work in progress on stack trace)
+- Integrated debugger
 - Jumping to a method definition
 - Autocomplete suggestions based on your code
 - "Compile this function"
+- "Compile this file" command
 - Function method argument order documentation
 - Integrated profiler
 
 Future features:
 - Interactive object inspection
-- "Compile this file" command
 - "Who calls this function" command
+- Stepping debugger
 
 
 **Note**: This package is still in beta and in active development! Contributions and bug reports are welcome.
@@ -65,7 +66,7 @@ If you've compiled your lisp code, placing the cursor over a method will cause a
 
 If you want to jump to where a certain method is defined, go to it and press <kbd>alt</kbd> + <kbd>.</kbd> (Mac: <kbd>ctrl</kbd> + <kbd>cmd</kbd> + <kbd>.</kbd>)or use the `Slime: Goto Definition` function in Atom. A little pop up window will come up and ask you which method you'd like to go to (since methods could be overloaded). Use the keyboard to go up and down, and press enter to jump to the definition you choose.
 
-To compile a single method in a Lisp file, place the cursor somewhere in that file and press <kbd>alt</kbd>+<kbd>c</kbd> (Mac: <kbd>ctrl</kbd> + <kbd>cmd</kbd> + <kbd>c</kbd>). The function should glow momentarily to indicate it's compiling, and from then on you can use it in the REPL.
+To compile a single toplevel form in a Lisp file, place the cursor somewhere in that form and press <kbd>alt</kbd>+<kbd>c</kbd> (Mac: <kbd>ctrl</kbd> + <kbd>cmd</kbd> + <kbd>c</kbd>). The form should glow momentarily to indicate it's compiling, and from then on you can use it in the REPL. To compile an entire buffer, place the cursor anywhere in that file and press <kbd>alt</kbd>+<kbd>k</kbd> (Mac: <kbd>ctrl</kbd> + <kbd>cmd</kbd> + <kbd>k</kbd>). The entire file will glow for a moment to indicate compilation.
 
 To use the integrated profiler, run `Slime: Profile`. You should see a menu appear at the bottom of Atom, where you can select what you'd like to profile. For example, click "Function" and type the function name at the dialog to begin profiling. You may then click "Report" to print a report to the REPL with profiling information.
 
