@@ -24,13 +24,13 @@ class FrameInfoView extends ScrollView
           @li =>
             @button outlet:'restartFrame', class:'inline-block-tight btn', 'Restart Frame'
           @li =>
-            @button outlet:'disassemble', class:'inline-block-tight btn', 'Disassemble Frame'
+            @button outlet:'disassembleBtn', class:'inline-block-tight btn', 'Disassemble Frame'
         @div outlet:'disassembleDiv', =>
           @h3 'Disassembled:'
           @span outlet:'disassembleOutput', class:'slime-message', ''
         @ol class:'list-group mark-active', =>
           @li =>
-            @input outlet:'frameReturnValue', class:'native-key-bindings', type:'text', size:50
+            @input outlet:'frameReturnValue', class:'native-key-bindings debug-text-entry', type:'text', size:50
           @li =>
             @button outlet:'returnFromFrame', class:'inline-block-tight btn', 'Return From Frame'
           @li =>
@@ -46,28 +46,28 @@ class FrameInfoView extends ScrollView
       @add_navigation_item(0, description = @info.stack_frames[0].description, 'Stack Top')
     if @frame_index > 1
       @add_navigation_item(@frame_index-1, description = @info.stack_frames[@frame_index-1].description, 'Up')
-    if @frame_index < @info.stack_frames.length - 1
+    last_index = @info.stack_frames.length - 1
+    if @frame_index < last_index - 1
       @add_navigation_item(@frame_index+1, description = @info.stack_frames[@frame_index+1].description, 'Down')
+    if @frame_index < last_index
+      @add_navigation_item(last_index, description = @info.stack_frames[last_index].description, 'Stack Bottom')
 
     this.find('.frame-navigation-button').on 'click', (event) =>
-      @setup(@swank, @info, Number(event.target.getAttribute('frame_index')), @debugView)
+      @show_frame Number(event.target.getAttribute('frame_index'))
 
     @viewSource.on 'click', (event) =>
-      @display_frame_source()
+      @display_source()
 
     if frame.restartable
       @restartFrame[0].disabled = false
       @restartFrame.on 'click', (event) =>
-        @debugView.active = false
-        @swank.debug_restart_frame(@frame_index, @info.thread)
+        @restart()
     else
       @restartFrame[0].disabled = true
 
     @disassembleDiv.hide()
-    @disassemble.on 'click', (event) =>
-      @swank.debug_disassemble_frame(@frame_index, @info.thread).then (output) =>
-        @disassembleOutput.text(output)
-        @disassembleDiv.show()
+    @disassembleBtn.on 'click', (event) =>
+      @disassemble
 
     @returnFromFrame.on 'click', (event) =>
       @debugView.active = false
@@ -107,7 +107,22 @@ class FrameInfoView extends ScrollView
         @button class:'inline-block-tight frame-navigation-button btn', frame_index:index, label
         @text index+": " + frame_description
 
-  display_frame_source: () =>
+  show_frame: (i) ->
+    if i != @frame_index
+      @setup(@swank, @info, i, @debugView)
+
+  show_first_frame: ->
+    @show_frame 0
+  show_last_frame: ->
+    @show_frame @info.stack_frames.length - 1
+  show_frame_up: ->
+    if @frame_index > 0
+      @show_frame @frame_index-1
+  show_frame_down: ->
+    if @frame_index < @info.stack_frames.length - 1
+      @show_frame @frame_index+1
+
+  display_source: () =>
     frame_index = @frame_index
     @swank.debug_frame_source(frame_index, @info.thread).then (source_location) ->
       if source_location.buffer_type == 'error'
@@ -166,6 +181,15 @@ class FrameInfoView extends ScrollView
           Promise.reject('Unsupported position type given: "'+source_location.position_type+'"')
     .catch (error) ->
       atom.notifications.addError 'Cannot show frame source: '+error
+
+  disassemble: () =>
+    @swank.debug_disassemble_frame(@frame_index, @info.thread).then (output) =>
+      @disassembleOutput.text(output)
+      @disassembleDiv.show()
+
+  restart: () =>
+    @debugView.active = false
+    @swank.debug_restart_frame(@frame_index, @info.thread)
 
   getTitle: -> 'Frame Info'
   getURI: => 'slime://debug/' + @info.level + '/frame'

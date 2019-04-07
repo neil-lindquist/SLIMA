@@ -33,9 +33,9 @@ class DebuggerView extends ScrollView
             @text "Description of frame 2"
           @li class:"", =>
             @text "Description of frame 3"
-      @button outlet:"fullStackTrace", class:"inline-block-tight btn", "Show All Stack Frames"
 
   setup: (@swank, @info, @replView) ->
+
     @errorTitle.html @info.title
     @errorType.html @info.type
     level = @info.level
@@ -46,27 +46,27 @@ class DebuggerView extends ScrollView
     for restart, i in @info.restarts
       @restarts.append $$ ->
         @li class:"", =>
-          @button class:'inline-block-tight restart-button btn', restartindex:i, level:level, thread:thread, restart.cmd
-          @text restart.description
+          @button class:'inline-block-tight restart-button btn', restartindex:i, restart.cmd
+          @text i + ": " + restart.description
 
     this.find('.restart-button').on 'click', (event) =>
-      @restart_click_handler event
+      restartindex = event.target.getAttribute('restartindex')
+      @activate_restart(restartindex)
 
     @render_stack_trace(@info.stack_frames)
 
-  restart_click_handler: (event) ->
-    restartindex = event.target.getAttribute('restartindex')
-    level = event.target.getAttribute('level')
-    thread = event.target.getAttribute('thread')
-    @active = false
-    @swank.debug_invoke_restart(level, restartindex, thread)
-
-  load_full_stack_trace: (event) ->
-    @fullStackTrace.remove()
-    thread = @info.thread
     @swank.debug_get_stack_trace(thread).then (stack_trace) =>
-      @info.stack_frame = stack_trace
+      @info.stack_frames = stack_trace
       @render_stack_trace(stack_trace)
+
+  activate_restart: (restartindex) ->
+    if @info.restarts.length > restartindex
+      @activate = false
+      @swank.debug_invoke_restart(@info.level, restartindex, @info.thread)
+
+  abort: () -> @swank.debug_abort_current_level(@info.level, @info.thread)
+  quit: () -> @swank.debug_escape_all @info.thread
+  continue: () -> @swank.debug_continue @info.thread
 
   render_stack_trace: (trace) =>
     @stackTrace.empty()

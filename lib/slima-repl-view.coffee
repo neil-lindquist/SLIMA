@@ -1,6 +1,7 @@
 {CompositeDisposable, Point, Range} = require 'atom'
 {$, TextEditorView, View} = require 'atom-space-pen-views'
 DebuggerView = require './slima-debugger-view'
+FrameInfoView = require './slima-frame-info'
 paredit = require 'paredit.js'
 
 module.exports =
@@ -140,6 +141,49 @@ class REPLView
       if @swank.connected
         @swank.interrupt()
 
+    #debugger controls
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-0', (event) =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(0))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-1', (event) =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(1))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-2', () =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(2))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-3', () =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(3))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-4', () =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(4))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-5', () =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(5))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-6', () =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(6))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-7', () =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(7))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-8', () =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(8))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-9', () =>
+      @callCurrentDebugger(event, (debug) -> debug.activate_restart(9))
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-abort', () =>
+      @callCurrentDebugger(event, (debug) -> debug.abort())
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-quit', () =>
+      @callCurrentDebugger(event, (debug) -> debug.quit())
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-continue', () =>
+      @callCurrentDebugger(event, (debug) -> debug.continue())
+
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-show-frame-source', () =>
+      @callCurrentFrameInfo(event, (frame) -> frame.display_source())
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-disassemble-frame', () =>
+      @callCurrentFrameInfo(event, (frame) -> frame.disassemble())
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-frame-up', () =>
+      @callCurrentFrameInfo(event, (frame) -> frame.show_frame_up())
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-frame-down', () =>
+      @callCurrentFrameInfo(event, (frame) -> frame.show_frame_down())
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-last-frame', () =>
+      @callCurrentFrameInfo(event, (frame) -> frame.show_last_frame())
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-first-frame', () =>
+      @callCurrentFrameInfo(event, (frame) -> frame.show_first_frame())
+    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-frame', () =>
+      @callCurrentFrameInfo(event, (frame) -> frame.restart())
+
     @subs.add @editor.onDidDestroy =>
       @destroy()
 
@@ -267,6 +311,7 @@ class REPLView
     @swank.on 'debug_activate', (obj) =>
       @showDebugTab(obj.level)
     @swank.on 'debug_return', (obj) =>
+      @dbgv[obj.level-1].active = false
       @closeDebugTab(obj.level)
 
     # Profile functions
@@ -364,7 +409,7 @@ class REPLView
           #recursively delete lower levels
           @closeDebugTab(level+1)
         if e.item.active
-          @swank.debug_abort_current_level(e.item.level, e.item.info.thread)
+          e.item.abort()
           e.item.active = false
         if e.item.frame_info?
           @replPane.destroyItem(e.item.frame_info)
@@ -380,16 +425,33 @@ class REPLView
     # A slight pause is needed before showing for when an error occurs immediatly after resolving another error
     setTimeout(() =>
       @replPane.activate()
-      atom.workspace.open('slime://debug/'+level).then (d) =>
-        # TODO - doesn't work
-        #elt = atom.views.getView(d)
-        #atom.commands.add elt, 'q': (event) => @closeDebugTab(level)
+      atom.workspace.open('slime://debug/'+level)
     , 10)
 
   closeDebugTab: (level) ->
     @replPane.destroyItem(@dbgv[level-1])
     @dbgv.pop()
 
+  callCurrentDebugger: (event, callback) =>
+    if not @replPane.isActive()
+      event.abortKeyBinding()
+      return
+    activeItem = @replPane.getActiveItem()
+    #TODO consider adding command to frame info views as well
+    if activeItem instanceof DebuggerView
+      callback(activeItem)
+    else
+      event.abortKeyBinding()
+
+  callCurrentFrameInfo: (event, callback) =>
+    if not @replPane.isActive()
+      event.abortKeyBinding()
+      return
+    activeItem = @replPane.getActiveItem()
+    if activeItem instanceof FrameInfoView and not event.target.classList.contains('debug-text-entry')
+      callback(activeItem)
+    else
+      event.abortKeyBinding()
 
   # Set the package and prompt
   setPackage: (pkg) ->
