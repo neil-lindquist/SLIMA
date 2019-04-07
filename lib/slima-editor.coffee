@@ -1,11 +1,11 @@
 {CompositeDisposable, Point, Range} = require 'atom'
 paredit = require 'paredit.js'
 slime = require './slime-functions'
-Bubble = require './atom-slime-bubble'
+Bubble = require './slima-bubble'
 utils = require './utils'
 
 module.exports =
-class AtomSlimeEditor
+class SlimaEditor
   subs: null
   ast: null
   pkg: null

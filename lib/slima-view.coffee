@@ -1,10 +1,10 @@
-REPLView = require './atom-slime-repl-view'
-StatusView = require './atom-slime-status-view'
-ProfileView = require './atom-slime-profiler-view'
+REPLView = require './slima-repl-view'
+StatusView = require './slima-status-view'
+ProfileView = require './slima-profiler-view'
 SlimeAutocompleteProvider = require './slime-autocomplete'
 
 module.exports =
-class AtomSlimeView
+class SlimaView
   constructor: (serializedState, @swank) ->
     # Start a status view
     @statusView = new StatusView()

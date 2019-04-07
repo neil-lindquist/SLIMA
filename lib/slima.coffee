@@ -1,13 +1,13 @@
 {CompositeDisposable, Point, Range} = require 'atom'
-Swank = require 'swank-client-js'
-AtomSlimeView = require './atom-slime-view'
+Swank = require 'swank-client'
+SlimaView = require './slima-view'
 paredit = require 'paredit.js'
 slime = require './slime-functions'
-AtomSlimeEditor = require './atom-slime-editor'
+SlimaEditor = require './slima-editor'
 SlimeAutocompleteProvider = require './slime-autocomplete'
 SwankStarter = require './swank-starter'
 
-module.exports = AtomSlime =
+module.exports = Slima =
   views: null
   subs: null
   asts: {}
@@ -57,7 +57,7 @@ module.exports = AtomSlime =
   activate: (state) ->
     # Setup a swank client instance
     @setupSwank()
-    @views = new AtomSlimeView(state.viewsState, @swank)
+    @views = new SlimaView(state.viewsState, @swank)
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subs = new CompositeDisposable
     @ases = new CompositeDisposable
@@ -72,16 +72,16 @@ module.exports = AtomSlime =
     # Keep track of all Lisp editors
     @subs.add atom.workspace.observeTextEditors (editor) =>
       if editor.getGrammar().name.match /Lisp/i
-        ase = new AtomSlimeEditor(editor, @views.statusView, @swank)
+        ase = new SlimaEditor(editor, @views.statusView, @swank)
         @ases.add ase
       else
         editor.onDidChangeGrammar =>
           if editor.getGrammar().name.match /Lisp/i
-            ase = new AtomSlimeEditor(editor, @views.statusView, @swank)
+            ase = new SlimaEditor(editor, @views.statusView, @swank)
             @ases.add ase
 
     # If desired, automatically start Swank.
-    if atom.config.get('atom-slime.autoStart')
+    if atom.config.get('slima.autoStart')
       @swankStart()
 
 
@@ -117,8 +117,8 @@ module.exports = AtomSlime =
       atom.notifications.addWarning("Cannot profile without the REPL")
 
   tryToConnect: (i) ->
-    if i > atom.config.get 'atom-slime.advancedSettings.connectionAttempts'
-      atom.notifications.addWarning("Couldn't connect to Lisp! Did you start a Lisp swank server?\n\nIf this is your first time running `atom-slime`, this is normal. Try running `slime:connect` in a minute or so once it's finished compiling.")
+    if i > atom.config.get 'slima.advancedSettings.connectionAttempts'
+      atom.notifications.addWarning("Couldn't connect to Lisp! Did you start a Lisp swank server?\n\nIf this is your first time running `slima`, this is normal. Try running `slime:connect` in a minute or so once it's finished compiling.")
       return false
     promise = @swank.connect()
     promise.then (=> @swankConnected()), ( => setTimeout ( => @tryToConnect(i + 1)), 200)

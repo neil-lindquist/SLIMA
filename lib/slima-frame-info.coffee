@@ -4,7 +4,7 @@
 module.exports =
 class FrameInfoView extends ScrollView
   @content: ->
-    @div outlet:'main', class:'atom-slime-debugger padded', =>
+    @div outlet:'main', class:'slima-debugger padded', =>
       @h1 outlet:'frameName', 'Frame Name'
       @div class:'select-list', =>
         @ol outlet:'navigation', class:'list-group mark-active', =>

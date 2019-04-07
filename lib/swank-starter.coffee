@@ -11,7 +11,7 @@ class SwankStarter
   start: () ->
     success = @check_path()
     if not success
-      atom.notifications.addWarning("Did you set up `atom-slime` as noted in the package's preferences? The \"Slime Path\" directory can't be opened. Please double check it!")
+      atom.notifications.addWarning("Did you set up `slima` as noted in the package's preferences? The \"Slime Path\" directory can't be opened. Please double check it!")
       return false
     command = @lisp
     args = []
@@ -35,23 +35,24 @@ class SwankStarter
 
   check_path: () ->
     # Retrieve the slime path and lisp name
-    @lisp = atom.config.get 'atom-slime.lispName'
-    @path = atom.config.get 'atom-slime.slimePath'
+    @lisp = atom.config.get 'slima.lispName'
+    @path = atom.config.get 'slima.slimePath'
     @path = @path[0...-1] if @path[@path.length - 1] == path.sep
     @swank_script = "#{@path}#{path.sep}start-swank.lisp"
     # Check if the slime path exists; return true or false
     try
       info = fs.statSync(@swank_script)
       return true
-    catch
+    catch e
+      console.log e
       return false
 
   stdout_callback: (output) ->
-    if atom.config.get 'atom-slime.advancedSettings.showSwankDebug'
+    if atom.config.get 'slima.advancedSettings.showSwankDebug'
       console.log output
 
   stderr_callback: (output) ->
-    if atom.config.get 'atom-slime.advancedSettings.showSwankDebug'
+    if atom.config.get 'slima.advancedSettings.showSwankDebug'
       console.log output
 
   get_cwd: ->

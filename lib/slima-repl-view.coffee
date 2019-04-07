@@ -1,6 +1,6 @@
 {CompositeDisposable, Point, Range} = require 'atom'
 {$, TextEditorView, View} = require 'atom-space-pen-views'
-DebuggerView = require './atom-slime-debugger-view'
+DebuggerView = require './slima-debugger-view'
 paredit = require 'paredit.js'
 
 module.exports =

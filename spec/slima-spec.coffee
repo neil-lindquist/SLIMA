@@ -1,40 +1,40 @@
-AtomSlime = require '../lib/atom-slime'
+Slima = require '../lib/slima'
 
 # Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
 #
 # To run a specific `it` or `describe` block add an `f` to the front (e.g. `fit`
 # or `fdescribe`). Remove the `f` to unfocus the block.
 
-describe "AtomSlime", ->
+describe "Slima", ->
   [workspaceElement, activationPromise] = []
 
   beforeEach ->
     workspaceElement = atom.views.getView(atom.workspace)
-    activationPromise = atom.packages.activatePackage('atom-slime')
+    activationPromise = atom.packages.activatePackage('slima')
 
-  describe "when the atom-slime:toggle event is triggered", ->
+  describe "when the slima:toggle event is triggered", ->
     it "hides and shows the modal panel", ->
       # Before the activation event the view is not on the DOM, and no panel
       # has been created
-      expect(workspaceElement.querySelector('.atom-slime')).not.toExist()
+      expect(workspaceElement.querySelector('.slima')).not.toExist()
 
       # This is an activation event, triggering it will cause the package to be
       # activated.
-      atom.commands.dispatch workspaceElement, 'atom-slime:toggle'
+      atom.commands.dispatch workspaceElement, 'slima:toggle'
 
       waitsForPromise ->
         activationPromise
 
       runs ->
-        expect(workspaceElement.querySelector('.atom-slime')).toExist()
+        expect(workspaceElement.querySelector('.slima')).toExist()
 
-        atomSlimeElement = workspaceElement.querySelector('.atom-slime')
-        expect(atomSlimeElement).toExist()
+        slimaElement = workspaceElement.querySelector('.slima')
+        expect(slimaElement).toExist()
 
-        atomSlimePanel = atom.workspace.panelForItem(atomSlimeElement)
-        expect(atomSlimePanel.isVisible()).toBe true
-        atom.commands.dispatch workspaceElement, 'atom-slime:toggle'
-        expect(atomSlimePanel.isVisible()).toBe false
+        slimaPanel = atom.workspace.panelForItem(slimaElement)
+        expect(slimaPanel.isVisible()).toBe true
+        atom.commands.dispatch workspaceElement, 'slima:toggle'
+        expect(slimaPanel.isVisible()).toBe false
 
     it "hides and shows the view", ->
       # This test shows you an integration test testing at the view level.
@@ -45,18 +45,18 @@ describe "AtomSlime", ->
       # workspaceElement to the DOM are generally slower than those off DOM.
       jasmine.attachToDOM(workspaceElement)
 
-      expect(workspaceElement.querySelector('.atom-slime')).not.toExist()
+      expect(workspaceElement.querySelector('.slima')).not.toExist()
 
       # This is an activation event, triggering it causes the package to be
       # activated.
-      atom.commands.dispatch workspaceElement, 'atom-slime:toggle'
+      atom.commands.dispatch workspaceElement, 'slima:toggle'
 
       waitsForPromise ->
         activationPromise
 
       runs ->
         # Now we can test for view visibility
-        atomSlimeElement = workspaceElement.querySelector('.atom-slime')
-        expect(atomSlimeElement).toBeVisible()
-        atom.commands.dispatch workspaceElement, 'atom-slime:toggle'
-        expect(atomSlimeElement).not.toBeVisible()
+        slimaElement = workspaceElement.querySelector('.slima')
+        expect(slimaElement).toBeVisible()
+        atom.commands.dispatch workspaceElement, 'slima:toggle'
+        expect(slimaElement).not.toBeVisible()

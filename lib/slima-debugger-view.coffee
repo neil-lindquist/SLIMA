@@ -1,11 +1,11 @@
 {CompositeDisposable} = require 'atom'
 {$, $$, TextEditorView, View, SelectListView, ScrollView} = require 'atom-space-pen-views'
-FrameInfoView = require './atom-slime-frame-info'
+FrameInfoView = require './slima-frame-info'
 
 module.exports =
 class DebuggerView extends ScrollView
   @content: ->
-    @div outlet:"main", class:"atom-slime-debugger padded", =>
+    @div outlet:"main", class:"slima-debugger padded", =>
       @h1 outlet:"errorTitle", =>
         @text "Error description"
       @h2 outlet:"errorType", class:"text-subtle", "   Error sub-text"

@@ -1,8 +1,8 @@
-# atom-slime package
+# SLIMA package
 
-Integrates SLIME (the Superior Lisp Interaction Mode for Emacs) with Atom! This package allows you to interactively develop Common Lisp code, helping turn Atom into a full-featured Lisp IDE.
+The Superior Lisp Interactive Mode for Atom.  This package allows you to interactively develop Common Lisp code, helping turn Atom into a full-featured Lisp IDE.  SLIMA uses the same Swank backend as Emacs's SLIME to control the Lisp process.  This is a fork of [atom-slime](https://github.com/sjlevine/atom-slime).
 
-![screenshot](https://raw.githubusercontent.com/sjlevine/atom-slime/master/media/atom-slime-screenshot.png)
+![screenshot](https://raw.githubusercontent.com/neil-lindquist/slima/master/media/slima-screenshot.png)
 
 Current features of this package:
 
@@ -29,14 +29,14 @@ Guide to setting up Atom as your main Lisp editor!
 -------------------------------------------
 By following these instructions, you can use Atom very effectively as your Lisp editor.
 
-1. Install this `atom-slime` package, as well as the `language-lisp` package (syntax highlighting) and the `lisp-paredit` package (proper idiomatic lisp indentation and parenthesis editing)
+1. Install this `slima` package, as well as the `language-lisp` package (syntax highlighting) and the `lisp-paredit` package (proper idiomatic lisp indentation and parenthesis editing)
 
 2. Install a lisp if you don't already have one (such as SBCL)
 
 3. Download the `slime` code, which exists in a separate repository. Place it somewhere safe (you'll need it's location in the following step). Note that if you've used Emacs before, you may already have slime somewhere on your computer. Otherwise, you can download it here:
 https://github.com/slime/slime.git
 
-4. After installing the `atom-slime` package, go to its package preferences page within Atom. Under the "Lisp Process" field, enter the executable for your lisp (ex. `sbcl`. Note that on some platforms you may need the full pathname, such as `/usr/bin/sbcl`). Under the "Slime Path" field, enter the path where you have slime on your computer from the above step.
+4. After installing the `slima` package, go to its package preferences page within Atom. Under the "Lisp Process" field, enter the executable for your lisp (ex. `sbcl`. Note that on some platforms you may need the full pathname, such as `/usr/bin/sbcl`). Under the "Slime Path" field, enter the path where you have slime on your computer from the above step.
 
 5. (Optional) Consider adding the following to your Atom keymap file:
 ```
@@ -58,7 +58,7 @@ Once you've followed the above steps, you should have:
 - Syntax highlighting if you open a file ending in `.lisp`
 - Proper lisp indentation when you hit tab
 
-To start a REPL (an interactive terminal where you can interact with Lisp live), run the `Slime: Start` command from the command pallete. A REPL should then pop up. Note that if this is your first time using `atom-slime`, or you've updated your lisp process, you may get some warning messages about not being able to connect. This is normal; wait a minute or so, restart Atom, and try again and it should work. (This happens because your lisp is compiling the swank server and isn't ready before this package times out).
+To start a REPL (an interactive terminal where you can interact with Lisp live), run the `Slime: Start` command from the command pallete. A REPL should then pop up. Note that if this is your first time using `slima`, or you've updated your lisp process, you may get some warning messages about not being able to connect. This is normal; wait a minute or so, restart Atom, and try again and it should work. (This happens because your lisp is compiling the swank server and isn't ready before this package times out).
 
 With the REPL, you can type commands, see results, switch packages, and more. It's a great way to write Lisp code! A debugger will come up if an error occurs. You can also use the up & down arrows to scroll up through your past commands. type <kbd>Ctrl</kbd>+<kbd>C</kbd> to interrupt lisp (if it's in an infinite loop, for example).
 

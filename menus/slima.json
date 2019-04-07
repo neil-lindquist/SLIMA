@@ -1,0 +1,26 @@
+{
+  "context-menu": {
+    "atom-text-editor": [
+      {
+        "label": "Toggle slima",
+        "command": "slima:toggle"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "slima",
+          "submenu": [
+            {
+              "label": "Toggle",
+              "command": "slima:toggle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
