@@ -1,10 +1,14 @@
 Slima = require '../lib/slima'
+Swank = require 'swank-client'
+SwankStarter = require '../lib/swank-starter'
+
 
 # Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
 #
 # To run a specific `it` or `describe` block add an `f` to the front (e.g. `fit`
 # or `fdescribe`). Remove the `f` to unfocus the block.
 
+# SLIMA's dependancy on running a swank server makes tests harder
 describe "Slima", ->
   [workspaceElement, activationPromise] = []
 
@@ -12,51 +16,20 @@ describe "Slima", ->
     workspaceElement = atom.views.getView(atom.workspace)
     activationPromise = atom.packages.activatePackage('slima')
 
-  describe "when the slima:toggle event is triggered", ->
-    it "hides and shows the modal panel", ->
-      # Before the activation event the view is not on the DOM, and no panel
-      # has been created
-      expect(workspaceElement.querySelector('.slima')).not.toExist()
-
-      # This is an activation event, triggering it will cause the package to be
-      # activated.
-      atom.commands.dispatch workspaceElement, 'slima:toggle'
-
+  describe "when the package is activated", ->
+    beforeEach ->
       waitsForPromise ->
         activationPromise
 
-      runs ->
-        expect(workspaceElement.querySelector('.slima')).toExist()
+    it "instantiates correctly", ->
+      expect(Slima.swank).toBeInstanceOf(Swank.Client)
+      expect(Slima.views).not.toEqual(null)
+      expect(Slima.subs).not.toEqual(null)
 
-        slimaElement = workspaceElement.querySelector('.slima')
-        expect(slimaElement).toExist()
+  describe "swank starter", ->
+    it "Doesn't start with an invalid path", ->
+      atom.config.set("slime.slimePath", "/tmp/")
 
-        slimaPanel = atom.workspace.panelForItem(slimaElement)
-        expect(slimaPanel.isVisible()).toBe true
-        atom.commands.dispatch workspaceElement, 'slima:toggle'
-        expect(slimaPanel.isVisible()).toBe false
-
-    it "hides and shows the view", ->
-      # This test shows you an integration test testing at the view level.
-
-      # Attaching the workspaceElement to the DOM is required to allow the
-      # `toBeVisible()` matchers to work. Anything testing visibility or focus
-      # requires that the workspaceElement is on the DOM. Tests that attach the
-      # workspaceElement to the DOM are generally slower than those off DOM.
-      jasmine.attachToDOM(workspaceElement)
-
-      expect(workspaceElement.querySelector('.slima')).not.toExist()
-
-      # This is an activation event, triggering it causes the package to be
-      # activated.
-      atom.commands.dispatch workspaceElement, 'slima:toggle'
-
-      waitsForPromise ->
-        activationPromise
-
-      runs ->
-        # Now we can test for view visibility
-        slimaElement = workspaceElement.querySelector('.slima')
-        expect(slimaElement).toBeVisible()
-        atom.commands.dispatch workspaceElement, 'slima:toggle'
-        expect(slimaElement).not.toBeVisible()
+      swankStarter = new SwankStarter
+      expect(swankStarter.start()).toEqual(false)
+      expect(swankStarter.process).toEqual(null)
