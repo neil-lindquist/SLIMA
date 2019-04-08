@@ -22,8 +22,11 @@
     'ctrl-cmd-m': 'slime:macroexpand-1'
     'ctrl-cmd-shift-m': 'slime:macroexpand-all'
 
-'atom-text-editor.slime-repl':
+'atom-workspace atom-text-editor.slime-repl':
     'ctrl-c': 'slime:interrupt-lisp'
     'ctrl-=': 'slime:clear-repl'
     'ctrl-shift-c': 'core:copy'
     'ctrl-shift-v': 'core:paste'
+    #disable keystrokes that rearrange lines
+    'ctrl-shift-down':'unset!'
+    'ctrl-shift-up':'unset!'
