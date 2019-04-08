@@ -3,19 +3,23 @@
   {
     'label': 'Packages',
     'submenu': [
-      'label': 'Slime',
+      'label': 'SLIMA',
       'submenu': [
         {
           'label': 'Start',
           'command': 'slime:start'
         },
         {
-          'label': 'Disconnect',
-          'command': 'slime:disconnect'
-        },
-        {
           'label': 'Restart',
           'command': 'slime:restart'
+        },
+        {
+          'label': 'Connect',
+          'command': 'slime:connect'
+        },
+        {
+          'label': 'Disconnect',
+          'command': 'slime:disconnect'
         },
         {
           'label': 'Profile',
