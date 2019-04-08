@@ -90,10 +90,7 @@ module.exports = Slima =
   setupSwank: () ->
     @swank = new Swank.Client("localhost", 4005);
     @swank.on 'disconnect', =>
-      atom.notifications.addError("Disconnected from Lisp")
-      @views.statusView.message('Slime not connected.')
-      if @views.profileView.enabled
-        @views.profileView.toggle()
+      @swankCleanup
 
   # Start a swank server and then connect to it
   swankStart: () ->
@@ -133,8 +130,13 @@ module.exports = Slima =
 
   swankDisconnect: () ->
     @swank.quit()
-    @views.destroyRepl()
+    @swankCleanup()
 
+  # releases resources and closes the REPL pane
+  swankCleanup: () ->
+    atom.notifications.addError("Disconnected from Lisp")
+    @views.statusView.message('Slime not connected.')
+    @views.destroyRepl
 
   swankRestart: () ->
     @swankDisconnect()

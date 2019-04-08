@@ -43,5 +43,5 @@ class SlimaView
   closeAllREPLs: ->
     editors = atom.workspace.getTextEditors()
     for editor in editors
-      if editor.getPath() == '/tmp/repl.lisp-repl'
+      if editor.getTitle() == 'repl.lisp-repl'
         editor.destroy()

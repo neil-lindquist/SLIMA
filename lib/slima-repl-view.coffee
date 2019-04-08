@@ -49,7 +49,7 @@ class REPLView
     @replPane = paneCurrent.splitDown() #.splitRight
     # Open a new REPL there
     @replPane.activate()
-    atom.workspace.open('/tmp/repl.lisp-repl').then (editor) =>
+    atom.workspace.open('repl.lisp-repl').then (editor) =>
       @editor = editor
       @editorElement = atom.views.getView(@editor)
       @setupRepl()
