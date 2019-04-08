@@ -30,3 +30,5 @@
     #disable keystrokes that rearrange lines
     'ctrl-shift-down':'unset!'
     'ctrl-shift-up':'unset!'
+    'ctrl-down':'core:move-down'
+    'ctrl-up':'core:move-up'
