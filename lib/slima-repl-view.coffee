@@ -45,7 +45,7 @@ class REPLView
       return
 
     # Create a new pane and editor if we didn't find one
-    paneCurrent = atom.workspace.getActivePane()
+    paneCurrent = atom.workspace.getCenter().getActivePane()
     @replPane = paneCurrent.splitDown() #.splitRight
     # Open a new REPL there
     @replPane.activate()
