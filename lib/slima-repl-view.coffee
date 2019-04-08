@@ -107,10 +107,18 @@ class REPLView
       if @inputFromUser
         if @preventUserInput
           event.cancel()
-        points = @editor.getCursorBufferPositions()
-        for point in points
-          if point.isLessThan(@promptMarker.getBufferRange().end)
-            event.cancel()
+        selections = @editor.getSelectedBufferRanges()
+        for selection in selections
+          if selection.start.isEqual(selection.end)
+            # no selection, need to check that the previous character is backspace-able
+            point = selection.start
+            if point.isLessThan(@promptMarker.getBufferRange().end)
+              event.cancel()
+          else
+            # range selected, need to check that selection is backspace-able
+            if @promptMarker.getBufferRange().intersectsWith(selection, true)
+              event.cancel()
+              return
 
     # Set up up/down arrow previous command cycling. But don't do it
     # if the autocomplete window is active...
