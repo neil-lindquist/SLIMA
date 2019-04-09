@@ -1,3 +1,6 @@
+## 1.0.2
+* Fixed a crash when unmatched double quotes are present in the REPL string
+
 ## 1.0.1
 * Disabled commands that move lines in the REPL (#9)
 * Fixed the improperly renamed menu
