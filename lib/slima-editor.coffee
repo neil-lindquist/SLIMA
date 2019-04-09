@@ -65,6 +65,8 @@ class SlimaEditor
   # Return a string of the current sexp the user is in. The "deepest" one.
   # If we're not in one, return null.
   getCurrentSexp: ->
+    if @ast.errors?.length != 0
+      return null #paredit can't parse the expression
     index = @getCursorIndex()
     text = @editor.getText()
     range = paredit.navigator.sexpRangeExpansion @ast, index, index
