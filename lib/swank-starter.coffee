@@ -15,7 +15,14 @@ class SwankStarter
       return false
     command = @lisp
     args = []
-    args.push 'run' if command.match(/ros/)
+    if command.match(/qlot/) # qlot exec ros -S . run @swank_script
+      args.push 'exec'
+      args.push 'ros'
+      args.push '-S'
+      args.push '.'
+      args.push 'run'
+    else if command.match(/ros/) # ros run @swank_script
+      args.push 'run'
     if not command.match(/clisp|lw/)
       args.push '--load'
     else
