@@ -126,10 +126,17 @@ class SlimaEditor
         p_start = utils.convertIndexToPoint(sexp.start, @editor)
         p_end = utils.convertIndexToPoint(sexp.end, @editor)
 
+        # Find file's package
+        pkgRegex = /\((?:cl:|common-lisp:)?in-package\s*(?:'|:)([^)]+)\s*\)/
+        pkg = "CL-USER"
+        @editor.backwardsScanInBufferRange pkgRegex, [[0,0], p_start], (match) ->
+          pkg = match.match[1]
+          match.stop()
+
         # Trigger a compilation
         line_reference = p_start.row + 1
         col_reference = p_start.column + 1
-        @swank.compile_string(sexp.sexp, title, path, sexp.start, line_reference, col_reference, @pkg)
+        @swank.compile_string(sexp.sexp, title, path, sexp.start, line_reference, col_reference, pkg)
 
         # Trigger the highlight effect
         range = Range(p_start, p_end)
