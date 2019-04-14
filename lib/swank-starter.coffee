@@ -9,23 +9,31 @@ class SwankStarter
   process: null
 
   start: () ->
-    success = @check_path()
-    if not success
-      atom.notifications.addWarning("Did you set up `slima` as noted in the package's preferences? The \"Slime Path\" directory can't be opened. Please double check it!")
-      return false
-    command = @lisp
-    args = []
-    args.push 'run' if command.match(/ros/)
-    if not command.match(/clisp|lw/)
-      args.push '--load'
+    manualCommand = atom.config.get 'slima.advancedSettings.swankCommand'
+
+    options = {cwd: @get_cwd()}
+    if manualCommand == ''
+      success = @check_path()
+      if not success
+        atom.notifications.addWarning("Did you set up `slima` as noted in the package's preferences? The \"Slime Path\" directory can't be opened. Please double check it!")
+        return false
+      command = @lisp
+      args = []
+      args.push 'run' if command.match(/ros/)
+      if not command.match(/clisp|lw/)
+        args.push '--load'
+      else
+        args.push '-load' if command.match(/lw/)
+      args.push @swank_script
     else
-      args.push '-load' if command.match(/lw/)
-    args.push @swank_script
+      command = manualCommand
+      options.windowsVerbatimArguments = true
+      options.shell = true
+      args = []
     @process = new BufferedProcess({
       command: command,
       args: args,
-      options:
-        cwd: @get_cwd()
+      options: options,
       stdout: @stdout_callback,
       stderr: @stderr_callback,
       exit: @exit_callback
@@ -37,12 +45,19 @@ class SwankStarter
     # Retrieve the slime path and lisp name
     @lisp = atom.config.get 'slima.lispName'
     @path = atom.config.get 'slima.slimePath'
-    @path = @path[0...-1] if @path[@path.length - 1] == path.sep
+    if @path[@path.length - 1] == path.sep
+      @path = @path[0...-1]
+    else
+      try
+        if fs.statSync(@path).isFile()
+          @swank_script = @path
+          return true
+      catch e
+       pass
     @swank_script = "#{@path}#{path.sep}start-swank.lisp"
     # Check if the slime path exists; return true or false
     try
-      info = fs.statSync(@swank_script)
-      return true
+      return fs.statSync(@swank_script).isFile()
     catch e
       console.log e
       return false

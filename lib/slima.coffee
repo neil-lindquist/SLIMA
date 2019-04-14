@@ -52,6 +52,12 @@ module.exports = Slima =
           description: 'If Lisp takes a while to load, then increasing the number of attempts may help (for advanced users using docker)'
           type: 'integer'
           default: 5
+        swankCommand:
+          title: 'Custom Swank Command'
+          description: 'If not blank, used to start the swank server instead of the fields above'
+          type: 'string'
+          default: ''
+
 
 
   activate: (state) ->
