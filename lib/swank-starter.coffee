@@ -52,8 +52,6 @@ class SwankStarter
         if fs.statSync(@path).isFile()
           @swank_script = @path
           return true
-      catch e
-       pass
     @swank_script = "#{@path}#{path.sep}start-swank.lisp"
     # Check if the slime path exists; return true or false
     try
