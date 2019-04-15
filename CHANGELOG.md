@@ -1,5 +1,13 @@
+## 1.1.0
+* Add keyboard shortcuts for debugger
+* Add option to set the command for starting the swank server
+* Allow slime path to be a lisp file
+* Fix package detection for compile string
+
+
 ## 1.0.2
 * Fixed a crash when unmatched double quotes are present in the REPL string
+
 
 ## 1.0.1
 * Disabled commands that move lines in the REPL (#9)
