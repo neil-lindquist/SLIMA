@@ -142,47 +142,20 @@ class REPLView
         @swank.interrupt()
 
     #debugger controls
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-0', (event) =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(0))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-1', (event) =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(1))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-2', () =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(2))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-3', () =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(3))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-4', () =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(4))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-5', () =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(5))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-6', () =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(6))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-7', () =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(7))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-8', () =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(8))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-9', () =>
-      @callCurrentDebugger(event, (debug) -> debug.activate_restart(9))
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-abort', () =>
-      @callCurrentDebugger(event, (debug) -> debug.abort())
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-quit', () =>
-      @callCurrentDebugger(event, (debug) -> debug.quit())
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-continue', () =>
-      @callCurrentDebugger(event, (debug) -> debug.continue())
+    for i in [0..9]
+      do (i) =>
+        @addDebugCommand 'slime:debug-restart-'+i, false, (debug) -> debug.activate_restart(i)
+    @addDebugCommand 'slime:debug-abort', false, (debug) -> debug.abort()
+    @addDebugCommand 'slime:debug-quit', false, (debug) -> debug.quit()
+    @addDebugCommand 'slime:debug-continue',  false, (debug) -> debug.continue()
 
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-show-frame-source', () =>
-      @callCurrentFrameInfo(event, (frame) -> frame.display_source())
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-disassemble-frame', () =>
-      @callCurrentFrameInfo(event, (frame) -> frame.disassemble())
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-frame-up', () =>
-      @callCurrentFrameInfo(event, (frame) -> frame.show_frame_up())
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-frame-down', () =>
-      @callCurrentFrameInfo(event, (frame) -> frame.show_frame_down())
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-last-frame', () =>
-      @callCurrentFrameInfo(event, (frame) -> frame.show_last_frame())
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-first-frame', () =>
-      @callCurrentFrameInfo(event, (frame) -> frame.show_first_frame())
-    @subs.add atom.commands.add 'atom-workspace', 'slime:debug-restart-frame', () =>
-      @callCurrentFrameInfo(event, (frame) -> frame.restart())
+    @addDebugCommand 'slime:debug-show-frame-source', true, (frame) -> frame.display_source()
+    @addDebugCommand 'slime:debug-disassemble-frame', true, (frame) -> frame.disassemble()
+    @addDebugCommand 'slime:debug-frame-up', true, (frame) -> frame.show_frame_up()
+    @addDebugCommand 'slime:debug-frame-down', true, (frame) -> frame.show_frame_down()
+    @addDebugCommand 'slime:debug-last-frame', true, (frame) -> frame.show_last_frame()
+    @addDebugCommand 'slime:debug-first-frame', true, (frame) -> frame.show_first_frame()
+    @addDebugCommand 'slime:debug-restart-frame', true, (frame) -> frame.restart()
 
     @subs.add @editor.onDidDestroy =>
       @destroy()
@@ -203,6 +176,19 @@ class REPLView
     #   @ed.setTextInBufferRange(new Range(pointAbove, pointAbove), "\nmonkus",undo:'skip')
     #   @ed.scrollToBotom()
 
+  # registers a debug command
+  # Note that these commands aren't displayed in the command palette, since they alias buttons
+  addDebugCommand: (name, forFrameInfo, command) ->
+      if forFrameInfo
+        @subs.add atom.commands.add 'atom-workspace', name, {
+            didDispatch: (event) => @callCurrentFrameInfo(event, command)
+            hiddenInCommandPalette: true
+          }
+      else
+        @subs.add atom.commands.add 'atom-workspace', name, {
+            didDispatch: (event) => @callCurrentDebugger(event, command)
+            hiddenInCommandPalette: true
+          }
 
   isAutoCompleteActive: () ->
     return $(@editorElement).hasClass('autocomplete-active')
