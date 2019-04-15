@@ -13,7 +13,7 @@ Current features of this package:
 - Jumping to a method definition
 - Autocomplete suggestions based on your code
 - "Compile this function"
-- "Compile this file" command
+- "Compile this file"
 - Function method argument order documentation
 - Integrated profiler
 
@@ -22,6 +22,7 @@ Future features:
 - "Who calls this function" command
 - Stepping debugger
 
+Documentation for SLIMA's features can be found in the [project wiki](https://github.com/neil-lindquist/SLIMA/wiki).
 
 **Note**: This package is still in beta and in active development! Contributions and bug reports are welcome.
 
@@ -51,7 +52,7 @@ This will allow the tab key to trigger automatic, correct indentation of your Li
 
 7. (Optional) In Atom's `bracket-matcher` package, consider unchecking the "Autocomplete Brackets" option. The `lisp-paredit` package above will take care of autocompleting parenthesis when you're editing a lisp file. Unchecking this option will prevent single quotes from being autocompleted in pairs, allowing you to define lisp symbols easier (for example, `(setf x 'some-symbol)`).
 
-All done!
+All done! Futher information on configuring the lisp process can be found in the [project wiki](https://github.com/neil-lindquist/SLIMA/wiki/Controlling-the-Lisp-Process-Lifecycle).
 
 
 How to Edit Lisp code with Atom
