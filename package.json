@@ -1,7 +1,7 @@
 {
   "name": "slima",
   "main": "./lib/slima",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "SLIME plugin for interacting with Lisp!",
   "keywords": [
     "lisp",
@@ -18,7 +18,7 @@
   "dependencies": {
     "paredit.js": "^0.3.5",
     "atom-space-pen-views": "^2.1.1",
-    "swank-client": "^1.0.0"
+    "swank-client": "^1.1.0"
   },
   "consumedServices": {
     "status-bar": {

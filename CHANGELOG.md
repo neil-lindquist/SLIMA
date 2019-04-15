@@ -1,3 +1,6 @@
+## 1.1.1
+* Update swank-client version to support the continue restart keystroke
+
 ## 1.1.0
 * Add keyboard shortcuts for debugger
 * Add option to set the command for starting the swank server
