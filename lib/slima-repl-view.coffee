@@ -288,8 +288,7 @@ class REPLView
       presentation_end = @editor.getBuffer().getRange().end
       range = new Range(@presentation_starts[pid], presentation_end)
       marker = @editor.markBufferRange(range, {exclusive: true})
-      #TODO should this just be syntax--lisp and let the lisp.cson find the best class (otherwise numbers/strings/ect don't get highlighting)
-      @editor.decorateMarker(marker, {type: 'text', class:'syntax--variable syntax--other syntax--global syntax--lisp'})
+      @editor.decorateMarker(marker, {type: 'text', class:'syntax--lisp'})
       delete @presentation_starts[pid]
 
     # Debug functions
