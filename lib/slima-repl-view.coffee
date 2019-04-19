@@ -122,14 +122,13 @@ class REPLView
               return
 
     # Set up up/down arrow previous command cycling. But don't do it
-    # if the autocomplete window is active...
-    # TODO - should check autocomplete plus's settings and make sure core movements is enabled?
+    # if the autocomplete window is active, don't take the event when core movements are enabled
     @subs.add atom.commands.add @editorElement, 'core:move-up': (event) =>
-      if not @isAutoCompleteActive()
+      if not (@isAutoCompleteActive() and atom.config.get('autocomplete-plus.useCoreMovementCommands'))
         @cycleBack()
         event.stopImmediatePropagation()
     @subs.add atom.commands.add @editorElement, 'core:move-down': (event) =>
-      if not @isAutoCompleteActive()
+      if not (@isAutoCompleteActive() and atom.config.get('autocomplete-plus.useCoreMovementCommands'))
         @cycleForward()
         event.stopImmediatePropagation()
 
