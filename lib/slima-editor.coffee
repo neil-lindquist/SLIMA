@@ -127,10 +127,12 @@ class SlimaEditor
         p_end = utils.convertIndexToPoint(sexp.end, @editor)
 
         # Find file's package
-        pkgRegex = /\((?:cl:|common-lisp:)?in-package\s*(?:'|:)([^)]+)\s*\)/
+        #TODO add support for character names with more than one character
+        pkgRegex = /\((?:cl:|common-lisp:)?in-package\s*(?:(?:'|#?:)([^)]+)|"([^)]+)"|#\\(.))\s*\)/
         pkg = "CL-USER"
         @editor.backwardsScanInBufferRange pkgRegex, [[0,0], p_start], (match) ->
-          pkg = match.match[1]
+          # there is exactly one matching group
+          pkg = match.match[1] || match.match[2] || match.match[3]
           match.stop()
 
         # Trigger a compilation
