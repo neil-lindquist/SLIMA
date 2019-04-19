@@ -1,7 +1,7 @@
 {
   "name": "slima",
   "main": "./lib/slima",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "SLIME plugin for interacting with Lisp!",
   "keywords": [
     "lisp",

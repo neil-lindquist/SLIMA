@@ -1,3 +1,8 @@
+## 1.1.3
+* Support almost all string designators for compile string's package detection
+* Allow presentations to be styled as normal lisp
+* Allow REPL cycling to always work when autocomplete isn't using up/down
+
 ## 1.1.2
 * Fix bug with debugger hotkeys trying to work in text editors
 * Update swank-client version that ensures code is loaded after compiling
