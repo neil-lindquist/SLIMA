@@ -1,6 +1,7 @@
 {BufferedProcess} = require 'atom'
 fs = require 'fs'
 path = require 'path'
+os = require 'os'
 
 # Helps to start a Swank server automatically so the
 # user doesn't have to start one in a separate terminal
@@ -45,6 +46,7 @@ class SwankStarter
     # Retrieve the slime path and lisp name
     @lisp = atom.config.get 'slima.lispName'
     @path = atom.config.get 'slima.slimePath'
+    @path = @path.replace /^~(?=[\\/])/, os.homedir()
     if @path[@path.length - 1] == path.sep
       @path = @path[0...-1]
     else

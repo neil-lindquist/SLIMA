@@ -20,7 +20,7 @@ module.exports = Slima =
       title: 'Slime Path'
       description: 'Path to where SLIME resides on your computer.'
       type: 'string'
-      default: '/home/username/Desktop/slime'
+      default: '~/Desktop/slime'
       order: 3
 
     lispName:
