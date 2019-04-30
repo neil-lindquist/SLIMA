@@ -5,6 +5,7 @@
 @import "ui-variables";
 @import "syntax-variables";
 @import 'octicon-utf-codes';
+@import "octicon-mixins";
 
 
 atom-text-editor.editor {
@@ -163,4 +164,27 @@ bubble-multiline-message {
 // frame info
 .slime-message {
   white-space: pre-line;
+}
+
+
+.select-list {
+
+  ol.list-group {
+    position: relative;
+    overflow-y: auto;
+    max-height: 312px;
+    margin: @component-padding 0 0 0;
+    padding: 0;
+
+    li {
+      display: block;
+
+      .primary-line,
+      .secondary-line {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+    }
+  }
 }

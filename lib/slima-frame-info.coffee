@@ -1,111 +1,85 @@
 {CompositeDisposable} = require 'atom'
-{$, $$, View, SelectListView, ScrollView} = require 'atom-space-pen-views'
+etch = require 'etch'
+$ = etch.dom
 
 module.exports =
-class FrameInfoView extends ScrollView
-  @content: ->
-    @div outlet:'main', class:'slima-debugger padded', =>
-      @h1 outlet:'frameName', 'Frame Name'
-      @div class:'select-list', =>
-        @ol outlet:'navigation', class:'list-group mark-active', =>
-          @li 'Navigate to adjacent stack frames'
-      @h3 'Local Variables'
-      @div class:'select-list', =>
-        @ol outlet:'locals', class:'list-group mark-active', =>
-          @li 'Description of var 0'
-      @div outlet: 'catchTagsDiv', class:'select-list', =>
-        @h3 'Catch Tags'
-        @ol outlet:'catchTags', start:'0', =>
-          @li 'Description of tag 0'
-      @div class:'select-list', =>
-        @ol class:'list-group mark-active', =>
-          @li =>
-            @button outlet:'viewSource', class:'inline-block-tight btn', 'View Frame Source'
-          @li =>
-            @button outlet:'restartFrame', class:'inline-block-tight btn', 'Restart Frame'
-          @li =>
-            @button outlet:'disassembleBtn', class:'inline-block-tight btn', 'Disassemble Frame'
-        @div outlet:'disassembleDiv', =>
-          @h3 'Disassembled:'
-          @span outlet:'disassembleOutput', class:'slime-message', ''
-        @ol class:'list-group mark-active', =>
-          @li =>
-            @input outlet:'frameReturnValue', class:'native-key-bindings debug-text-entry', type:'text', size:50
-          @li =>
-            @button outlet:'returnFromFrame', class:'inline-block-tight btn', 'Return From Frame'
-          @li =>
-            @button outlet:'evalInFrame', class:'inline-block-tight btn', 'Eval in Frame'
+class FrameInfoView
 
-  setup: (@swank, @info, @frame_index, @debugView) ->
+  constructor: () ->
+    etch.initialize @
+
+  update: () ->
+    etch.update @
+
+  render: ->
+    #need to early exit if we haven't been setup yet
+    return $.div {}, '' unless @info
+
     frame = @info.stack_frames[@frame_index]
 
-    @frameName.html @frame_index + ': ' + frame.description
-
-    @navigation.empty()
+    nav_btns = []
     if @frame_index > 0
-      @add_navigation_item(0, description = @info.stack_frames[0].description, 'Stack Top')
-    if @frame_index > 1
-      @add_navigation_item(@frame_index-1, description = @info.stack_frames[@frame_index-1].description, 'Up')
-    last_index = @info.stack_frames.length - 1
-    if @frame_index < last_index - 1
-      @add_navigation_item(@frame_index+1, description = @info.stack_frames[@frame_index+1].description, 'Down')
-    if @frame_index < last_index
-      @add_navigation_item(last_index, description = @info.stack_frames[last_index].description, 'Stack Bottom')
+      nav_btns.push @create_nav(0, @info.stack_frames[0].description, 'Stack Top')
+     if @frame_index > 1
+       i = @frame_index-1
+       nav_btns.push @create_nav(i, @info.stack_frames[i].description, 'Up')
+     last_index = @info.stack_frames.length - 1
+     if @frame_index < last_index - 1
+       i = @frame_index+1
+       nav_btns.push @create_nav(i, @info.stack_frames[i].description, 'Down')
+     if @frame_index < last_index
+       nav_btns.push @create_nav(last_index, @info.stack_frames[last_index].description, 'Stack Bottom')
 
-    this.find('.frame-navigation-button').on 'click', (event) =>
-      @show_frame Number(event.target.getAttribute('frame_index'))
-
-    @viewSource.on 'click', (event) =>
-      @display_source()
-
-    if frame.restartable
-      @restartFrame[0].disabled = false
-      @restartFrame.on 'click', (event) =>
-        @restart()
-    else
-      @restartFrame[0].disabled = true
-
-    @disassembleDiv.hide()
-    @disassembleBtn.on 'click', (event) =>
-      @disassemble
-
-    @returnFromFrame.on 'click', (event) =>
-      @debugView.active = false
-      @swank.debug_return_from_frame(@frame_index, @frameReturnValue.val(), @info.thread)
-      .catch (errorMessage) =>
-        atom.notifications.addError(errorMessage)
-
-    @evalInFrame.on 'click', (event) =>
-      input = @frameReturnValue.val()
-      @frameReturnValue.val('')
-      @swank.debug_eval_in_frame(@frame_index, input, @info.thread).then (result) =>
-        replView = @debugView.replView
-        replView.print_string_callback(result+'\n')
-        replView.replPane.activateItem(replView.editor)
-
-    @swank.debug_stack_frame_details(@frame_index, @info.stack_frames, @info.thread).then (frame) =>
-      @locals.empty()
-      if frame.locals.length > 0
-        for local, i in frame.locals
-          @locals.append $$ ->
-            @li local.id + ': ' + local.name + ' = ' + local.value
+    $.div {className:'slima-debugger padded'},
+      $.h1 {}, @frame_index + ': ' + frame.description
+      $.div {className:'select-list'},
+        $.ol {className:'list-group mark-active'}, nav_btns
+      $.h3 {}, 'Local Variables'
+      $.div {className:'select-list'},
+        $.ol {class:'list-group mark-active'},
+          if frame.locals? and frame.locals.length > 0
+            ($.li {}, local.id + ': ' + local.name + ' = ' + local.value) for local, i in frame.locals
+          else
+            $.li {}, '<No locals>'
+      if frame.catch_tags? and frame.catch_tags.length > 0
+        $.div {className:'select-list'},
+          $.h3 {}, 'Catch Tags'
+          $.ol {class:'list-group mark-active'},
+            ($.li i+': '+tag) for tag, i in frame.catch_tags
       else
-        @locals.append $$ ->
-          @li '<No Locals>'
-      if frame.catch_tags.length > 0
-        @catchTagsDiv.show()
-        @catchTags.empty()
-        for tag, i in frame.catch_tags
-          @catchTags.append $$ ->
-            @li i + ': ' + tag
-      else
-        @catchTagsDiv.hide()
+        ''
+      $.div {className:'select-list'},
+        $.ol {className:'list-group mark-active'},
+          $.li {},
+            $.button {className:'inline-block-tight btn', on:{click:@display_source}}, 'View Frame Source'
+          $.li {},
+            $.button {className:'inline-block-tight btn', disable:frame.restartable, on:{click:@restart}}, 'Restart Frame'
+          $.li {},
+            $.button {className:'inline-block-tight btn', on:{click:@disassemble}}, 'Disassemble Frame'
+        if @disassembleText
+          $.div {},
+            $.h3 {}, 'Disassembled'
+            $.span {className:'slime-message'}, @disassembleText
+        else
+          ''
+        $.ol {className:'list-group mark-active'},
+          $.li {},
+            $.input {className:'native-key-bindings debug-text-entry', type:'text', size:50, ref:'frameReturnValue'}, ''
+          $.li {},
+            $.button {className:'inline-block-tight btn', on:{click:@returnFromFrame}}, 'Return From Frame'
+          $.li {},
+            $.button {className:'inline-block-tight btn', on:{click:@evalInFrame}}, 'Eval in Frame'
 
-  add_navigation_item: (index, frame_description, label) ->
-    @navigation.append $$ ->
-      @li class:"", =>
-        @button class:'inline-block-tight frame-navigation-button btn', frame_index:index, label
-        @text index+": " + frame_description
+  create_nav: (index, frame_description, label) ->
+      $.li {},
+        $.button {className:'inline-block-tight frame-navigation-button btn', on:{click:(event)=>@show_frame index}}, label
+        index+': '+frame_description
+
+  setup: (@swank, @info, @frame_index, @debugView) ->
+    #etch.update @
+    #TODO only get details if we don't already have them
+    @swank.debug_stack_frame_details(@frame_index, @info.stack_frames, @info.thread).then () =>
+      etch.update @
 
   show_frame: (i) ->
     if i != @frame_index
@@ -184,12 +158,26 @@ class FrameInfoView extends ScrollView
 
   disassemble: () =>
     @swank.debug_disassemble_frame(@frame_index, @info.thread).then (output) =>
-      @disassembleOutput.text(output)
-      @disassembleDiv.show()
+      @disassembleText = output
+      etch.update @
 
   restart: () =>
     @debugView.active = false
     @swank.debug_restart_frame(@frame_index, @info.thread)
+
+  returnFromFrame: () =>
+    @debugView.active = false
+    @swank.debug_return_from_frame(@frame_index, @refs.frameReturnValue.val(), @info.thread)
+    .catch (errorMessage) =>
+      atom.notifications.addError(errorMessage)
+
+  evalInFrame: () =>
+    input = @frameReturnValue.val()
+    @frameReturnValue.val('')
+    @swank.debug_eval_in_frame(@frame_index, input, @info.thread).then (result) =>
+      replView = @debugView.replView
+      replView.print_string_callback(result+'\n')
+      replView.replPane.activateItem(replView.editor)
 
   getTitle: -> 'Frame Info'
   getURI: => 'slime://debug/' + @info.level + '/frame'

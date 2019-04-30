@@ -1,17 +1,22 @@
-{$} = require('atom-space-pen-views')
+etch = require 'etch'
+$ = etch.dom
 
 module.exports =
   class StatusView
 
     constructor: ->
-      @content = $('<div>').addClass('inline-block')
-      @content.css({'max-width':'100vw'}) # Prevent from getting cut off
-      @main = $('<div>').text('Slime not connected.')
-      @content.append(@main)
+      @msg = 'Slime not connected.'
+      etch.initialize @
 
+    update: (props, children) ->
+      return etch.update @
 
-    message: (msg) =>
-      @main.html(msg)
+    render: () ->
+      $.div {className:'inline-block', style:'max-width:100vw'},
+        @msg
+
+    message: (@msg) =>
+      return etch.update @
 
     # Display prettily-formatted autodocumentation information
     displayAutoDoc: (msg) =>
@@ -38,13 +43,17 @@ module.exports =
       entries[0].classes.push "entity"
       entries[0].classes.push "name"
       entries[0].classes.push "function"
-      result = '<div style="font-family: monospace;">(' + (('<span class="' + entry.classes.join(' ') + '">' + entry.text + '</span>' for entry in entries).join ' ') + ')</div>'
-      # Otherwise, treat it and parse it
-      @main.html(result)
+      body = ['(', $.span {className:entries[0].classes.join(' ')}, entries[0].text]
+      for i in [1..entries.length-1]
+        body.push ' '
+        body.push $.span {className:entries[i].classes.join(' ')}, ' '+entries[i].text
+      body.push ')'
+      @message $.div {style:'font-family:monospace'}, body
+
 
     attach: (@statusBar) ->
-      @statusBar.addLeftTile(item: @content[0], priority: 100)
+      @statusBar.addLeftTile(item: @element, priority: 100)
 
     # Tear down any state and detach
     destroy: ->
-      @content.remove()
+      @element.remove()

@@ -1,5 +1,4 @@
 {CompositeDisposable, Point, Range} = require 'atom'
-{$, TextEditorView, View} = require 'atom-space-pen-views'
 DebuggerView = require './slima-debugger-view'
 FrameInfoView = require './slima-frame-info'
 paredit = require 'paredit.js'
@@ -59,7 +58,7 @@ class REPLView
   # Set up the REPL GUI for use
   setupRepl: () ->
     # Make sure it's marked with the special REPL class - helps some of our keybindings!
-    $(@editorElement).addClass('slime-repl')
+    @editorElement.classList.add('slime-repl')
     # Clear the REPL
     @clearREPL()
     # Attach event handlers
@@ -190,7 +189,7 @@ class REPLView
           }
 
   isAutoCompleteActive: () ->
-    return $(@editorElement).hasClass('autocomplete-active')
+    return @editorElement.classList.contains('autocomplete-active')
 
   markPrompt: (promptRange) ->
     range = new Range([0, 0], promptRange.end)
