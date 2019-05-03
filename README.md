@@ -24,7 +24,7 @@ Future features:
 
 Documentation for SLIMA's features can be found in the [project wiki](https://github.com/neil-lindquist/SLIMA/wiki).
 
-**Note**: This package is still in beta and in active development! Contributions and bug reports are welcome.
+**Note**: This package is still in active development! Contributions and bug reports are welcome.
 
 
 
