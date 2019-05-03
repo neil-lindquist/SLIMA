@@ -57,6 +57,16 @@ module.exports = Slima =
           description: 'If not blank, used to start the swank server instead of the fields above'
           type: 'string'
           default: ''
+        swankHostname:
+          title: 'Swank Hostname'
+          description: 'The hostname of the swank server to connect to'
+          type: 'string'
+          default: 'localhost'
+        swankPort:
+          title: 'Swank Port'
+          description: 'The port used by the swank server to connect to'
+          type: 'integer'
+          default: 4005
 
 
 
@@ -94,9 +104,17 @@ module.exports = Slima =
 
   # Sets up a swank client but does not connect
   setupSwank: () ->
-    @swank = new Swank.Client("localhost", 4005);
+    host = atom.config.get 'slima.advancedSettings.swankHostname'
+    port = atom.config.get 'slima.advancedSettings.swankPort'
+    @swank = new Swank.Client(host, port);
     @swank.on 'disconnect', =>
       @swankCleanup
+
+    atom.config.onDidChange 'slima.advancedSettings.swankHostname', (newHost)=>
+      @swank.host = newHost.newValue
+    atom.config.onDidChange 'slima.advancedSettings.swankPort', (newPort)=>
+      @swank.port = newPort.newValue
+
 
   # Start a swank server and then connect to it
   swankStart: () ->

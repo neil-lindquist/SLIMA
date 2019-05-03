@@ -6,8 +6,7 @@ $ = etch.dom
 
 module.exports =
 class ProfilerView
-  constructor: (sw) ->
-    @swank = sw
+  constructor: (@swank) ->
     @enabled = false
     @msg = $.div {}, ''
     etch.initialize @
