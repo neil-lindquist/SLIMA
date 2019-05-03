@@ -1,3 +1,7 @@
+## 1.2
+* Allow ~ as home directory in the slime path
+* Add more commands to the Packages>SLIMA menu
+
 ## 1.1.3
 * Support almost all string designators for compile string's package detection
 * Allow presentations to be styled as normal lisp
