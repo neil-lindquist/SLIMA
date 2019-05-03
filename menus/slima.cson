@@ -6,24 +6,59 @@
       'label': 'SLIMA',
       'submenu': [
         {
-          'label': 'Start',
-          'command': 'slime:start'
+          'label': 'Lisp Process',
+          'submenu': [
+            {
+              'label': 'Start',
+              'command': 'slime:start'
+            },
+            {
+              'label': 'Restart',
+              'command': 'slime:restart'
+            },
+            {
+              'label': 'Connect',
+              'command': 'slime:connect'
+            },
+            {
+              'label': 'Disconnect',
+              'command': 'slime:disconnect'
+            },
+          ]
         },
         {
-          'label': 'Restart',
-          'command': 'slime:restart'
+          'label': 'REPL',
+          'submenu': [
+            {
+              'label': 'Clear REPL',
+              'command': 'slime:clear-repl'
+            },
+            {
+              'label': 'Interrupt REPL',
+              'command': 'slime:interrupt-lisp'
+            }
+          ]
         },
         {
-          'label': 'Connect',
-          'command': 'slime:connect'
-        },
-        {
-          'label': 'Disconnect',
-          'command': 'slime:disconnect'
-        },
-        {
-          'label': 'Profile',
-          'command': 'slime:profile'
+          'label': 'Introspection',
+          'submenu': [
+            {
+              'label': 'Goto Definition',
+              'command': 'slime:goto-definition'
+            },
+            {
+              'label': 'Macroexpand 1',
+              'command': 'slime:macroexpand-1'
+            },
+            {
+              'label': 'Macroexpand All',
+              'command': 'slime:macroexpand-all'
+            },
+            {
+              'label': 'Profile',
+              'command': 'slime:profile'
+            },
+          ]
         }
       ]
     ]

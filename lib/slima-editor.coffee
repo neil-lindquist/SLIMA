@@ -19,8 +19,6 @@ class SlimaEditor
     @subs.add @editor.onDidChangeCursorPosition => @cursorMovedCallback()
     @subs.add @editor.onDidDestroy => @editorDestroyedCallback()
 
-    # TODO - make this a context menu item... not a command that only works through
-    # command pallette in that window...
     @subs.add atom.commands.add @editorElement, 'slime:goto-definition': =>
       @openDefinition()
     @subs.add atom.commands.add @editorElement, 'slime:compile-function': =>
