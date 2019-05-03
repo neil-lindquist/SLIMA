@@ -2,7 +2,7 @@
   "name": "slima",
   "main": "./lib/slima",
   "version": "1.2.0",
-  "description": "SLIME plugin for interacting with Lisp!",
+  "description": "Interactive Common Lisp development using SLIME!",
   "keywords": [
     "lisp",
     "slime",
