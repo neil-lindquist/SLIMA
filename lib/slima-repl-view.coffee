@@ -1,4 +1,7 @@
 {CompositeDisposable, Point, Range} = require 'atom'
+fs = require 'fs'
+os = require 'os'
+path = require 'path'
 DebuggerView = require './slima-debugger-view'
 FrameInfoView = require './slima-frame-info'
 paredit = require 'paredit.js'
@@ -16,6 +19,7 @@ class REPLView
 
   constructor: (@swank) ->
     @prompt = @pkg + "> "
+    @loadReplHistory()
 
   attach: () ->
     @subs = new CompositeDisposable
@@ -443,7 +447,49 @@ class REPLView
 
 
   destroy: ->
+    @saveReplHistory()
     if @swank.connected
       @closeDebugTab(1)
       @subs.dispose()
       @swank.quit()
+
+
+  loadReplHistory: () ->
+    historyPath = os.homedir() + path.sep + '.slime-history.eld'
+    return unless fs.existsSync(historyPath) && fs.statSync(historyPath).isFile()
+
+    # Note that an encoding type of utf-8-unix is assumed
+    rawHistory = fs.readFileSync(historyPath).toString()
+    ast = paredit.parse(rawHistory)
+    if ast.errors.length != 0
+      atom.notifications.addWarning("Unable to parse history file", options)
+      return
+
+    entries = ast.children.find (elt) -> elt.type == 'list'
+    oldCommands = []
+    for entry in entries.children
+      # remove leading and trailing quotes, then resolve escapes
+      command = entry.source.slice(1, -1).replace(/\\("|\\)/g, "$1")
+      oldCommands.push command
+    @previousCommands = oldCommands.reverse().concat @previousCommands
+    @cycleIndex = @previousCommands.length
+
+
+  saveReplHistory: () ->
+    # get the latest version if multiple SLIME sessions are going
+    @loadReplHistory()
+    outputCommands = []
+    addedCommands = new Set()
+    for i in [@previousCommands.length-1..0]
+      command = @previousCommands[i]
+      unless addedCommands.has command
+        #only add items once
+        outputCommands.push '"' + command.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + '"'
+        addedCommands.add command
+
+    historyPath = os.homedir() + path.sep + '.slime-history.eld'
+    stream = fs.createWriteStream(historyPath);
+    stream.once 'open', (fd) ->
+      stream.write ";; -*- coding: utf-8-unix -*-\n;; History for SLIME REPL. Automatically written.\n;; Edit only if you know what you're doing\n"
+      stream.write '(' + outputCommands.join(' ') + ')'
+      stream.end()
