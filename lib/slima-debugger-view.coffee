@@ -33,7 +33,7 @@ class DebuggerView
 
     $.div {className:'slima-debugger padded'},
       $.h1 {}, @info.title
-      $.h2 {class:'text-subtle':@info.type}
+      $.h2 {class:'text-subtle'}, @info.type
       $.h3 {}, 'Restarts:'
       $.div {className:'select-list'},
         $.ol {className:'list-group mark-active'}, restarts
