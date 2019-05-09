@@ -1,6 +1,14 @@
-## 1.2
+## 1.3.0
+* Add support for connecting to swank servers on other hosts/ports
+* Save the command history between SLIMA sessions
+* Replace space-pen with etch
+* Update swank-client version to improve the function signature in the status bar
+
+
+## 1.2.0
 * Allow ~ as home directory in the slime path
 * Add more commands to the Packages>SLIMA menu
+
 
 ## 1.1.3
 * Support almost all string designators for compile string's package detection
