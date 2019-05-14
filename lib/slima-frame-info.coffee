@@ -167,13 +167,13 @@ class FrameInfoView
 
   returnFromFrame: () =>
     @debugView.active = false
-    @swank.debug_return_from_frame(@frame_index, @refs.frameReturnValue.val(), @info.thread)
+    @swank.debug_return_from_frame(@frame_index, @refs.frameReturnValue.value, @info.thread)
     .catch (errorMessage) =>
       atom.notifications.addError(errorMessage)
 
   evalInFrame: () =>
-    input = @frameReturnValue.val()
-    @frameReturnValue.val('')
+    input = @refs.frameReturnValue.value
+    @refs.frameReturnValue.value = ''
     @swank.debug_eval_in_frame(@frame_index, input, @info.thread).then (result) =>
       replView = @debugView.replView
       replView.print_string_callback(result+'\n')
