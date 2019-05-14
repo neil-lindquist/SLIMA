@@ -454,30 +454,32 @@ class REPLView
       @swank.quit()
 
 
-  loadReplHistory: () ->
+  loadReplHistory: (showWarning=true) ->
     historyPath = os.homedir() + path.sep + '.slime-history.eld'
     return unless fs.existsSync(historyPath) && fs.statSync(historyPath).isFile()
 
     # Note that an encoding type of utf-8-unix is assumed
     rawHistory = fs.readFileSync(historyPath).toString()
     ast = paredit.parse(rawHistory)
-    if ast.errors.length != 0
-      atom.notifications.addWarning("Unable to parse history file", options)
+    entries = ast.children.find (elt) -> elt.type == 'list'
+    unless ast.errors.length == 0 && entries
+      if showWarning
+        atom.notifications.addWarning("Unable to parse history file")
       return
 
-    entries = ast.children.find (elt) -> elt.type == 'list'
     oldCommands = []
     for entry in entries.children
-      # remove leading and trailing quotes, then resolve escapes
-      command = entry.source.slice(1, -1).replace(/\\("|\\)/g, "$1")
-      oldCommands.push command
+      if entry.type == 'string'
+        # remove leading and trailing quotes, then resolve escapes
+        command = entry.source.slice(1, -1).replace(/\\("|\\)/g, "$1")
+        oldCommands.push command
     @previousCommands = oldCommands.reverse().concat @previousCommands
     @cycleIndex = @previousCommands.length
 
 
   saveReplHistory: () ->
     # get the latest version if multiple SLIME sessions are going
-    @loadReplHistory()
+    @loadReplHistory(false)
     outputCommands = []
     addedCommands = new Set()
     for i in [@previousCommands.length-1..0]
