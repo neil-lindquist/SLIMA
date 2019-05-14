@@ -166,10 +166,11 @@ class FrameInfoView
     @swank.debug_restart_frame(@frame_index, @info.thread)
 
   returnFromFrame: () =>
-    @debugView.active = false
     @swank.debug_return_from_frame(@frame_index, @refs.frameReturnValue.value, @info.thread)
-    .catch (errorMessage) =>
-      atom.notifications.addError(errorMessage)
+    .then () =>
+      @debugView.active = false
+    .catch (error) =>
+      atom.notifications.addError error.message, dismissable:true
 
   evalInFrame: () =>
     input = @refs.frameReturnValue.value
