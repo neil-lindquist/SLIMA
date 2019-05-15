@@ -100,7 +100,7 @@ class FrameInfoView
   display_source: () =>
     frame_index = @frame_index
     @swank.debug_frame_source(frame_index, @info.thread)
-    .then showSourceLocation
+    .then (srcloc) -> showSourceLocation(srcloc, 'Frame ' + frame_index + ' Source')
     .catch (error) ->
       atom.notifications.addError 'Cannot show frame source: '+error
 

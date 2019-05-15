@@ -37,7 +37,7 @@ class Bubble
     )
     @subs.add atom.commands.add(atom.views.getView(atom.workspace.getActiveTextEditor()), 'editor:newline': (event) =>
       # Confirmed! Open that tab!
-      showSourceLocation(@reference[@selIndex].location)
+      showSourceLocation(@reference[@selIndex].location, 'Source for '+@reference[@selIndex].label)
       @destroy()
       event.stopImmediatePropagation()
     )

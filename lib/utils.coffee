@@ -24,7 +24,7 @@ module.exports =
       ), delay)
 
   # Display a source location
-  showSourceLocation: (source_location) ->
+  showSourceLocation: (source_location, fallBackTitle) ->
     if source_location.buffer_type == 'error'
       editor_promise = Promise.reject(source_location.error)
     else if source_location.buffer_type == 'buffer' or source_location.buffer_type == 'buffer-and-file'
@@ -47,7 +47,7 @@ module.exports =
       editor = atom.workspace.buildTextEditor()
       editor.setText(source_location.source_form)
       #change default title
-      editor.getTitle = -> editor.getFileName() ? 'Frame ' + frame_index + ' Source'
+      editor.getTitle = -> editor.getFileName() ? fallBackTitle
       #change condition for save prompt for unsaved file
       editor_buffer = editor.getBuffer()
       editor_buffer.isModified = ->
