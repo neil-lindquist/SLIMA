@@ -1,3 +1,9 @@
+## 1.3.1
+* Fix bug in `debug_return_from_frame` and `debug_eval_in_frame`
+* Improve handling of invalid formatting in the history file
+* Support more source locations for `find_definition`
+* Update swank-client to v2.0.0
+
 ## 1.3.0
 * Add support for connecting to swank servers on other hosts/ports
 * Save the command history between SLIMA sessions
