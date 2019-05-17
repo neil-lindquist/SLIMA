@@ -38,6 +38,7 @@ class DebuggerView
       $.div {className:'select-list'},
         $.ol {className:'list-group mark-active'}, restarts
       $.h3 {}, 'Stack Trace'
+      $.div {className:'select-list'},
         $.ol {className:'list-group mark-active'}, frames
 
   setup: (@swank, @info, @replView) ->
