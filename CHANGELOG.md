@@ -1,3 +1,6 @@
+## 1.3.2
+* Update swank-client to v2.0.1
+
 ## 1.3.1
 * Fix bug in `debug_return_from_frame` and `debug_eval_in_frame`
 * Improve handling of invalid formatting in the history file
