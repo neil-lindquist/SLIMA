@@ -1,6 +1,6 @@
-Original code Copyright (c) 2015-2017 Steve Levine  
-Subsequent changes Copyright (c) 2018-2019 Neil Lindquist  
-All code is licensed under the MIT license below
+MIT License
+
+Copyright (c) 2015-2019 Steve Levine, Neil Lindquist, and more (see AUTHORS.md)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
