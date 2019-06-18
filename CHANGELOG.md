@@ -1,3 +1,7 @@
+## 1.3.3
+* Update swank-client to v2.0.2
+  * Fixed a fatal bug with escaping arguments to autodoc
+
 ## 1.3.2
 * Update swank-client to v2.0.1
 
