@@ -249,6 +249,7 @@ class REPLView
 
     @preventUserInput = true
     @editor.moveToBottom()
+    @editor.moveToEndOfLine()
     @appendText("\n",false)
     promise = @swank.eval input, @pkg
     promise.then =>
@@ -262,6 +263,9 @@ class REPLView
 
   insertPrompt: () ->
     @inputFromUser = false
+
+    @editor.moveToBottom()
+    @editor.moveToEndOfLine()
 
     @editor.insertText("\n", {autoIndent:false,autoIndentNewline:false})
     range = @editor.insertText(@prompt, {autoIndent:false,autoIndentNewline:false})[0]
@@ -313,6 +317,8 @@ class REPLView
     if @preventUserInput
       # A command is being run, no prompt is in the way - so directly print
       # anything received to the REPL
+      @editor.moveToBottom()
+      @editor.moveToEndOfLine()
       @appendText(msg)
     else
       # There's a REPL in the way - so go to the line before the REPL,
