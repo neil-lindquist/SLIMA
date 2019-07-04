@@ -45,6 +45,7 @@ class REPLView
             @editorElement = atom.views.getView(@editor)
 
     if @editor and @replPane
+      fs.writeFileSync("repl.lisp-repl", "")
       @setupRepl()
       return
 
@@ -53,6 +54,8 @@ class REPLView
     @replPane = paneCurrent.splitDown() #.splitRight
     # Open a new REPL there
     @replPane.activate()
+
+    fs.writeFileSync("repl.lisp-repl", "")
     atom.workspace.open('repl.lisp-repl').then (editor) =>
       @editor = editor
       @editorElement = atom.views.getView(@editor)
@@ -458,6 +461,7 @@ class REPLView
       @closeDebugTab(1)
       @subs.dispose()
       @swank.quit()
+    fs.unlinkSync(@editor.getPath())
 
 
   loadReplHistory: (showWarning=true) ->
