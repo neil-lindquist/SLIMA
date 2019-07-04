@@ -364,15 +364,17 @@ class REPLView
 
 
   cycleBack: () ->
-    # Cycle back through command history
-    @cycleIndex = @cycleIndex - 1 if @cycleIndex > 0
-    @showPreviousCommand(@cycleIndex)
+    if not @preventUserInput
+      # Cycle back through command history
+      @cycleIndex = @cycleIndex - 1 if @cycleIndex > 0
+      @showPreviousCommand(@cycleIndex)
 
 
   cycleForward: () ->
-    # Cycle forward through command history
-    @cycleIndex = @cycleIndex + 1 if @cycleIndex < @previousCommands.length
-    @showPreviousCommand(@cycleIndex)
+    if not @preventUserInput
+      # Cycle forward through command history
+      @cycleIndex = @cycleIndex + 1 if @cycleIndex < @previousCommands.length
+      @showPreviousCommand(@cycleIndex)
 
 
   showPreviousCommand: (index) ->
@@ -385,13 +387,14 @@ class REPLView
 
 
   setPromptCommand: (cmd) ->
-    # Sets the command at the prompt
-    lastrow = @editor.getLastBufferRow()
-    lasttext = @editor.lineTextForBufferRow(lastrow)
-    promptEnd = @promptMarker.getBufferRange().end
-    range = new Range(promptEnd, [lastrow, lasttext.length])
-    @editor.setTextInBufferRange(range, cmd)
-    @editor.getBuffer().groupLastChanges()
+    if not @preventUserInput
+      # Sets the command at the prompt
+      lastrow = @editor.getLastBufferRow()
+      lasttext = @editor.lineTextForBufferRow(lastrow)
+      promptEnd = @promptMarker.getBufferRange().end
+      range = new Range(promptEnd, [lastrow, lasttext.length])
+      @editor.setTextInBufferRange(range, cmd)
+      @editor.getBuffer().groupLastChanges()
 
 
   setupDebugger: () ->
