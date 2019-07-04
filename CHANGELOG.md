@@ -1,3 +1,12 @@
+## 2.0.0
+* Use the current project's directory instead of the current file's as the Lisp
+  process's initial working directory
+* Fix problems with REPL when there is not a project
+* Get Git tab to recognize the repository that the REPL is nested in
+* Ensure the cursor is at the bottom of the REPL when printing the prompt or
+  REPL output
+* Fix autodoc failing to show functions/macros with 0 argument lambda lists
+
 ## 1.3.3
 * Update swank-client to v2.0.2
   * Fixed a fatal bug with escaping arguments to autodoc
