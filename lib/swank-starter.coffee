@@ -8,11 +8,13 @@ os = require 'os'
 module.exports =
 class SwankStarter
   process: null
+  cwd: null
 
   start: () ->
     manualCommand = atom.config.get 'slima.advancedSettings.swankCommand'
+    @cwd = @get_cwd()
 
-    options = {cwd: @get_cwd()}
+    options = {cwd: @cwd}
     if manualCommand == ''
       success = @check_path()
       if not success

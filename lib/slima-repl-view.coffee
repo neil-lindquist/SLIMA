@@ -32,6 +32,12 @@ class REPLView
   # that already exists
   createRepl: () ->
     @editor = @replPane = null
+    if @swank.process?.cwd
+      uri = @swank.process.cwd
+    else
+      uri = os.homedir()
+    uri = uri + path.sep + 'repl.lisp-repl'
+
     editors = atom.workspace.getTextEditors()
     for editor in editors
       if editor.getTitle() == 'repl.lisp-repl'
@@ -45,18 +51,18 @@ class REPLView
             @editorElement = atom.views.getView(@editor)
 
     if @editor and @replPane
-      fs.writeFileSync("repl.lisp-repl", "")
+      fs.writeFileSync(uri, "")
       @setupRepl()
       return
 
     # Create a new pane and editor if we didn't find one
     paneCurrent = atom.workspace.getCenter().getActivePane()
     @replPane = paneCurrent.splitDown() #.splitRight
-    # Open a new REPL there
-    @replPane.activate()
 
-    fs.writeFileSync("repl.lisp-repl", "")
-    atom.workspace.open('repl.lisp-repl').then (editor) =>
+    fs.writeFileSync(uri, '')
+    atom.workspace.createItemForURI(uri).then (editor) =>
+      @replPane.activateItem(editor)
+      @replPane.activate()
       @editor = editor
       @editorElement = atom.views.getView(@editor)
       @setupRepl()

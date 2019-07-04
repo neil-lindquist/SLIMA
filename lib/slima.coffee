@@ -121,6 +121,7 @@ module.exports = Slima =
     # Start a new process
     @process = new SwankStarter
     if @process.start()
+      @swank.process = @process
       # Try and connect if successful!
       @swankConnect()
 
