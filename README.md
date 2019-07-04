@@ -1,6 +1,5 @@
 # SLIMA package
 
-[![Build Status](https://travis-ci.org/neil-lindquist/SLIMA.svg?branch=master)](https://travis-ci.org/neil-lindquist/SLIMA)
 [![Dependancy Status](https://img.shields.io/david/neil-lindquist/SLIMA.svg)](https://david-dm.org/neil-lindquist/SLIMA)
 
 The Superior Lisp Interactive Mode for Atom.  This package allows you to interactively develop Common Lisp code, helping turn Atom into a full-featured Lisp IDE.  SLIMA uses the same Swank backend as Emacs's SLIME to control the Lisp process.  This is a fork of [atom-slime](https://github.com/sjlevine/atom-slime).
