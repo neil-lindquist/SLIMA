@@ -44,7 +44,8 @@ module.exports =
       entries[0].classes.push "name"
       entries[0].classes.push "function"
       body = ['(', $.span {className:entries[0].classes.join(' ')}, entries[0].text]
-      for i in [1..entries.length-1]
+      i = 0
+      while ++i < entries.length
         body.push ' '
         body.push $.span {className:entries[i].classes.join(' ')}, ' '+entries[i].text
       body.push ')'
