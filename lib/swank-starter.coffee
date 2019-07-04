@@ -71,9 +71,13 @@ class SwankStarter
       console.log output
 
   get_cwd: ->
+    proj = atom.project.getPaths()[0]
+    return proj if proj?
+
     ed = atom.workspace.getActiveTextEditor()?.getPath()
-    return atom.project.getPaths()[0] unless ed?
-    return path.dirname(ed)
+    return path.dirname(ed) if ed?
+    
+    return ""
 
   exit_callback: (code) ->
     console.log "Lisp process exited: #{code}"
