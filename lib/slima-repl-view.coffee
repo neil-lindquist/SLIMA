@@ -56,11 +56,11 @@ class REPLView
       return
 
     # Create a new pane and editor if we didn't find one
-    paneCurrent = atom.workspace.getCenter().getActivePane()
-    @replPane = paneCurrent.splitDown() #.splitRight
+    @replPane = atom.workspace.getBottomDock().getActivePane()
 
     fs.writeFileSync(uri, '')
     atom.workspace.createItemForURI(uri).then (editor) =>
+      atom.workspace.getBottomDock().activate()
       @replPane.activateItem(editor)
       @replPane.activate()
       @editor = editor
