@@ -429,8 +429,7 @@ class REPLView
   showDebugTab: (level) ->
     # A slight pause is needed before showing for when an error occurs immediatly after resolving another error
     setTimeout(() =>
-      @replPane.activate()
-      atom.workspace.open('slime://debug/'+level)
+      atom.workspace.open('slime://debug/'+level, {location:"bottom"})
     , 10)
 
   closeDebugTab: (level) ->

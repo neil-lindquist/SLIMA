@@ -62,7 +62,7 @@ class DebuggerView
         @frame_info = new FrameInfoView
       @frame_info.setup(@swank, @info, Number(frame_index), @)
 
-      atom.workspace.open('slime://debug/'+@info.level+'/frame')
+      atom.workspace.open('slime://debug/'+@info.level+'/frame', {location:"bottom"})
 
   activate_restart: (restartindex) ->
     if @info.restarts.length > restartindex
