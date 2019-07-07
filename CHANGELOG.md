@@ -1,3 +1,8 @@
+## 2.0.1
+* Disallow cycling the current command when the user cannot enter text
+* Update swank-client to v2.0.3
+  * Fixes the values of local variables in a stack frame being displayed as strings
+
 ## 2.0.0
 * Use the current project's directory instead of the current file's as the Lisp
   process's initial working directory
@@ -6,6 +11,7 @@
 * Ensure the cursor is at the bottom of the REPL when printing the prompt or
   REPL output
 * Fix autodoc failing to show functions/macros with 0 argument lambda lists
+
 
 ## 1.3.3
 * Update swank-client to v2.0.2
