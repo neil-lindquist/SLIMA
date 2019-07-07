@@ -1,4 +1,8 @@
+## 2.0.2
+* Fix debug tabs not spawning correctly in the new REPL location
+
 ## 2.0.1
+* Place REPL in bottom dock, instead of emulating that behavior
 * Disallow cycling the current command when the user cannot enter text
 * Update swank-client to v2.0.3
   * Fixes the values of local variables in a stack frame being displayed as strings
