@@ -31,7 +31,7 @@ class DebuggerView
                     $.button {className:'inline-block-tight btn', on:{click:@view_frame_callback i}}, 'Frame Info'
                     i + ': ' + frame.description
 
-    $.div {className:'slima-debugger padded'},
+    $.div {className:'slima-infoview padded'},
       $.h1 {}, @info.title
       $.h2 {class:'text-subtle'}, @info.type
       $.h3 {}, 'Restarts:'

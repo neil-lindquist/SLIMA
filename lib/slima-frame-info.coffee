@@ -31,7 +31,7 @@ class FrameInfoView
      if @frame_index < last_index
        nav_btns.push @create_nav(last_index, @info.stack_frames[last_index].description, 'Stack Bottom')
 
-    $.div {className:'slima-debugger padded'},
+    $.div {className:'slima-infoview padded'},
       $.h1 {}, @frame_index + ': ' + frame.description
       $.div {className:'select-list'},
         $.ol {className:'list-group mark-active'}, nav_btns
