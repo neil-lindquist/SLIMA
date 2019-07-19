@@ -40,9 +40,9 @@ class FrameInfoView
         $.ol {class:'list-group mark-active'},
           if frame.locals? and frame.locals.length > 0
             ($.li {},
-               local.id + ': '
-               $.a {on:{click:@inspect_var_callback(local.name)}}, local.name
-               ' = ' + local.value) for local, i in frame.locals
+               local.id + ': ' + local.name + ' = '
+               $.a {on:{click:@inspect_var_callback(local.value)}}, local.value
+            ) for local, i in frame.locals
           else
             $.li {}, '<No locals>'
       if frame.catch_tags? and frame.catch_tags.length > 0
