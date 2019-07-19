@@ -67,6 +67,11 @@
     'ctrl-up':'core:move-up'
 
 'atom-workspace':
+    #general menus
+    'q': 'slime:menu-quit'
+    'n': 'slime:menu-next'
+    'p': 'slime:menu-previous'
+    #debugger
     '0': 'slime:debug-restart-0'
     '1': 'slime:debug-restart-1'
     '2': 'slime:debug-restart-2'
@@ -88,13 +93,10 @@
     'numpad8': 'slime:debug-restart-8'
     'numpad9': 'slime:debug-restart-9'
     'a': 'slime:debug-abort'
-    'q': 'slime:debug-quit'
     'c': 'slime:debug-continue'
     # frame info
     'v': 'slime:debug-show-frame-source'
     'shift-d': 'slime:debug-disassemble-frame'
-    'n': 'slime:debug-frame-up'
-    'p': 'slime:debug-frame-down'
     '>': 'slime:debug-last-frame'
     '<': 'slime:debug-first-frame'
     'r': 'slime:debug-restart-frame'

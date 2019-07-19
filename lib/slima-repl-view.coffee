@@ -71,7 +71,7 @@ class REPLView
 
 
   # Set up the REPL GUI for use
-  setupRepl: () ->
+  setupRepl: () =>
     # Make sure it's marked with the special REPL class - helps some of our keybindings!
     @editorElement.classList.add('slime-repl')
     # Clear the REPL
@@ -158,8 +158,12 @@ class REPLView
     for i in [0..9]
       do (i) =>
         @addDebugCommand 'slime:debug-restart-'+i, false, (debug) -> debug.activate_restart(i)
+
+    @addMenuCommand 'slime:menu-quit', ((debug) -> debug.quit()), ((frame) -> frame.debugView.quit()), (inspector) => @replPane.destroyItem(inspector)
+    @addMenuCommand 'slime:menu-next', null, ((frame) -> frame.show_frame_up()), ((inspector)->inspector.show_next())
+    @addMenuCommand 'slime:menu-previous', null, ((frame) -> frame.show_frame_down()), ((inspector)->inspector.show_previous())
+
     @addDebugCommand 'slime:debug-abort', false, (debug) -> debug.abort()
-    @addDebugCommand 'slime:debug-quit', false, (debug) -> debug.quit()
     @addDebugCommand 'slime:debug-continue',  false, (debug) -> debug.continue()
 
     @addDebugCommand 'slime:debug-show-frame-source', true, (frame) -> frame.display_source()
@@ -200,6 +204,13 @@ class REPLView
     #   pointAbove = new Point(point.row - 1, @ed.lineTextForBufferRow(point.row - 1).length)
     #   @ed.setTextInBufferRange(new Range(pointAbove, pointAbove), "\nmonkus",undo:'skip')
     #   @ed.scrollToBotom()
+
+  # registers a command for one or more menus
+  addMenuCommand: (name, debugCommand, frameCommand, inspectorCommand) ->
+    @subs.add atom.commands.add 'atom-workspace', name, {
+        didDispatch: (event) => @callCurrentMenu(event, debugCommand, frameCommand, inspectorCommand)
+        hiddenInCommandPalette: true
+      }
 
   # registers a debug command
   # Note that these commands aren't displayed in the command palette, since they alias buttons
@@ -465,6 +476,19 @@ class REPLView
       @inspector.setup(@swank, obj)
       atom.workspace.open('slime://inspect/', {location:"bottom"})
 
+  callCurrentMenu: (event, debugCallback, frameCallback, inspectorCallback) =>
+    if not @replPane.isActive()
+      event.abortKeyBinding()
+      return
+    activeItem = @replPane.getActiveItem()
+    if debugCallback? and activeItem instanceof DebuggerView
+      debugCallback(activeItem)
+    else if frameCallback? and activeItem instanceof FrameInfoView and not event.target.classList.contains('debug-text-entry')
+      frameCallback(activeItem)
+    else if inspectorCallback? and activeItem instanceof InspectorView
+      inspectorCallback(activeItem)
+    else
+      event.abortKeyBinding()
 
   callCurrentDebugger: (event, callback) =>
     if not @replPane.isActive()
@@ -483,6 +507,17 @@ class REPLView
       return
     activeItem = @replPane.getActiveItem()
     if activeItem instanceof FrameInfoView and not event.target.classList.contains('debug-text-entry')
+      callback(activeItem)
+    else
+      event.abortKeyBinding()
+
+  callInspector: (event, callback) =>
+    if not @replPane.isActive()
+      event.abortKeyBinding()
+      return
+    activeItem = @replPane.getActiveItem()
+    console.log(activeItem)
+    if activeItem instanceof InspectorView
       callback(activeItem)
     else
       event.abortKeyBinding()
