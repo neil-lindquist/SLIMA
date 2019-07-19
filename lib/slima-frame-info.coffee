@@ -39,7 +39,10 @@ class FrameInfoView
       $.div {className:'select-list'},
         $.ol {class:'list-group mark-active'},
           if frame.locals? and frame.locals.length > 0
-            ($.li {}, local.id + ': ' + local.name + ' = ' + local.value) for local, i in frame.locals
+            ($.li {},
+               local.id + ': '
+               $.a {on:{click:@inspect_var_callback(local.name)}}, local.name
+               ' = ' + local.value) for local, i in frame.locals
           else
             $.li {}, '<No locals>'
       if frame.catch_tags? and frame.catch_tags.length > 0
@@ -76,9 +79,7 @@ class FrameInfoView
         $.button {className:'inline-block-tight frame-navigation-button btn', on:{click:(event)=>@show_frame index}}, label
         index+': '+frame_description
 
-  setup: (@swank, @info, @frame_index, @debugView) ->
-    #etch.update @
-    #TODO only get details if we don't already have them
+  setup: (@swank, @info, @frame_index, @debugView) =>
     @swank.debug_stack_frame_details(@frame_index, @info.stack_frames, @info.thread).then () =>
       etch.update @
 
@@ -127,6 +128,13 @@ class FrameInfoView
       replView = @debugView.replView
       replView.print_string_callback(result+'\n')
       replView.replPane.activateItem(replView.editor)
+
+  inspect_var_callback: (var_name) =>
+    (e) => @inspect_var(var_name)
+
+  inspect_var: (var_name) =>
+    @swank.inspect_frame_var(@frame_index, var_name, @info.thread)
+    .then @debugView.replView.inspect
 
   getTitle: -> 'Frame Info'
   getURI: => 'slime://debug/' + @info.level + '/frame'

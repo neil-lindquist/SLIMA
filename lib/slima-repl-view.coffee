@@ -4,6 +4,7 @@ os = require 'os'
 path = require 'path'
 DebuggerView = require './slima-debugger-view'
 FrameInfoView = require './slima-frame-info'
+InspectorView = require './slima-introspection-view'
 paredit = require 'paredit.js'
 
 module.exports =
@@ -16,6 +17,7 @@ class REPLView
   # Keep track of command history, for use with the up/down arrows
   previousCommands: []
   cycleIndex: null
+  inspector: null
 
   constructor: (@swank) ->
     @prompt = @pkg + "> "
@@ -168,6 +170,18 @@ class REPLView
     @addDebugCommand 'slime:debug-first-frame', true, (frame) -> frame.show_first_frame()
     @addDebugCommand 'slime:debug-restart-frame', true, (frame) -> frame.restart()
 
+
+    @subs.add atom.workspace.addOpener (filePath) =>
+      if filePath.match(///^slime://inspect/$///)
+        unless @inspector
+          @inspector = new InspectorView
+        return @inspector
+
+    @subs.add @replPane.onWillDestroyItem (e) =>
+      if e.item == @inspector
+        @inspector = null
+
+
     @subs.add @editor.onDidDestroy =>
       @destroy()
 
@@ -212,6 +226,11 @@ class REPLView
     @editor.decorateMarker(syntaxMarker, {type: 'text', class:'syntax--repl-prompt syntax--keyword syntax--control syntax--lisp'})
 
   clearREPL: () ->
+    #clear the old presentaiton markers
+    for pid,marker of @presentationMarkers
+      marker.destroy()
+    @presentationMarkers = {}
+    #Set the text to the prompt
     @editor.setText @prompt
     range = @editor.getBuffer().getRange()
     @markPrompt(range)
@@ -297,6 +316,7 @@ class REPLView
 
     # On printing presentation visualizations (like for results)
     @presentation_starts = {}
+    @presentationMarkers = {}
     @swank.on 'presentation_start', (pid) =>
       @presentation_starts[pid] = @editor.getBuffer().getRange().end
     @swank.on 'presentation_end', (pid) =>
@@ -304,6 +324,7 @@ class REPLView
       range = new Range(@presentation_starts[pid], presentation_end)
       marker = @editor.markBufferRange(range, {exclusive: true})
       @editor.decorateMarker(marker, {type: 'text', class:'syntax--lisp'})
+      @presentationMarkers[pid] = marker
       delete @presentation_starts[pid]
 
     # Debug functions
@@ -435,6 +456,14 @@ class REPLView
   closeDebugTab: (level) ->
     @replPane.destroyItem(@dbgv[level-1])
     @dbgv.pop()
+
+
+  inspect: (obj) =>
+    unless @inspector
+      @inspector = new InspectorView
+    @inspector.setup(@swank, obj)
+    atom.workspace.open('slime://inspect/', {location:"bottom"})
+
 
   callCurrentDebugger: (event, callback) =>
     if not @replPane.isActive()
