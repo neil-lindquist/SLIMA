@@ -32,6 +32,8 @@ class IntrospectionView
       slots = @slots.map elt =>
         $.li {}, elt.name + "  =  " + elt.value
       $.div {className:"slima-infoview padded"},
+        $.button {className:'inline-block-tight btn', on:{click:@show_previous}}, 'Previous Object'
+        $.button {className:'inline-block-tight btn', on:{click:@show_next}}, 'Next Object'
         $.h1 {}, @obj.title
         $.div {}, header_content
         $.h3 {}, Slots
@@ -39,6 +41,8 @@ class IntrospectionView
           $.ol {className:'list-group mark-active'}, slots
     else
       $.div {className:"slima-infoview padded"},
+        $.button {className:'inline-block-tight btn', on:{click:@show_previous}}, 'Previous Object'
+        $.button {className:'inline-block-tight btn', on:{click:@show_next}}, 'Next Object'
         $.h1 {}, @obj.title
         $.div {}, header_content
 
@@ -80,11 +84,19 @@ class IntrospectionView
 
   resolve_action: (id) =>
     @swank.inspector_call_nth_action(id)
-    .then (obj) => @setup(@swank, obj)
+    .then (obj) => @setup(@swank, obj) if obj
 
   show_part: (id) =>
     @swank.inspect_nth_part(id)
-    .then (obj) => @setup(@swank, obj)
+    .then (obj) => @setup(@swank, obj) if obj
+
+  show_previous: () =>
+    @swank.inspect_previous_object()
+    .then (obj) => @setup(@swank, obj) if obj
+
+  show_next: () =>
+    @swank.inspect_next_object()
+    .then (obj) => @setup(@swank, obj) if obj
 
   getTitle: -> "Inspector"
   getURI: -> "slime://inspect/"
