@@ -32,7 +32,8 @@ class DebuggerView
                     i + ': ' + frame.description
 
     $.div {className:'slima-infoview padded'},
-      $.h1 {}, @info.title
+      $.h1 {},
+        $.a {on:{click:@inspect_condition}}, @info.title
       $.h2 {class:'text-subtle'}, @info.type
       $.h3 {}, 'Restarts:'
       $.div {className:'select-list'},
@@ -68,6 +69,10 @@ class DebuggerView
     if @info.restarts.length > restartindex
       @activate = false
       @swank.debug_invoke_restart(@info.level, restartindex, @info.thread)
+
+  inspect_condition: () ->
+    @swank.inspect_current_condition(@info.thread)
+    .then @replView.inspect
 
   abort: () -> @swank.debug_abort_current_level(@info.level, @info.thread)
   quit: () -> @swank.debug_escape_all @info.thread
