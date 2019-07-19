@@ -459,10 +459,11 @@ class REPLView
 
 
   inspect: (obj) =>
-    unless @inspector
-      @inspector = new InspectorView
-    @inspector.setup(@swank, obj)
-    atom.workspace.open('slime://inspect/', {location:"bottom"})
+    if obj
+      unless @inspector
+        @inspector = new InspectorView
+      @inspector.setup(@swank, obj)
+      atom.workspace.open('slime://inspect/', {location:"bottom"})
 
 
   callCurrentDebugger: (event, callback) =>
