@@ -41,7 +41,7 @@ class FrameInfoView
           if frame.locals? and frame.locals.length > 0
             ($.li {},
                local.id + ': ' + local.name + ' = '
-               $.a {on:{click:@inspect_var_callback(local.value)}}, local.value
+               $.a {on:{click:@inspectVarCallback(local.id)}}, local.value
             ) for local, i in frame.locals
           else
             $.li {}, '<No locals>'
@@ -73,6 +73,8 @@ class FrameInfoView
             $.button {className:'inline-block-tight btn', on:{click:@returnFromFrame}}, 'Return From Frame'
           $.li {},
             $.button {className:'inline-block-tight btn', on:{click:@evalInFrame}}, 'Eval in Frame'
+          $.li {},
+            $.button {className:'inline-block-tight btn', on:{click:@inspectInFrame}}, 'Inspect in Frame'
 
   create_nav: (index, frame_description, label) ->
       $.li {},
@@ -123,17 +125,21 @@ class FrameInfoView
 
   evalInFrame: () =>
     input = @refs.frameReturnValue.value
-    @refs.frameReturnValue.value = ''
     @swank.debug_eval_in_frame(@frame_index, input, @info.thread).then (result) =>
       replView = @debugView.replView
       replView.print_string_callback(result+'\n')
       replView.replPane.activateItem(replView.editor)
 
-  inspect_var_callback: (var_name) =>
-    (e) => @inspect_var(var_name)
+  inspectInFrame: () =>
+    input = @refs.frameReturnValue.value
+    @swank.inspect_in_frame(@frame_index, input, @info.thread)
+    .then @debugView.replView.inspect
 
-  inspect_var: (var_name) =>
-    @swank.inspect_frame_var(@frame_index, var_name, @info.thread)
+  inspectVarCallback: (var_num) =>
+    (e) => @inspectVar(var_num)
+
+  inspectVar: (var_num) =>
+    @swank.inspect_frame_var(@frame_index, var_num, @info.thread)
     .then @debugView.replView.inspect
 
   getTitle: -> 'Frame Info'
