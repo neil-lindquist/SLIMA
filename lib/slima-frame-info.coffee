@@ -68,7 +68,7 @@ class FrameInfoView
           ''
         $.ol {className:'list-group mark-active'},
           $.li {},
-            $.input {className:'native-key-bindings debug-text-entry', type:'text', size:50, ref:'frameReturnValue'}, ''
+            $.input {className:'native-key-bindings debug-text-entry', type:'text', size:100, ref:'frameReturnValue'}, ''
           $.li {},
             $.button {className:'inline-block-tight btn', on:{click:@returnFromFrame}}, 'Return From Frame'
           $.li {},
