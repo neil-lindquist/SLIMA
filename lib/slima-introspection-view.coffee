@@ -24,7 +24,7 @@ class IntrospectionView
           elt
       else # typeof elt == 'array'
         if elt[0] == ':value'
-          $.button {className:'inline-block-tight btn', on:{click:(e)=>@show_part elt[2]}}, elt[1]
+          $.a {on:{click:(e)=>@show_part elt[2]}}, elt[1]
         else
           $.button {className:'inline-block-tight btn', on:{click:(e)=>@resolve_action elt[2]}}, elt[1]
 
