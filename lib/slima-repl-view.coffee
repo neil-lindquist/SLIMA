@@ -154,6 +154,20 @@ class REPLView
       if @swank.connected
         @swank.interrupt()
 
+    # Add presentation inspection
+    @subs.add atom.commands.add @editorElement, 'slime:inspect-presentation': (event) =>
+      clazzes = event.target.classList
+      pid = null
+      for clazz in clazzes
+        match = ///^repl-presentation-(\d+)$///.exec(clazz)
+        if match?
+          pid = Number(match[1])
+          break
+      unless pid?
+        return
+      @swank.inspect_presentation(pid)
+      .then(@inspect)
+
     #debugger controls
     for i in [0..9]
       do (i) =>
@@ -334,7 +348,7 @@ class REPLView
       presentation_end = @editor.getBuffer().getRange().end
       range = new Range(@presentation_starts[pid], presentation_end)
       marker = @editor.markBufferRange(range, {exclusive: true})
-      @editor.decorateMarker(marker, {type: 'text', class:'syntax--lisp'})
+      @editor.decorateMarker(marker, {type: 'text', class:'syntax--lisp repl-presentation repl-presentation-'+pid.toString()})
       @presentationMarkers[pid] = marker
       delete @presentation_starts[pid]
 

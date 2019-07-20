@@ -64,3 +64,11 @@
     ]
   }
 ]
+
+'context-menu':
+  '.slime-repl .repl-presentation': [
+    {
+      'label': 'Inspect Presentation',
+      'command': 'slime:inspect-presentation'
+    }
+  ]
