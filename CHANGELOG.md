@@ -1,3 +1,9 @@
+## 2.1.0 (2019-07-20)
+* Add an inspector
+  * Add links from some locations in the debugger
+  * Add <kbd>Ctrl</kbd>+<kbd>I</kbd> and context menu commands for returned values in the REPL.
+
+
 ## 2.0.2
 * Fix debug tabs not spawning correctly in the new REPL location
 

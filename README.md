@@ -16,9 +16,9 @@ Current features of this package:
 - "Compile this file"
 - Function method argument order documentation
 - Integrated profiler
+- Interactive object inspection
 
 Future features:
-- Interactive object inspection
 - "Who calls this function" command
 - Stepping debugger
 
@@ -62,7 +62,7 @@ Once you've followed the above steps, you should have:
 
 To start a REPL (an interactive terminal where you can interact with Lisp live), run the `Slime: Start` command from the command pallete. A REPL should then pop up. Note that if this is your first time using `slima`, or you've updated your lisp process, you may get some warning messages about not being able to connect. This is normal; wait a minute or so, then run `slime:connect`. (This happens because your lisp is compiling the swank server and isn't ready before this package times out).
 
-With the REPL, you can type commands, see results, switch packages, and more. It's a great way to write Lisp code! A debugger will come up if an error occurs. You can also use the up & down arrows to scroll up through your past commands. type <kbd>Ctrl</kbd>+<kbd>C</kbd> to interrupt lisp (if it's in an infinite loop, for example).
+With the REPL, you can type commands, see results, switch packages, and more. It's a great way to write Lisp code! A debugger will come up if an error occurs. You can also use the up & down arrows to scroll up through your past commands. Type <kbd>Ctrl</kbd>+<kbd>C</kbd> to interrupt lisp (if it's in an infinite loop, for example).  The result value of evaluated expressions can be inspected by placing the cursor there and pressing <kbd>Ctrl</kbd>+<kbd>I</kbd>.
 
 If you've compiled your lisp code, placing the cursor over a method will cause a documentation string to appear at the bottom of the atom window, showing you the function arguments and their order.
 
