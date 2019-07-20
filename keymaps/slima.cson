@@ -58,6 +58,7 @@
 'atom-workspace atom-text-editor.slime-repl':
     'ctrl-c': 'slime:interrupt-lisp'
     'ctrl-=': 'slime:clear-repl'
+    'ctrl-i': 'slime:inspect-presentation'
     'ctrl-shift-c': 'core:copy'
     'ctrl-shift-v': 'core:paste'
     #disable keystrokes that rearrange lines

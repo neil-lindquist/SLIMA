@@ -155,18 +155,29 @@ class REPLView
         @swank.interrupt()
 
     # Add presentation inspection
-    @subs.add atom.commands.add @editorElement, 'slime:inspect-presentation': (event) =>
-      clazzes = event.target.classList
-      pid = null
-      for clazz in clazzes
-        match = ///^repl-presentation-(\d+)$///.exec(clazz)
-        if match?
-          pid = Number(match[1])
-          break
-      unless pid?
-        return
-      @swank.inspect_presentation(pid)
-      .then(@inspect)
+    @subs.add atom.commands.add @editorElement, 'slime:inspect-presentation-context', {
+        didDispatch: (event) =>
+          clazzes = event.target.classList
+          pid = null
+          for clazz in clazzes
+            match = ///^repl-presentation-(\d+)$///.exec(clazz)
+            if match?
+              pid = Number(match[1])
+              break
+          if pid?
+            @swank.inspect_presentation(pid)
+            .then(@inspect)
+        hiddenInCommandPalette: true
+      }
+
+    @subs.add atom.commands.add @editorElement, 'slime:inspect-presentation', (event) =>
+      cursors = @editor.getCursorBufferPositions()
+      for cursor in cursors
+        for pid,marker of @presentationMarkers
+          if marker.getBufferRange().containsPoint(cursor)
+            @swank.inspect_presentation(pid)
+            .then(@inspect)
+            return
 
     #debugger controls
     for i in [0..9]
@@ -530,7 +541,6 @@ class REPLView
       event.abortKeyBinding()
       return
     activeItem = @replPane.getActiveItem()
-    console.log(activeItem)
     if activeItem instanceof InspectorView
       callback(activeItem)
     else

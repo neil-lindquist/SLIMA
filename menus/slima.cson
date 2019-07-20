@@ -69,6 +69,6 @@
   '.slime-repl .repl-presentation': [
     {
       'label': 'Inspect Presentation',
-      'command': 'slime:inspect-presentation'
+      'command': 'slime:inspect-presentation-context'
     }
   ]
