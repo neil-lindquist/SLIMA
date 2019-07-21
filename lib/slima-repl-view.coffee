@@ -379,7 +379,6 @@ class REPLView
   print_string_callback: (msg) ->
     # Print something to the REPL when the swank server says to.
     # However, we need to make sure we're not interfering with the cursor!
-    msg = msg.replace(/\\\"/g, '"')
     if @preventUserInput
       # A command is being run, no prompt is in the way - so directly print
       # anything received to the REPL
