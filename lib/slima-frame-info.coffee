@@ -82,7 +82,7 @@ class FrameInfoView
         index+': '+frame_description
 
   setup: (@swank, @info, @frame_index, @debugView) =>
-    @swank.debug_stack_frame_details(@frame_index, @info.stack_frames, @info.thread).then () =>
+    @swank.debug_stack_frame_details(@frame_index, @info.stack_frames, @info.thread, @debugView.replView.pkg).then () =>
       etch.update @
 
   show_frame: (i) ->
@@ -102,22 +102,22 @@ class FrameInfoView
 
   display_source: () =>
     frame_index = @frame_index
-    @swank.debug_frame_source(frame_index, @info.thread)
+    @swank.debug_frame_source(frame_index, @info.thread, @debugView.replView.pkg)
     .then (srcloc) -> showSourceLocation(srcloc, 'Frame ' + frame_index + ' Source')
     .catch (error) ->
       atom.notifications.addError 'Cannot show frame source: '+error
 
   disassemble: () =>
-    @swank.debug_disassemble_frame(@frame_index, @info.thread).then (output) =>
+    @swank.debug_disassemble_frame(@frame_index, @info.thread, @debugView.replView.pkg).then (output) =>
       @disassembleText = output
       etch.update @
 
   restart: () =>
     @debugView.active = false
-    @swank.debug_restart_frame(@frame_index, @info.thread)
+    @swank.debug_restart_frame(@frame_index, @info.thread, @debugView.replView.pkg)
 
   returnFromFrame: () =>
-    @swank.debug_return_from_frame(@frame_index, @refs.frameReturnValue.value, @info.thread)
+    @swank.debug_return_from_frame(@frame_index, @refs.frameReturnValue.value, @info.thread, @debugView.replView.pkg)
     .then () =>
       @debugView.active = false
     .catch (error) =>
@@ -125,21 +125,21 @@ class FrameInfoView
 
   evalInFrame: () =>
     input = @refs.frameReturnValue.value
-    @swank.debug_eval_in_frame(@frame_index, input, @info.thread).then (result) =>
+    @swank.debug_eval_in_frame(@frame_index, input, @info.thread, @debugView.replView.pkg).then (result) =>
       replView = @debugView.replView
       replView.print_string_callback(result+'\n')
       replView.replPane.activateItem(replView.editor)
 
   inspectInFrame: () =>
     input = @refs.frameReturnValue.value
-    @swank.inspect_in_frame(@frame_index, input, @info.thread)
+    @swank.inspect_in_frame(@frame_index, input, @info.thread, @debugView.replView.pkg)
     .then @debugView.replView.inspect
 
   inspectVarCallback: (var_num) =>
     (e) => @inspectVar(var_num)
 
   inspectVar: (var_num) =>
-    @swank.inspect_frame_var(@frame_index, var_num, @info.thread)
+    @swank.inspect_frame_var(@frame_index, var_num, @info.thread, @debugView.replView.pkg)
     .then @debugView.replView.inspect
 
   getTitle: -> 'Frame Info'

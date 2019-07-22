@@ -6,7 +6,7 @@ $ = etch.dom
 
 module.exports =
 class ProfilerView
-  constructor: (@swank) ->
+  constructor: (@swank, @views) ->
     @enabled = false
     @msg = $.div {}, ''
     etch.initialize @
@@ -39,21 +39,21 @@ class ProfilerView
     etch.update @
 
   unprofile_click_handler: ->
-    @swank.profile_invoke_unprofile_all()
+    @swank.profile_invoke_unprofile_all(@views.repl.pkg)
 
   report_click_handler: ->
-    @swank.profile_invoke_report()
+    @swank.profile_invoke_report(@views.repl.pkg)
 
   reset_click_handler: ->
-    @swank.profile_invoke_reset()
+    @swank.profile_invoke_reset(@views.repl.pkg)
 
   profile_function_click_handler: ->
     func_dialog = new Dialog({prompt: "Enter Function", forpackage: false})
-    func_dialog.attach(((func) => @swank.profile_invoke_toggle_function(func)), false)
+    func_dialog.attach(((func) => @swank.profile_invoke_toggle_function(func, @views.repl.pkg)), false)
 
   profile_package_click_handler: ->
     func_dialog = new Dialog({prompt: "Enter Package", forpackage: true})
-    func_dialog.attach(((pack,rec_calls,prof_meth) => @swank.profile_invoke_toggle_package(pack,rec_calls,prof_meth)), true)
+    func_dialog.attach(((pack,rec_calls,prof_meth) => @swank.profile_invoke_toggle_package(pack, rec_calls, prof_meth, @views.repl.pkg)), true)
 
   attach: (@statusBar) ->
     @statusBar.addLeftTile(item: @element, priority: 9)

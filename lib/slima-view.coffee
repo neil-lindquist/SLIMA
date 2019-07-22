@@ -8,7 +8,7 @@ class SlimaView
   constructor: (serializedState, @swank) ->
     # Start a status view
     @statusView = new StatusView()
-    @profileView = new ProfileView(@swank)
+    @profileView = new ProfileView(@swank, @)
     # Close any currently-opened REPL's that are leftover in the editor from last time
     process.nextTick =>
       @closeAllREPLs()

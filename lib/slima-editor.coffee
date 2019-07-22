@@ -39,7 +39,7 @@ class SlimaEditor
   stoppedEditingCallback: ->
     # Parse the file and get an abstract syntax tree, also get package
     @ast = paredit.parse(@editor.getText())
-    @pkg = slime.getPackage(@ast)
+    @pkg = slime.getEditorPackage(@editor)
 
   cursorMovedCallback: ->
     # Implement a small 300ms delay until when we trigger that the cursor has moved
@@ -125,13 +125,7 @@ class SlimaEditor
         p_end = utils.convertIndexToPoint(sexp.end, @editor)
 
         # Find file's package
-        #TODO add support for character names with more than one character
-        pkgRegex = /\((?:cl:|common-lisp:)?in-package\s*(?:(?:'|#?:)([^)]+)|"([^)]+)"|#\\(.))\s*\)/
-        pkg = "CL-USER"
-        @editor.backwardsScanInBufferRange pkgRegex, [[0,0], p_start], (match) ->
-          # there is exactly one matching group
-          pkg = match.match[1] || match.match[2] || match.match[3]
-          match.stop()
+        pkg = getEditorPackage(@editor, p_start)
 
         # Trigger a compilation
         line_reference = p_start.row + 1
@@ -162,7 +156,7 @@ class SlimaEditor
       sexp = @getCurrentSexp()
       if sexp
         console.log(sexp.sexp);
-        @swank.eval("(pprint (" + fun + "'" + sexp.sexp + "))")
+        @swank.eval("(pprint (" + fun + "'" + sexp.sexp + "))", @pkg)
 
 
   macroexpand1: ->

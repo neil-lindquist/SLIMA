@@ -47,7 +47,7 @@ class IntrospectionView
         $.div {}, header_content
 
 
-  setup: (@swank, @obj) ->
+  setup: (@swank, @obj, @replView) ->
     split_index = @obj.content.indexOf '--------------------'
     if split_index != -1
       @header = @obj.content.splice(0, split_index)
@@ -83,20 +83,20 @@ class IntrospectionView
     etch.update @
 
   resolve_action: (id) =>
-    @swank.inspector_call_nth_action(id)
-    .then (obj) => @setup(@swank, obj) if obj
+    @swank.inspector_call_nth_action(id, @replView.pkg)
+    .then (obj) => @setup(@swank, obj, @replView) if obj
 
   show_part: (id) =>
-    @swank.inspect_nth_part(id)
-    .then (obj) => @setup(@swank, obj) if obj
+    @swank.inspect_nth_part(id, @replView.pkg)
+    .then (obj) => @setup(@swank, obj, @replView) if obj
 
   show_previous: () =>
-    @swank.inspect_previous_object()
-    .then (obj) => @setup(@swank, obj) if obj
+    @swank.inspect_previous_object(@replView.pkg)
+    .then (obj) => @setup(@swank, obj, @replView) if obj
 
   show_next: () =>
-    @swank.inspect_next_object()
-    .then (obj) => @setup(@swank, obj) if obj
+    @swank.inspect_next_object(@replView.pkg)
+    .then (obj) => @setup(@swank, obj, @replView) if obj
 
   getTitle: -> "Inspector"
   getURI: -> "slime://inspect/"

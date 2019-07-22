@@ -165,7 +165,7 @@ class REPLView
               pid = Number(match[1])
               break
           if pid?
-            @swank.inspect_presentation(pid)
+            @swank.inspect_presentation(pid, @pkg)
             .then(@inspect)
         hiddenInCommandPalette: true
       }
@@ -175,7 +175,7 @@ class REPLView
       for cursor in cursors
         for pid,marker of @presentationMarkers
           if marker.getBufferRange().containsPoint(cursor)
-            @swank.inspect_presentation(pid)
+            @swank.inspect_presentation(pid, @pkg)
             .then(@inspect)
             return
 
@@ -344,7 +344,7 @@ class REPLView
 
   setupSwankSubscriptions: () ->
     # On changing package
-    @swank.on 'new_package', (pkg) => @setPackage(pkg)
+    @swank.on 'new_package', @setPackage
 
     # On printing text from REPL response
     @swank.on 'print_string', (msg) =>
@@ -497,7 +497,7 @@ class REPLView
     if obj
       unless @inspector
         @inspector = new InspectorView
-      @inspector.setup(@swank, obj)
+      @inspector.setup(@swank, obj, @)
       atom.workspace.open('slime://inspect/', {location:"bottom"})
 
   callCurrentMenu: (event, debugCallback, frameCallback, inspectorCallback) =>
@@ -546,7 +546,7 @@ class REPLView
       event.abortKeyBinding()
 
   # Set the package and prompt
-  setPackage: (pkg) ->
+  setPackage: (pkg) =>
     @pkg = pkg
     @prompt = "#{@pkg}> "
 

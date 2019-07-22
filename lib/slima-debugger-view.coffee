@@ -46,7 +46,7 @@ class DebuggerView
 
     @active = true
 
-    @swank.debug_get_stack_trace(@info.thread).then (stack_trace) =>
+    @swank.debug_get_stack_trace(@info.thread, @replView.pkg).then (stack_trace) =>
       @info.stack_frames = stack_trace
       etch.update @
     etch.update @
@@ -68,15 +68,15 @@ class DebuggerView
   activate_restart: (restartindex) ->
     if @info.restarts.length > restartindex
       @activate = false
-      @swank.debug_invoke_restart(@info.level, restartindex, @info.thread)
+      @swank.debug_invoke_restart(@info.level, restartindex, @info.thread, @replView.pkg)
 
   inspect_condition: () ->
-    @swank.inspect_current_condition(@info.thread)
+    @swank.inspect_current_condition(@info.thread, @replView.pkg)
     .then @replView.inspect
 
-  abort: () -> @swank.debug_abort_current_level(@info.level, @info.thread)
-  quit: () -> @swank.debug_escape_all @info.thread
-  continue: () -> @swank.debug_continue @info.thread
+  abort: () -> @swank.debug_abort_current_level(@info.level, @info.thread, @replView.pkg)
+  quit: () -> @swank.debug_escape_all @info.thread, @replView.pkg
+  continue: () -> @swank.debug_continue @info.thread, @replView.pkg
 
   getTitle: -> "Debugger"
   getURI: -> "slime://debug/"+@info.level
