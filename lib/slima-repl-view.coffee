@@ -555,6 +555,8 @@ class REPLView
     @saveReplHistory()
     if @swank.connected
       @closeDebugTab(1)
+      if @inspector
+        @replPane.destroyItem(@inspector)
       @subs.dispose()
       @swank.quit()
     fs.unlinkSync(@editor.getPath())
