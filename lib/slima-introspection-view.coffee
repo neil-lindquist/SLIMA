@@ -48,10 +48,15 @@ class IntrospectionView
 
 
   setup: (@swank, @obj, @replView) ->
-    split_index = @obj.content.indexOf '--------------------'
+    content = @obj.content.map (entry) ->
+      if typeof entry == 'string'
+        return entry.replace(/  /g, ' \xa0');
+      else #typeof entry == array
+        return [entry[0], entry[1].replace(/  /g, ' \xa0'), entry[2]]
+    split_index = content.indexOf '--------------------'
     if split_index != -1
-      @header = @obj.content.splice(0, split_index)
-      raw_slots = @obj.content.splice(10 + split_index)
+      @header = content.splice(0, split_index)
+      raw_slots = content.splice(10 + split_index)
 
       @slots = []
       i = 0
@@ -71,13 +76,13 @@ class IntrospectionView
         @slots.push(slot)
         i += 1
 
-      # @slots_inheritance_sort_id = @obj.content[split_index + 3][2]
-      # @slots_alphabet_sort_id = @obj.content[split_index + 6][2]
-      # @slots_alpha_sort = @obj.content[split_index + 6][1] == '[X]'
+      # @slots_inheritance_sort_id = content[split_index + 3][2]
+      # @slots_alphabet_sort_id = content[split_index + 6][2]
+      # @slots_alpha_sort = content[split_index + 6][1] == '[X]'
       # @slots_set_value_id = raw_slots[i+1][2]
       # @slots_makeunbound_id = raw_slots[i+3][2]
     else
-      @header = @obj.content
+      @header = content
       @slots = null
 
     etch.update @
