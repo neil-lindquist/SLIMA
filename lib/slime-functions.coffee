@@ -7,13 +7,22 @@ module.exports =
     unless startPos?
       startPos = editor.getBuffer().getEndPosition()
     #TODO add support for character names with more than one character
-    pkgRegex = /\((?:cl:|common-lisp:)?in-package\s*(?:(?:'|#?:)?([^)]+)|"([^)]+)"|#\\(.))\s*\)/
+    pkgRegex = /\((?:cl:|common-lisp:)?in-package\s*(?:"([^"]+)"|#\\(.)|(?:#?:)?([^) ]+))\s*\)/i
+    pkg = "CL-USER"
     editor.backwardsScanInBufferRange pkgRegex, [[0,0], startPos], (match) ->
       # there is exactly one matching group
-      return match.match[1] || match.match[2] || match.match[3]
+
+      if match.match[3]
+        m3 = match.match[3]
+        if m3.charAt(0) == '|' && m3.slice(-1) == '|'
+          pkg = m3.slice(1,-1)
+        else
+          pkg = m3.toUpperCase()
+      else
+        pkg = match.match[1] || match.match[2]
 
     # couldn't find a in-package statement
-    return "CL-USER"
+    return pkg
 
 
   # Given an AST and the cursor index,

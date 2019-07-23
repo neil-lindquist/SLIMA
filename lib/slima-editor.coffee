@@ -125,7 +125,8 @@ class SlimaEditor
         p_end = utils.convertIndexToPoint(sexp.end, @editor)
 
         # Find file's package
-        pkg = getEditorPackage(@editor, p_start)
+        pkg = slime.getEditorPackage(@editor, p_start)
+        console.log("pkg = "+pkg)
 
         # Trigger a compilation
         line_reference = p_start.row + 1
