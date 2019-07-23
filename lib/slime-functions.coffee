@@ -7,7 +7,7 @@ module.exports =
     unless startPos?
       startPos = editor.getBuffer().getEndPosition()
     #TODO add support for character names with more than one character
-    pkgRegex = /\((?:cl:|common-lisp:)?in-package\s*(?:"([^"]+)"|#\\(.)|(?:#?:)?([^) ]+))\s*\)/i
+    pkgRegex = /\((?:cl::?|common-lisp::?)?in-package\s*(?:"([^"]+)"|#\\(.)|(?:(?:#?|[^ ):]+:?):)?([^) ]+))\s*\)/i
     pkg = "CL-USER"
     editor.backwardsScanInBufferRange pkgRegex, [[0,0], startPos], (match) ->
       # there is exactly one matching group
