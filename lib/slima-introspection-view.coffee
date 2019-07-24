@@ -29,14 +29,17 @@ class IntrospectionView
           $.button {className:'inline-block-tight btn', on:{click:(e)=>@resolve_action elt[2]}}, elt[1]
 
     if @slots?
-      slots = @slots.map elt =>
-        $.li {}, elt.name + "  =  " + elt.value
+      slots = @slots.map (elt) =>
+        $.li {},
+          $.a {on:{click:(e)=>@show_part elt.introspect_id}}, elt.name
+          "  =  "
+          $.a {on:{click:(e)=>@show_part elt.value_id}}, elt.value
       $.div {className:"slima-infoview padded"},
         $.button {className:'inline-block-tight btn', on:{click:@show_previous}}, 'Previous Object'
         $.button {className:'inline-block-tight btn', on:{click:@show_next}}, 'Next Object'
         $.h1 {}, @obj.title
         $.div {}, header_content
-        $.h3 {}, Slots
+        $.h3 {}, "Slots"
         $.div {className:'select-list'},
           $.ol {className:'list-group mark-active'}, slots
     else
@@ -55,8 +58,9 @@ class IntrospectionView
         return [entry[0], entry[1].replace(/  /g, ' \xa0'), entry[2]]
     split_index = content.indexOf '--------------------'
     if split_index != -1
-      @header = content.splice(0, split_index)
-      raw_slots = content.splice(10 + split_index)
+      @header = content.slice(0, split_index)
+      raw_slots = content.slice(11 + split_index)
+      console.log(content)
 
       @slots = []
       i = 0
@@ -74,7 +78,7 @@ class IntrospectionView
           slot.value_id = value[2]
 
         @slots.push(slot)
-        i += 1
+        i += 7
 
       # @slots_inheritance_sort_id = content[split_index + 3][2]
       # @slots_alphabet_sort_id = content[split_index + 6][2]
