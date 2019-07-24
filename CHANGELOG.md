@@ -1,3 +1,10 @@
+## 2.1.1 (2019-07-24)
+* Change the repl-based functionality to use the REPL's current package
+* Fix the compile-function not always recognizing `in-package` statements
+* Fix a bug with printing `\"` from lisp
+* Improve the inspector's presentation of whitespace-based formatting
+* Fix the inspector not closing when the REPL is closed
+
 ## 2.1.0 (2019-07-20)
 * Add an inspector
   * Add links from some locations in the debugger

@@ -1,7 +1,7 @@
 {
   "name": "slima",
   "main": "./lib/slima",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Interactive Common Lisp development using SLIME!",
   "keywords": [
     "lisp",
@@ -18,7 +18,7 @@
   "dependencies": {
     "paredit.js": "^0.3.6",
     "etch": "^0.14.0",
-    "swank-client": "^3.0.0"
+    "swank-client": "^3.1.0"
   },
   "consumedServices": {
     "status-bar": {
