@@ -50,7 +50,10 @@ class IntrospectionView
             $.input {type:'checkbox', checked:slot.selected, on:{click:(e)=>@resolve_action slot.select_fun_id}}, ''
             $.a {on:{click:(e)=>@show_part slot.introspect_id}}, slot.name
             "  =  "
-            $.a {on:{click:(e)=>@show_part slot.value_id}}, slot.value
+            if slot.value_id?
+              $.a {on:{click:(e)=>@show_part slot.value_id}}, slot.value
+            else
+              slot.value
         body.push $.h3 {}, group.name
         body.push $.div {className:'select-list'},
                     $.ol {className:'list-group mark-active'}, slots
@@ -105,7 +108,7 @@ class IntrospectionView
       @slots_alphabet_sort_id = content[split_index + 6][2]
       @slots_alphabet_sorted = content[split_index + 6][1] == '[X]'
       @slots_set_value_id = raw_slots[i][2]
-      @slots_makeunbound_id = raw_slots[i][2]
+      @slots_makeunbound_id = raw_slots[i+2][2]
     else
       @header = content
       @slotGroups = null
