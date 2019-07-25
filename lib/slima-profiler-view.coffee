@@ -48,11 +48,11 @@ class ProfilerView
     @swank.profile_invoke_reset(@views.repl.pkg)
 
   profile_function_click_handler: ->
-    func_dialog = new Dialog({prompt: "Enter Function", forpackage: false})
+    func_dialog = new Dialog("Enter Function", false)
     func_dialog.attach(((func) => @swank.profile_invoke_toggle_function(func, @views.repl.pkg)), false)
 
   profile_package_click_handler: ->
-    func_dialog = new Dialog({prompt: "Enter Package", forpackage: true})
+    func_dialog = new Dialog("Enter Package", true)
     func_dialog.attach(((pack,rec_calls,prof_meth) => @swank.profile_invoke_toggle_package(pack, rec_calls, prof_meth, @views.repl.pkg)), true)
 
   attach: (@statusBar) ->
