@@ -5,6 +5,7 @@ path = require 'path'
 DebuggerView = require './slima-debugger-view'
 FrameInfoView = require './slima-frame-info'
 InspectorView = require './slima-introspection-view'
+{makeDialog} = require './dialog'
 paredit = require 'paredit.js'
 
 module.exports =
@@ -349,6 +350,10 @@ class REPLView
     # On printing text from REPL response
     @swank.on 'print_string', (msg) =>
       @print_string_callback(msg)
+
+    # On request for user input
+    @swank.on 'read_from_minibuffer', (prompt, initial_value) ->
+      return makeDialog(prompt, false, initial_value)
 
     # On printing presentation visualizations (like for results)
     @presentation_starts = {}

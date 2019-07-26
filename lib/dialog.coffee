@@ -7,12 +7,13 @@ class Dialog
   rec_calls: true
   prof_meth: true
 
-  constructor: (@prompt, @forpackage, @resolve_callback, @reject_callback) ->
+  constructor: (@prompt, @forpackage, initial_value, @resolve_callback, @reject_callback) ->
     etch.initialize @
     atom.commands.add @element,
       'core:confirm': => @confirm()
       'core:cancel': => @cancel()
     @panel = atom.workspace.addModalPanel(item: this.element)
+    @miniEditor().setText(initial_value)
     @miniEditor().element.focus()
     @miniEditor().scrollToCursorPosition()
     etch.update @
@@ -69,6 +70,6 @@ class Dialog
 
 
 module.exports =
-  makeDialog: (prompt, forpackage) ->
+  makeDialog: (prompt, forpackage, initial_value='') ->
     return new Promise (resolve, reject) =>
-      new Dialog(prompt, forpackage, resolve, reject)
+      new Dialog(prompt, forpackage, initial_value, resolve, reject)
