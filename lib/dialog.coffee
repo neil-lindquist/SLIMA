@@ -2,61 +2,49 @@ etch = require 'etch'
 $ = etch.dom
 {TextEditor} = require 'atom'
 
-module.exports =
 class Dialog
 
-  errorMessage: ''
+  rec_calls: true
+  prof_meth: true
 
-  constructor: (@prompt, @forpackage) ->
+  constructor: (@prompt, @forpackage, @resolve_callback, @reject_callback) ->
     etch.initialize @
     atom.commands.add @element,
       'core:confirm': => @confirm()
       'core:cancel': => @cancel()
-    @miniEditor().onDidChange => @showError()
+    @panel = atom.workspace.addModalPanel(item: this.element)
+    @miniEditor().element.focus()
+    @miniEditor().scrollToCursorPosition()
+    etch.update @
 
   update: (props, children) ->
     return etch.update @
 
   render: () ->
-    $.div({}, [
-      $.label({className:'icon'}, @prompt),
+    $.div {},
+      $.label {className:'icon'}, @prompt
       $(TextEditor, {
               ref: 'miniEditor',
               mini: true
-            }),
-      $.div({className:'error-message'}, @errorMessage),
-      (if @forpackage
-        $.div({}, [
-          $.label({className:'input-label'}, 'Record most common callers'),
-          $.input({className:'input-toggle', type:'checkbox', on:{click:@toggleRecCalls}, checked:true}),
-          $.label({className:'input-label', style:'margin-left: 13px'}, 'Profile methods'),
-          $.input({className:'input-toggle', type:'checkbox', on:{click:@toggleProfMeth}, checked:true})
-        ])
+            })
+      if @forpackage
+        $.div {},
+          $.label {className:'input-label'}, 'Record most common callers'
+          $.input {className:'input-toggle', type:'checkbox', on:{click:@toggleRecCalls}, checked:true}
+          $.label {className:'input-label', style:'margin-left: 13px'}, 'Profile methods'
+          $.input {className:'input-toggle', type:'checkbox', on:{click:@toggleProfMeth}, checked:true}, ''
       else
-        ''),
-      $.div({style:'text-align:right; display:block; margin-top: 13px'}, [
-        $.button({className:'btn btn-primary icon icon-check', on:{click:@confirm}}),
-        $.button({className:'btn btn-error icon icon-x', on:{click:@close}})
-      ])
-    ])
+        ''
+      $.div {style:'text-align:right; display:block; margin-top: 13px'},
+        $.button {className:'btn btn-primary icon icon-check', on:{click:@confirm}}
+        $.button {className:'btn btn-error icon icon-x', on:{click:@close}}
 
   miniEditor: () -> @refs.miniEditor
 
-  attach: (cb, forpackage) ->
-    @callback = cb
-    @panel = atom.workspace.addModalPanel(item: this.element)
-    @miniEditor().element.focus()
-    @miniEditor().scrollToCursorPosition()
-    @forpackage = forpackage
-    @rec_calls = true
-    @prof_meth = true
-    etch.update @
-
-
-  toggleRecCalls: ->
+  toggleRecCalls: =>
     @rec_calls = !@rec_calls
 
-  toggleProfMeth: ->
+  toggleProfMeth: =>
     @prof_meth = !@prof_meth
 
   close: ->
@@ -66,20 +54,21 @@ class Dialog
     atom.workspace.getActivePane().activate()
 
   confirm: () ->
+    @close()
+
     txt = @miniEditor().getText()
     if @forpackage
-      rc = {true: 't', false:'nil'}[@rec_calls]
-      pm = {true: 't', false:'nil'}[@prof_meth]
-      @callback(txt, rc, pm)
+      @resolve_callback([txt, @rec_calls, @prof_meth])
     else
-      @callback(txt)
-    @close()
-    return
+      @resolve_callback(txt)
+
 
   cancel: ->
     @close()
+    @reject_callback('cancel')
 
-  showError: (message='') ->
-    @errorMessage = message
-    #@flashError() if message
-    etch.render @
+
+module.exports =
+  makeDialog: (prompt, forpackage) ->
+    return new Promise (resolve, reject) =>
+      new Dialog(prompt, forpackage, resolve, reject)
