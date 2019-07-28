@@ -12,9 +12,11 @@ module.exports =
 class REPLView
   pkg: "CL-USER"
   prompt: "> "
-  promptMarker: null
+  uneditableMarker: null
   preventUserInput: false
   inputFromUser: true
+  showingPrompt: true
+  reading_for_stdin_callback: null
   # Keep track of command history, for use with the up/down arrows
   previousCommands: []
   cycleIndex: null
@@ -85,12 +87,12 @@ class REPLView
         if selection.start.isEqual(selection.end)
           # no selection, need to check that the previous character is backspace-able
           point = selection.start
-          if @promptMarker.getBufferRange().containsPoint(point)
+          if @uneditableMarker.getBufferRange().containsPoint(point)
             event.stopImmediatePropagation()
             return
         else
           # range selected, need to check that selection is backspace-able
-          if @promptMarker.getBufferRange().intersectsWith(selection, true)
+          if @uneditableMarker.getBufferRange().intersectsWith(selection, true)
             event.stopImmediatePropagation()
             return
 
@@ -98,7 +100,7 @@ class REPLView
       selections = @editor.getSelectedBufferRanges()
       for selection in selections
         # need to check that both start and end of selection are valid
-        if @promptMarker.getBufferRange().intersectsWith(selection, true)
+        if @uneditableMarker.getBufferRange().intersectsWith(selection, true)
           event.stopImmediatePropagation()
           return
 
@@ -106,7 +108,7 @@ class REPLView
       selections = @editor.getSelectedBufferRanges()
       for selection in selections
         # need to check that both start and end of selection are valid
-        if @promptMarker.getBufferRange().intersectsWith(selection, true)
+        if @uneditableMarker.getBufferRange().intersectsWith(selection, true)
           event.stopImmediatePropagation()
           return
 
@@ -128,11 +130,11 @@ class REPLView
           if selection.start.isEqual(selection.end)
             # no selection, need to check that the previous character is backspace-able
             point = selection.start
-            if point.isLessThan(@promptMarker.getBufferRange().end)
+            if point.isLessThan(@uneditableMarker.getBufferRange().end)
               event.cancel()
           else
             # range selected, need to check that selection is backspace-able
-            if @promptMarker.getBufferRange().intersectsWith(selection, true)
+            if @uneditableMarker.getBufferRange().intersectsWith(selection, true)
               event.cancel()
               return
 
@@ -257,7 +259,7 @@ class REPLView
 
   markPrompt: (promptRange) ->
     range = new Range([0, 0], promptRange.end)
-    @promptMarker = @editor.markBufferRange(range, {exclusive: true})
+    @uneditableMarker = @editor.markBufferRange(range, {exclusive: true})
     syntaxRange = new Range(promptRange.start, [promptRange.end.row, promptRange.end.column-1])
     syntaxMarker = @editor.markBufferRange(syntaxRange, {exclusive: true})
     @editor.decorateMarker(syntaxMarker, {type: 'text', class:'syntax--repl-prompt syntax--keyword syntax--control syntax--lisp'})
@@ -290,7 +292,7 @@ class REPLView
   getUserInput: (text) ->
     lastrow = @editor.getLastBufferRow()
     lasttext = @editor.lineTextForBufferRow(lastrow)
-    promptEnd = @promptMarker.getBufferRange().end
+    promptEnd = @uneditableMarker.getBufferRange().end
     range = new Range(promptEnd, [lastrow, lasttext.length])
     return @editor.getTextInBufferRange(range)
 
@@ -302,10 +304,12 @@ class REPLView
       return
 
     input = @getUserInput()
-    ast = paredit.parse(input)
-    if ast.errors.find((err) -> err.error.indexOf('but reached end of input') != -1)
-      # missing ending parenthesis, use default system to add newline
-      return
+
+    if @reading_for_stdin_callback
+      ast = paredit.parse(input)
+      if ast.errors.find((err) -> err.error.indexOf('but reached end of input') != -1)
+        # missing ending parenthesis, use default system to add newline
+        return
 
     # Push this command to the ring if applicable
     if input != '' and @previousCommands[@previousCommands.length - 1] != input
@@ -313,13 +317,19 @@ class REPLView
     @cycleIndex = @previousCommands.length
 
     @preventUserInput = true
+    @showingPrompt = false
     @editor.moveToBottom()
     @editor.moveToEndOfLine()
-    @appendText("\n",false)
-    promise = @swank.eval input, @pkg
-    promise.then =>
-      @insertPrompt()
-      @preventUserInput = false
+    @appendText('\n',false)
+    if @reading_for_stdin_callback?
+      @reading_for_stdin_callback(input+'\n')
+      @reading_for_stdin_callback = null
+    else # entered at prompt
+      @swank.eval input, @pkg
+      .then =>
+        @insertPrompt()
+        @preventUserInput = false
+        @showingPrompt = true
 
     # Stop enter
     event.stopImmediatePropagation()
@@ -355,6 +365,19 @@ class REPLView
     @swank.on 'read_from_minibuffer', (prompt, initial_value) ->
       return makeDialog(prompt, false, initial_value)
 
+    @swank.on 'read_string', (tag) =>
+      # NOTE: Assuming that multiple read-string's will not happen at the same time
+      range = @editor.getBuffer().getRange()
+      @uneditableMarker = @editor.markBufferRange(range, {exclusive: true})
+      @preventUserInput = false
+      return new Promise (resolve, reject) =>
+        @reading_for_stdin_callback = resolve
+
+    @swank.on 'read_aborted', (tag) =>
+      @reading_for_stdin_callback = null
+      @preventUserInput = not @showingPrompt
+
+
     # On printing presentation visualizations (like for results)
     @presentation_starts = {}
     @presentationMarkers = {}
@@ -384,7 +407,7 @@ class REPLView
   print_string_callback: (msg) ->
     # Print something to the REPL when the swank server says to.
     # However, we need to make sure we're not interfering with the cursor!
-    if @preventUserInput
+    if not @showingPrompt
       # A command is being run, no prompt is in the way - so directly print
       # anything received to the REPL
       @editor.moveToBottom()
@@ -396,7 +419,7 @@ class REPLView
       # But only move the user's cursor back to the REPL line if it was there to
       # begin with, otherwise put it back at it's absolute location.
       p_cursors = @editor.getCursorBufferPositions()
-      original_prompt_end = @promptMarker.getBufferRange().end
+      original_prompt_end = @uneditableMarker.getBufferRange().end
       row_repl = original_prompt_end.row
       # Edge case: if the row is the last line, insert a new line right above then continue.
       if row_repl == 0
@@ -410,7 +433,7 @@ class REPLView
 
       # Map cursors above the REPL to the same spot
       # Map cursors at the REPL based on the change in the prompt's end location
-      new_prompt_end = @promptMarker.getBufferRange().end
+      new_prompt_end = @uneditableMarker.getBufferRange().end
       row_offset = new_prompt_end.row-original_prompt_end.row
       col_offset = Math.min(new_prompt_end.column-original_prompt_end.column, 0)
       p_cursors = for point in p_cursors
@@ -448,11 +471,11 @@ class REPLView
 
 
   setPromptCommand: (cmd) ->
-    if not @preventUserInput
+    if @showingPrompt
       # Sets the command at the prompt
       lastrow = @editor.getLastBufferRow()
       lasttext = @editor.lineTextForBufferRow(lastrow)
-      promptEnd = @promptMarker.getBufferRange().end
+      promptEnd = @uneditableMarker.getBufferRange().end
       range = new Range(promptEnd, [lastrow, lasttext.length])
       @editor.setTextInBufferRange(range, cmd)
       @editor.getBuffer().groupLastChanges()
