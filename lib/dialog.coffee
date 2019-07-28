@@ -7,7 +7,7 @@ class Dialog
   rec_calls: true
   prof_meth: true
 
-  constructor: (@prompt, @forpackage, initial_value, @resolve_callback, @reject_callback) ->
+  constructor: (@prompt, @forpackage, initial_value, @errorMessage, @resolve_callback, @reject_callback) ->
     etch.initialize @
     atom.commands.add @element,
       'core:confirm': => @confirm()
@@ -28,6 +28,10 @@ class Dialog
               ref: 'miniEditor',
               mini: true
             })
+      if @errorMessage?
+        $.div {className:'error-message'}, @errorMessage,
+      else
+        ''
       if @forpackage
         $.div {},
           $.label {className:'input-label'}, 'Record most common callers'
@@ -70,6 +74,6 @@ class Dialog
 
 
 module.exports =
-  makeDialog: (prompt, forpackage, initial_value='') ->
+  makeDialog: (prompt, forpackage, initial_value='', errorMessage=null) ->
     return new Promise (resolve, reject) =>
-      new Dialog(prompt, forpackage, initial_value, resolve, reject)
+      new Dialog(prompt, forpackage, initial_value, errorMessage, resolve, reject)
