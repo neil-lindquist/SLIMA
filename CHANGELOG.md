@@ -1,3 +1,13 @@
+## 2.2.0 (2019-07-28)
+* Add support for the standard in in the REPL
+* Add support for querying from swank via minibuffer and via an editor version of `y-or-n-p`
+* Fix inspector bugs
+  * grouping class slots would only show the first group
+  * links were being added to some slot values that couldn't be inspected
+  * the make slot unbound button was acting like set slot value
+* Fix bugs with profiler input dialog
+
+
 ## 2.1.1 (2019-07-24)
 * Change the repl-based functionality to use the REPL's current package
 * Fix the compile-function not always recognizing `in-package` statements
