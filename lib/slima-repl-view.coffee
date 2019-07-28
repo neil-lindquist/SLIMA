@@ -365,6 +365,8 @@ class REPLView
     @swank.on 'read_from_minibuffer', (prompt, initial_value) ->
       return makeDialog(prompt, false, initial_value)
 
+    @swank.on 'y_or_n_p', @y_or_n_p_resolver
+
     @swank.on 'read_string', (tag) =>
       # NOTE: Assuming that multiple read-string's will not happen at the same time
       range = @editor.getBuffer().getRange()
@@ -403,6 +405,20 @@ class REPLView
     @swank.on 'profile_command_complete', (msg) =>
       atom.notifications.addSuccess(msg)
 
+
+  y_or_n_p_resolver: (q, err=false) =>
+    if err
+      err_msg = 'Please enter "y" for yes or "n" for no'
+    else
+      err = null
+    return makeDialog(q + ' (y or n)', false, '', err_msg)
+    .then (answer) =>
+      if answer.toLowerCase() == 'y'
+        return true
+      else if answer.toLowerCase() == 'n'
+        return false
+      else
+        return @y_or_n_p_resolver(q, true)
 
   print_string_callback: (msg) ->
     # Print something to the REPL when the swank server says to.
