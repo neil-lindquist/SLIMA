@@ -81,6 +81,9 @@ class REPLView
     @clearREPL()
     # Attach event handlers
     @subs.add atom.commands.add @editorElement, 'core:backspace': (event) =>
+      if @preventUserInput
+        event.stopImmediatePropagation()
+        return
       # Check buffer position!
       selections = @editor.getSelectedBufferRanges()
       for selection in selections
@@ -97,6 +100,9 @@ class REPLView
             return
 
     @subs.add atom.commands.add @editorElement, 'core:delete': (event) =>
+      if @preventUserInput
+        event.stopImmediatePropagation()
+        return
       selections = @editor.getSelectedBufferRanges()
       for selection in selections
         # need to check that both start and end of selection are valid
@@ -105,6 +111,9 @@ class REPLView
           return
 
     @subs.add atom.commands.add @editorElement, 'core:cut': (event) =>
+      if @preventUserInput
+        event.stopImmediatePropagation()
+        return
       selections = @editor.getSelectedBufferRanges()
       for selection in selections
         # need to check that both start and end of selection are valid
