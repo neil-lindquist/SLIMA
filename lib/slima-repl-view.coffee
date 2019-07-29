@@ -266,9 +266,13 @@ class REPLView
   isAutoCompleteActive: () ->
     return @editorElement.classList.contains('autocomplete-active')
 
-  markPrompt: (promptRange) ->
-    range = new Range([0, 0], promptRange.end)
+  # updates uneditableMarker to everything that's been printed/typed so far
+  updateUneditable: () ->
+    range = @editor.getBuffer().getRange()
     @uneditableMarker = @editor.markBufferRange(range, {exclusive: true})
+
+  markPrompt: (promptRange) ->
+    @updateUneditable()
     syntaxRange = new Range(promptRange.start, [promptRange.end.row, promptRange.end.column-1])
     syntaxMarker = @editor.markBufferRange(syntaxRange, {exclusive: true})
     @editor.decorateMarker(syntaxMarker, {type: 'text', class:'syntax--repl-prompt syntax--keyword syntax--control syntax--lisp'})
@@ -378,8 +382,7 @@ class REPLView
 
     @swank.on 'read_string', (tag) =>
       # NOTE: Assuming that multiple read-string's will not happen at the same time
-      range = @editor.getBuffer().getRange()
-      @uneditableMarker = @editor.markBufferRange(range, {exclusive: true})
+      @updateUneditable()
       @preventUserInput = false
       return new Promise (resolve, reject) =>
         @reading_for_stdin_callback = resolve
