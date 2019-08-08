@@ -158,6 +158,17 @@ class REPLView
         @cycleForward()
         event.stopImmediatePropagation()
 
+    # jump to first character of editable region on the line with the prompt
+    @subs.add atom.commands.add @editorElement, 'editor:move-to-first-character-of-line', (event) =>
+      @editor.moveCursors @moveCursorToFirstCharacterOfLine
+      event.stopImmediatePropagation()
+
+    @subs.add atom.commands.add @editorElement, 'editor:select-to-first-character-of-line', (event) =>
+      @editor.expandSelectionsBackward (selection) =>
+        selection.modifySelection () => @moveCursorToFirstCharacterOfLine(selection.cursor)
+      event.stopImmediatePropagation()
+
+
     # Add a clear command
     @subs.add atom.commands.add @editorElement, 'slime:clear-repl': (event) =>
       @clearREPL()
@@ -262,6 +273,25 @@ class REPLView
             didDispatch: (event) => @callCurrentDebugger(event, command)
             hiddenInCommandPalette: true
           }
+
+  moveCursorToFirstCharacterOfLine: (cursor) =>
+    screenRow = cursor.getScreenRow()
+    editableStart = @uneditableMarker.getBufferRange().end
+    if screenRow == @editor.screenPositionForBufferPosition(editableStart).row
+      screenLineStart = @editor.clipScreenPosition([screenRow, 0], {
+          skipSoftWrapIndentation:true
+        })
+      screenLineBufferRange = @editor.bufferRangeForScreenRange([screenLineStart,
+                                                                 [screenRow, Infinity]])
+      firstCharacterColumn = editableStart.column
+      if firstCharacterColumn != cursor.getBufferColumn()
+        targetBufferColumn = firstCharacterColumn
+      else
+        targetBufferColumn = screenLineBufferRange.start.column
+
+      cursor.setBufferPosition([screenLineBufferRange.start.row, targetBufferColumn])
+    else
+      cursor.moveToFirstCharacterOfLine()
 
   isAutoCompleteActive: () ->
     return @editorElement.classList.contains('autocomplete-active')
