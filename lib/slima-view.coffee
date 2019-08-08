@@ -37,8 +37,13 @@ class SlimaView
     @element
 
   setStatusBar: (@statusBar) ->
-    @statusView.attach(@statusBar)
-    @profileView.attach(@statusBar)
+    try
+      @statusView.attach(@statusBar)
+      @profileView.attach(@statusBar)
+    catch error
+      atom.notifications.addError("Failed to attach to the status bar. Please restart Atom",
+            description:"SLIMA sometimes has issues connecting to the status bar. If restart Atom doesn't fix this message, please [report the issue](https://github.com/neil-lindquist/SLIMA/issues)",
+            dismissable:true)
 
   closeAllREPLs: ->
     editors = atom.workspace.getTextEditors()
