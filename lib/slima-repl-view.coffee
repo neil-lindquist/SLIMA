@@ -318,7 +318,7 @@ class REPLView
 
     input = @getUserInput()
 
-    if @reading_for_stdin_callback
+    unless @reading_for_stdin_callback
       ast = paredit.parse(input)
       if ast.errors.find((err) -> err.error.indexOf('but reached end of input') != -1)
         # missing ending parenthesis, use default system to add newline
