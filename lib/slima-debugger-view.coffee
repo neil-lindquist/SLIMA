@@ -1,4 +1,5 @@
 {CompositeDisposable} = require 'atom'
+{clipboard} = require 'electron'
 FrameInfoView = require './slima-frame-info'
 etch = require 'etch'
 $ = etch.dom
@@ -31,7 +32,7 @@ class DebuggerView
                     $.button {className:'inline-block-tight btn', on:{click:@view_frame_callback i}}, 'Frame Info'
                     i + ': ' + frame.description
 
-    $.div {className:'slima-infoview padded'},
+    $.div {className:'slima-infoview padded slima-debugger'},
       $.h1 {},
         $.a {on:{click:@inspect_condition}}, @info.title
       $.h2 {class:'text-subtle'}, @info.type
@@ -73,6 +74,23 @@ class DebuggerView
   inspect_condition: () ->
     @swank.inspect_current_condition(@info.thread, @replView.pkg)
     .then @replView.inspect
+
+  copy_debug_info: () ->
+    clipboard.clear()
+    restarts = ''
+    for restart, i in @info.restarts
+      restarts += '  ' + i + ': [' + restart.cmd + '] ' + restart.description + '\n'
+    frames = ''
+    for frame in @info.stack_frames
+      frames += '  ' + frame.frame_number + ': ' + frame.description + '\n'
+    clipboard.writeText(
+      @info.title + '\n' +
+      @info.type + '\n' +
+      'Restarts: \n' +
+      restarts +
+      'Stack Trace: \n' +
+      frames
+    )
 
   abort: () -> @swank.debug_abort_current_level(@info.level, @info.thread, @replView.pkg)
   quit: () -> @swank.debug_escape_all @info.thread, @replView.pkg

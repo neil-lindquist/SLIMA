@@ -213,6 +213,7 @@ class REPLView
 
     @addDebugCommand 'slime:debug-abort', false, (debug) -> debug.abort()
     @addDebugCommand 'slime:debug-continue',  false, (debug) -> debug.continue()
+    @addDebugCommand 'slima:copy-debugger-info', false, (debug) -> debug.copy_debug_info()
 
     @addDebugCommand 'slime:debug-show-frame-source', true, (frame) -> frame.display_source()
     @addDebugCommand 'slime:debug-disassemble-frame', true, (frame) -> frame.disassemble()

@@ -72,3 +72,9 @@
       'command': 'slime:inspect-presentation-context'
     }
   ]
+  '.slima-debugger,.slima-debugger *': [
+    {
+      'label': 'Copy Error Information',
+      'command': 'slima:copy-debugger-info'
+    }
+  ]
