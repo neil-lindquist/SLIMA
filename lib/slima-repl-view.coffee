@@ -207,7 +207,7 @@ class REPLView
       do (i) =>
         @addDebugCommand 'slime:debug-restart-'+i, false, (debug) -> debug.activate_restart(i)
 
-    @addMenuCommand 'slime:menu-quit', ((debug) -> debug.quit()), ((frame) -> frame.debugView.quit()), (inspector) => @replPane.destroyItem(inspector)
+    @addMenuCommand 'slime:menu-quit', ((debug) -> debug.quit()), ((frame) => @replPane.destroyItem(frame)), (inspector) => @replPane.destroyItem(inspector)
     @addMenuCommand 'slime:menu-next', null, ((frame) -> frame.show_frame_up()), ((inspector)->inspector.show_next())
     @addMenuCommand 'slime:menu-previous', null, ((frame) -> frame.show_frame_down()), ((inspector)->inspector.show_previous())
 
