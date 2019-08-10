@@ -211,17 +211,17 @@ class REPLView
     @addMenuCommand 'slime:menu-next', null, ((frame) -> frame.show_frame_up()), ((inspector)->inspector.show_next())
     @addMenuCommand 'slime:menu-previous', null, ((frame) -> frame.show_frame_down()), ((inspector)->inspector.show_previous())
 
-    @addDebugCommand 'slime:debug-abort', false, (debug) -> debug.abort()
-    @addDebugCommand 'slime:debug-continue',  false, (debug) -> debug.continue()
-    @addDebugCommand 'slima:copy-debugger-info', false, (debug) -> debug.copy_debug_info()
+    @addDebugCommand 'slime:debug-abort', (debug) -> debug.abort()
+    @addDebugCommand 'slime:debug-continue', (debug) -> debug.continue()
+    @addDebugCommand 'slima:copy-debugger-info', (debug) -> debug.copy_debug_info()
 
-    @addDebugCommand 'slime:debug-show-frame-source', true, (frame) -> frame.display_source()
-    @addDebugCommand 'slime:debug-disassemble-frame', true, (frame) -> frame.disassemble()
-    @addDebugCommand 'slime:debug-frame-up', true, (frame) -> frame.show_frame_up()
-    @addDebugCommand 'slime:debug-frame-down', true, (frame) -> frame.show_frame_down()
-    @addDebugCommand 'slime:debug-last-frame', true, (frame) -> frame.show_last_frame()
-    @addDebugCommand 'slime:debug-first-frame', true, (frame) -> frame.show_first_frame()
-    @addDebugCommand 'slime:debug-restart-frame', true, (frame) -> frame.restart()
+    @addFrameInfoCommand 'slime:debug-show-frame-source', (frame) -> frame.display_source()
+    @addFrameInfoCommand 'slime:debug-disassemble-frame', (frame) -> frame.disassemble()
+    @addFrameInfoCommand 'slime:debug-frame-up', (frame) -> frame.show_frame_up()
+    @addFrameInfoCommand 'slime:debug-frame-down', (frame) -> frame.show_frame_down()
+    @addFrameInfoCommand 'slime:debug-last-frame', (frame) -> frame.show_last_frame()
+    @addFrameInfoCommand 'slime:debug-first-frame', (frame) -> frame.show_first_frame()
+    @addFrameInfoCommand 'slime:debug-restart-frame', (frame) -> frame.restart()
 
 
     @subs.add atom.workspace.addOpener (filePath) =>
@@ -263,17 +263,18 @@ class REPLView
 
   # registers a debug command
   # Note that these commands aren't displayed in the command palette, since they alias buttons
-  addDebugCommand: (name, forFrameInfo, command) ->
-      if forFrameInfo
-        @subs.add atom.commands.add 'atom-workspace', name, {
-            didDispatch: (event) => @callCurrentFrameInfo(event, command)
-            hiddenInCommandPalette: true
-          }
-      else
-        @subs.add atom.commands.add 'atom-workspace', name, {
-            didDispatch: (event) => @callCurrentDebugger(event, command)
-            hiddenInCommandPalette: true
-          }
+  addDebugCommand: (name, command) ->
+    @subs.add atom.commands.add 'atom-workspace', name, {
+        didDispatch: (event) => @callCurrentDebugger(event, command)
+        hiddenInCommandPalette: true
+      }
+  # registers a frame info command
+  # Note that these commands aren't displayed in the command palette, since they alias buttons
+  addFrameInfoCommand: (name, command) ->
+    @subs.add atom.commands.add 'atom-workspace', name, {
+        didDispatch: (event) => @callCurrentFrameInfo(event, command)
+        hiddenInCommandPalette: true
+      }
 
   moveCursorToFirstCharacterOfLine: (cursor) =>
     screenRow = cursor.getScreenRow()
