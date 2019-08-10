@@ -1,3 +1,13 @@
+## 2.3.0-rc.1 (2019-08-10)
+* Change the <kbd>q</kbd> key to only close the current frame info tab, instead of quitting all errors
+* Change the behavior of <kbd>home</kbd> to jump to the start of the user modifiable text in the REPL
+* Change the REPL styling so that lines with prompts are no longer highlighted
+* Add a context menu option to copy the information in a debugger
+* Add a nice error message when the status bar fails to attach
+* Fix multiline input not working
+* Fix a bug that allowed certain modifications to the REPL when user input should have been disabled
+
+
 ## 2.2.0 (2019-07-28)
 * Add support for the standard in in the REPL
 * Add support for querying from swank via minibuffer and via an editor version of `y-or-n-p`
