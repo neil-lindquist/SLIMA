@@ -39,10 +39,10 @@ class FrameInfoView
       $.div {className:'select-list'},
         $.ol {class:'list-group mark-active'},
           if frame.locals? and frame.locals.length > 0
-            ($.li {},
-               local.id + ': ' + local.name + ' = '
-               $.a {on:{click:@inspectVarCallback(local.id)}}, local.value
-            ) for local, i in frame.locals
+            frame.locals.map (local, i) =>
+              $.li {},
+                i + ': ' + local.name + (local.id == 0?"":("#"+local.id)) + ' = '
+                $.a {on:{click:(e) => @inspectVar(i)}}, local.value
           else
             $.li {}, '<No locals>'
       if frame.catch_tags? and frame.catch_tags.length > 0
@@ -134,9 +134,6 @@ class FrameInfoView
     input = @refs.frameReturnValue.value
     @swank.inspect_in_frame(@frame_index, input, @info.thread, @debugView.replView.pkg)
     .then @debugView.replView.inspect
-
-  inspectVarCallback: (var_num) =>
-    (e) => @inspectVar(var_num)
 
   inspectVar: (var_num) =>
     @swank.inspect_frame_var(@frame_index, var_num, @info.thread, @debugView.replView.pkg)
