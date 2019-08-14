@@ -1,3 +1,8 @@
+## 2.3.0-rc.2 (2019-08-13)
+* Fix restart hotkeys no longer working
+  * introduced in 2.3.0-rc.1
+* Fix frame info local variables being numbering strangely and displaying the wrong value when being inspected
+
 ## 2.3.0-rc.1 (2019-08-10)
 * Change the <kbd>q</kbd> key to only close the current frame info tab, instead of quitting all errors
 * Change the behavior of <kbd>home</kbd> to jump to the start of the user modifiable text in the REPL
