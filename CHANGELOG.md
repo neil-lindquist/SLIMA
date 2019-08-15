@@ -1,3 +1,7 @@
+## 2.3.0-rc.3 (2019-08-14)
+* Fix a crash caused by the fix for the local variable bug
+  * introduced in 2.3.0-rc.2
+
 ## 2.3.0-rc.2 (2019-08-13)
 * Fix restart hotkeys no longer working
   * introduced in 2.3.0-rc.1
