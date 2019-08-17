@@ -1,20 +1,12 @@
-## 2.3.0-rc.3 (2019-08-14)
-* Fix a crash caused by the fix for the local variable bug
-  * introduced in 2.3.0-rc.2
-
-## 2.3.0-rc.2 (2019-08-13)
-* Fix restart hotkeys no longer working
-  * introduced in 2.3.0-rc.1
-* Fix frame info local variables being numbering strangely and displaying the wrong value when being inspected
-
-## 2.3.0-rc.1 (2019-08-10)
+## 2.3.0 (2019-08-16)
 * Change the <kbd>q</kbd> key to only close the current frame info tab, instead of quitting all errors
-* Change the behavior of <kbd>home</kbd> to jump to the start of the user modifiable text in the REPL
-* Change the REPL styling so that lines with prompts are no longer highlighted
-* Add a context menu option to copy the information in a debugger
-* Add a nice error message when the status bar fails to attach
+* Change the behavior of <kbd>home</kbd> to jump to the start of the user modifiable text in the REPL (#22)
+* Change the REPL styling so that lines with prompts are no longer highlighted (#22)
+* Add a context menu option to copy the information in a debugger (#24)
+* Add a nice error message when the status bar fails to attach (#23)
 * Fix multiline input not working
-* Fix a bug that allowed certain modifications to the REPL when user input should have been disabled
+* Fix a bug that allowed certain modifications to the REPL when user input should have been disabled (#20)
+* Fix frame info local variables being numbering strangely and displaying the wrong value when being inspected
 
 
 ## 2.2.0 (2019-07-28)
