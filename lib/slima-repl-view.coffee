@@ -576,7 +576,10 @@ class REPLView extends InfoView
   showDebugTab: (level) ->
     # A slight pause is needed before showing for when an error occurs immediatly after resolving another error
     setTimeout(() =>
-      atom.workspace.open('slime://debug/'+level, {location:"bottom"})
+      if level == '1'
+        atom.workspace.open('slime://debug/'+level)
+      else
+        @dbgv[level-1].activate(@dbgv[level-2].currentPane())
     , 10)
 
   closeDebugTab: (level) ->
@@ -589,7 +592,7 @@ class REPLView extends InfoView
       unless @inspector
         @inspector = new InspectorView
       @inspector.setup(@swank, obj, @)
-      atom.workspace.open('slime://inspect/', {location:"bottom"})
+      atom.workspace.open('slime://inspect/')
 
   callCurrentMenu: (event, debugCallback, frameCallback, inspectorCallback) =>
     activeItem = atom.workspace.getActivePaneItem()

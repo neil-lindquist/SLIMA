@@ -3,7 +3,7 @@
 module.exports =
 class InfoView
 
-  findCurrentPane: () =>
+  currentPane: () =>
     for pane in atom.workspace.getPanes()
       if pane.getItems().includes(@)
         return pane
@@ -12,13 +12,13 @@ class InfoView
   getItem: () =>
     @
 
-  activate: () =>
-    pane = @findCurrentPane()
+  activate: (pane=null) =>
+    pane ?= @currentPane()
     if pane?
       pane.activate()
       pane.activateItem(@getItem())
 
   destroy: () =>
-    pane = @findCurrentPane()
+    pane = @currentPane()
     if pane?
       pane.destroyItem(@getItem())

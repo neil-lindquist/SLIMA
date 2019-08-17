@@ -61,11 +61,14 @@ class DebuggerView extends InfoView
   #need to curry view_frame to be able to generate frames in a loop
   view_frame_callback: (frame_index) ->
     () =>
-      if not @frame_info?
+      unless @frame_info?
         @frame_info = new FrameInfoView
       @frame_info.setup(@swank, @info, Number(frame_index), @)
 
-      atom.workspace.open('slime://debug/'+@info.level+'/frame', {location:"bottom"})
+      if @frame_info.currentPane()?
+        @frame_info.activate()
+      else
+        @frame_info.activate(@currentPane())
 
   activate_restart: (restartindex) ->
     if @info.restarts.length > restartindex
