@@ -1,9 +1,10 @@
 {CompositeDisposable} = require 'atom'
+InfoView = require './slima-info-view'
 etch = require 'etch'
 $ = etch.dom
 
 module.exports =
-class IntrospectionView
+class IntrospectionView extends InfoView
 
   obj: null
 

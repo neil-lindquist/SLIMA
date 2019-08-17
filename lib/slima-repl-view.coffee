@@ -2,6 +2,7 @@
 fs = require 'fs'
 os = require 'os'
 path = require 'path'
+InfoView = require './slima-info-view'
 DebuggerView = require './slima-debugger-view'
 FrameInfoView = require './slima-frame-info'
 InspectorView = require './slima-introspection-view'
@@ -9,7 +10,7 @@ InspectorView = require './slima-introspection-view'
 paredit = require 'paredit.js'
 
 module.exports =
-class REPLView
+class REPLView extends InfoView
   pkg: "CL-USER"
   prompt: "> "
   uneditableMarker: null
@@ -32,11 +33,10 @@ class REPLView
     @createRepl()
     @setupDebugger()
 
-
   # Make a new pane / REPL text editor, or find one
   # that already exists
   createRepl: () ->
-    @editor = @replPane = null
+    @editor = null
     if @swank.process?.cwd
       uri = @swank.process.cwd
     else
@@ -52,22 +52,21 @@ class REPLView
           if editor in pane.getItems()
             # Found the pane too!
             @editor = editor
-            @replPane = pane
             @editorElement = atom.views.getView(@editor)
 
-    if @editor and @replPane
+    if @editor
       fs.writeFileSync(uri, "")
       @setupRepl()
       return
 
     # Create a new pane and editor if we didn't find one
-    @replPane = atom.workspace.getBottomDock().getActivePane()
+    replPane = atom.workspace.getBottomDock().getActivePane()
 
     fs.writeFileSync(uri, '')
     atom.workspace.createItemForURI(uri).then (editor) =>
       atom.workspace.getBottomDock().activate()
-      @replPane.activateItem(editor)
-      @replPane.activate()
+      replPane.activateItem(editor)
+      replPane.activate()
       @editor = editor
       @editorElement = atom.views.getView(@editor)
       @setupRepl()
@@ -207,7 +206,7 @@ class REPLView
       do (i) =>
         @addDebugCommand 'slime:debug-restart-'+i, (debug) -> debug.activate_restart(i)
 
-    @addMenuCommand 'slime:menu-quit', ((debug) -> debug.quit()), ((frame) => @replPane.destroyItem(frame)), (inspector) => @replPane.destroyItem(inspector)
+    @addMenuCommand 'slime:menu-quit', ((debug) -> debug.quit()), ((frame) => frame.destroy()), (inspector) => inspector.destroy()
     @addMenuCommand 'slime:menu-next', null, ((frame) -> frame.show_frame_up()), ((inspector)->inspector.show_next())
     @addMenuCommand 'slime:menu-previous', null, ((frame) -> frame.show_frame_down()), ((inspector)->inspector.show_previous())
 
@@ -230,7 +229,7 @@ class REPLView
           @inspector = new InspectorView
         return @inspector
 
-    @subs.add @replPane.onWillDestroyItem (e) =>
+    @subs.add atom.workspace.onDidDestroyPaneItem (e) =>
       if e.item == @inspector
         @inspector = null
 
@@ -294,6 +293,10 @@ class REPLView
       cursor.setBufferPosition([screenLineBufferRange.start.row, targetBufferColumn])
     else
       cursor.moveToFirstCharacterOfLine()
+
+  # override info view function to use @editor instead
+  getItem: () =>
+    @editor
 
   isAutoCompleteActive: () ->
     return @editorElement.classList.contains('autocomplete-active')
@@ -416,7 +419,7 @@ class REPLView
       # NOTE: Assuming that multiple read-string's will not happen at the same time
       @updateUneditable()
       @preventUserInput = false
-      @replPane.activateItem(@editor)
+      @activate()
       return new Promise (resolve, reject) =>
         @reading_for_stdin_callback = resolve
 
@@ -552,7 +555,7 @@ class REPLView
       if filePath.match(///^slime://debug/\d+/frame$///)
         level = filePath.slice(14, -6)
         return @dbgv[level-1].frame_info
-    @subs.add @replPane.onWillDestroyItem (e) =>
+    @subs.add atom.workspace.onWillDestroyPaneItem (e) =>
       if e.item in @dbgv
         level = e.item.info.level #1 based indices
         if level < @dbgv.length
@@ -561,8 +564,7 @@ class REPLView
         if e.item.active
           e.item.abort()
           e.item.active = false
-        if e.item.frame_info?
-          @replPane.destroyItem(e.item.frame_info)
+        e.item.frame_info?.destroy()
 
 
   createDebugTab: (obj) ->
@@ -578,7 +580,7 @@ class REPLView
     , 10)
 
   closeDebugTab: (level) ->
-    @replPane.destroyItem(@dbgv[level-1])
+    @dbgv[level-1].destroy()
     @dbgv.pop()
 
 
@@ -590,10 +592,7 @@ class REPLView
       atom.workspace.open('slime://inspect/', {location:"bottom"})
 
   callCurrentMenu: (event, debugCallback, frameCallback, inspectorCallback) =>
-    if not @replPane.isActive()
-      event.abortKeyBinding()
-      return
-    activeItem = @replPane.getActiveItem()
+    activeItem = atom.workspace.getActivePaneItem()
     if debugCallback? and activeItem instanceof DebuggerView
       debugCallback(activeItem)
     else if frameCallback? and activeItem instanceof FrameInfoView and not event.target.classList.contains('debug-text-entry')
@@ -604,10 +603,7 @@ class REPLView
       event.abortKeyBinding()
 
   callCurrentDebugger: (event, callback) =>
-    if not @replPane.isActive()
-      event.abortKeyBinding()
-      return
-    activeItem = @replPane.getActiveItem()
+    activeItem = atom.workspace.getActivePaneItem()
     #TODO consider adding command to frame info views as well
     if activeItem instanceof DebuggerView
       callback(activeItem)
@@ -615,20 +611,14 @@ class REPLView
       event.abortKeyBinding()
 
   callCurrentFrameInfo: (event, callback) =>
-    if not @replPane.isActive()
-      event.abortKeyBinding()
-      return
-    activeItem = @replPane.getActiveItem()
+    activeItem = atom.workspace.getActivePaneItem()
     if activeItem instanceof FrameInfoView and not event.target.classList.contains('debug-text-entry')
       callback(activeItem)
     else
       event.abortKeyBinding()
 
   callInspector: (event, callback) =>
-    if not @replPane.isActive()
-      event.abortKeyBinding()
-      return
-    activeItem = @replPane.getActiveItem()
+    activeItem = atom.workspace.getActivePaneItem()
     if activeItem instanceof InspectorView
       callback(activeItem)
     else
@@ -644,8 +634,7 @@ class REPLView
     @saveReplHistory()
     if @swank.connected
       @closeDebugTab(1)
-      if @inspector
-        @replPane.destroyItem(@inspector)
+      @inspector?.destroy
       @subs.dispose()
       @swank.quit()
     fs.unlinkSync(@editor.getPath())

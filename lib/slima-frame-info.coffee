@@ -1,10 +1,11 @@
 {CompositeDisposable} = require 'atom'
+InfoView = require './slima-info-view'
 etch = require 'etch'
 $ = etch.dom
 {showSourceLocation} = require './utils'
 
 module.exports =
-class FrameInfoView
+class FrameInfoView extends InfoView
 
   constructor: () ->
     etch.initialize @
@@ -128,7 +129,7 @@ class FrameInfoView
     @swank.debug_eval_in_frame(@frame_index, input, @info.thread, @debugView.replView.pkg).then (result) =>
       replView = @debugView.replView
       replView.print_string_callback(result+'\n')
-      replView.replPane.activateItem(replView.editor)
+      replView.activate()
 
   inspectInFrame: () =>
     input = @refs.frameReturnValue.value

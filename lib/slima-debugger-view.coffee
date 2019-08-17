@@ -1,11 +1,12 @@
 {CompositeDisposable} = require 'atom'
 {clipboard} = require 'electron'
+InfoView = require './slima-info-view'
 FrameInfoView = require './slima-frame-info'
 etch = require 'etch'
 $ = etch.dom
 
 module.exports =
-class DebuggerView
+class DebuggerView extends InfoView
 
   active: false
 
