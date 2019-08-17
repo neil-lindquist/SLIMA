@@ -416,6 +416,7 @@ class REPLView
       # NOTE: Assuming that multiple read-string's will not happen at the same time
       @updateUneditable()
       @preventUserInput = false
+      @replPane.activateItem(@editor)
       return new Promise (resolve, reject) =>
         @reading_for_stdin_callback = resolve
 
