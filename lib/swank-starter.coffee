@@ -2,6 +2,7 @@
 fs = require 'fs'
 path = require 'path'
 os = require 'os'
+tmp = require 'temporary'
 
 # Helps to start a Swank server automatically so the
 # user doesn't have to start one in a separate terminal
@@ -13,6 +14,7 @@ class SwankStarter
   start: () ->
     manualCommand = atom.config.get 'slima.advancedSettings.swankCommand'
     @cwd = @get_cwd()
+    @lisp = atom.config.get 'slima.lispName'
 
     options = {cwd: @cwd}
     if manualCommand == ''
@@ -45,8 +47,7 @@ class SwankStarter
     return true
 
   check_path: () ->
-    # Retrieve the slime path and lisp name
-    @lisp = atom.config.get 'slima.lispName'
+    # Retrieve the slime path
     @path = atom.config.get 'slima.slimePath'
     @path = @path.replace /^~(?=[\\/])/, os.homedir()
     if @path[@path.length - 1] == path.sep
@@ -56,10 +57,19 @@ class SwankStarter
         if fs.statSync(@path).isFile()
           @swank_script = @path
           return true
-    @swank_script = "#{@path}#{path.sep}start-swank.lisp"
-    # Check if the slime path exists; return true or false
+
+    loader_path = "#{@path}#{path.sep}swank-loader.lisp"
+    @swank_starter = new tmp.File("swank-starter.lisp")
+    @swank_script = @swank_starter.path
+    @swank_starter.writeFileSync(
+        "(load \"#{loader_path.replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}\" :verbose t) " +
+        "(funcall (read-from-string \"swank-loader:init\") " +
+                 ":from-emacs t) " +
+        "(funcall (read-from-string \"swank:create-server\") " +
+                 ":port 4005 " +
+                 ":dont-close nil)")
     try
-      return fs.statSync(@swank_script).isFile()
+      return fs.statSync(loader_path).isFile()
     catch e
       console.log e
       return false
@@ -78,11 +88,15 @@ class SwankStarter
 
     ed = atom.workspace.getActiveTextEditor()?.getPath()
     return path.dirname(ed) if ed?
-    
+
     return ""
 
   exit_callback: (code) ->
+    @swank_starter?.unlink()
+    @swank_starter = null
     console.log "Lisp process exited: #{code}"
 
   destroy: () ->
+    @swank_starter?.unlink()
+    @swank_starter = null
     @process?.kill()

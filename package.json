@@ -18,7 +18,8 @@
   "dependencies": {
     "paredit.js": "^0.3.6",
     "etch": "^0.14.0",
-    "swank-client": "^4.0.0"
+    "swank-client": "^4.0.0",
+    "temporary": "^1.0.1"
   },
   "consumedServices": {
     "status-bar": {
