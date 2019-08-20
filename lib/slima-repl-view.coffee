@@ -636,8 +636,9 @@ class REPLView extends InfoView
   destroy: ->
     @saveReplHistory()
     if @swank.connected
-      @closeDebugTab(1)
-      @inspector?.destroy
+      if @dbgv.length >= 1
+        @closeDebugTab(1)
+      @inspector?.destroy()
       @subs.dispose()
       @swank.quit()
     fs.unlinkSync(@editor.getPath())

@@ -161,7 +161,7 @@ module.exports = Slima =
   swankCleanup: () ->
     atom.notifications.addError("Disconnected from Lisp")
     @views.statusView.message('Slime not connected.')
-    @views.destroyRepl
+    @views.destroyRepl()
 
   swankRestart: () ->
     @swankDisconnect()
