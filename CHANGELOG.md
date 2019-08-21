@@ -1,3 +1,13 @@
+## 2.3.1 (2019-08-20)
+* Change the inspector contents to be displayed as formatted by swank (#28)
+* Change the behavior when swank requests user input to switch to the REPL tab (#27)
+* Change the SLIMA tabs to spawn in the pane the user last placed them when able (#14)
+* Fix bugs when the SLIMA tabs are not in the REPL's pane (#14)
+* Fix the behavior of `*standard-output*` in multithreaded contexts (#26)
+* Fix some minor bugs with closing the repl
+* Fix the compile file command not loading the file (#29)
+
+
 ## 2.3.0 (2019-08-16)
 * Change the <kbd>q</kbd> key to only close the current frame info tab, instead of quitting all errors
 * Change the behavior of <kbd>home</kbd> to jump to the start of the user modifiable text in the REPL (#22)
