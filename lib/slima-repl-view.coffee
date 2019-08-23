@@ -444,10 +444,10 @@ class REPLView extends InfoView
     # Debug functions
     @swank.on 'debug_setup', (obj) => @createDebugTab(obj)
     @swank.on 'debug_activate', (obj) =>
-      @showDebugTab(obj.level)
+      @showDebugTab(Number(obj.level))
     @swank.on 'debug_return', (obj) =>
-      @dbgv[obj.level-1].active = false
-      @closeDebugTab(obj.level)
+      @dbgv[Number(obj.level)-1].active = false
+      @closeDebugTab(Number(obj.level))
 
     # Profile functions
     @swank.on 'profile_command_complete', (msg) =>
@@ -568,6 +568,7 @@ class REPLView extends InfoView
 
 
   createDebugTab: (obj) ->
+    obj.level = Number(obj.level)
     if obj.level > @dbgv.length
       @dbgv.push(new DebuggerView)
     debug = @dbgv[obj.level-1]
@@ -576,7 +577,7 @@ class REPLView extends InfoView
   showDebugTab: (level) ->
     # A slight pause is needed before showing for when an error occurs immediatly after resolving another error
     setTimeout(() =>
-      if level == '1'
+      if level == 1
         atom.workspace.open('slime://debug/'+level)
       else
         @dbgv[level-1].activate(@dbgv[level-2].currentPane())
