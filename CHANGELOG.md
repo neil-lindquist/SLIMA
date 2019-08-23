@@ -1,4 +1,8 @@
-## 2.3.1 (2019-08-20)
+## 2.3.1-rc.2 (2019-08-22)
+* Fix nested debuggers not being closable
+  * Introduced in 2.3.1-rc.1
+
+## 2.3.1-rc.1 (2019-08-20)
 * Change the inspector contents to be displayed as formatted by swank (#28)
 * Change the behavior when swank requests user input to switch to the REPL tab (#27)
 * Change the SLIMA tabs to spawn in the pane the user last placed them when able (#14)
