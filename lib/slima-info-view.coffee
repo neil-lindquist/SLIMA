@@ -4,10 +4,7 @@ module.exports =
 class InfoView
 
   currentPane: () =>
-    for pane in atom.workspace.getPanes()
-      if pane.getItems().includes(@)
-        return pane
-    return null
+    return atom.workspace.paneForItem(@getItem())
 
   getItem: () =>
     @

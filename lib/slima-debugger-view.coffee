@@ -72,7 +72,7 @@ class DebuggerView extends InfoView
 
   activate_restart: (restartindex) ->
     if @info.restarts.length > restartindex
-      @activate = false
+      @active = false
       @swank.debug_invoke_restart(@info.level, restartindex, @info.thread, @replView.pkg)
 
   inspect_condition: () ->

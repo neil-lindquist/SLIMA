@@ -586,6 +586,8 @@ class REPLView extends InfoView
   closeDebugTab: (level) ->
     @dbgv[level-1].destroy()
     @dbgv.pop()
+    if level == 1
+      @activate()
 
 
   inspect: (obj) =>
