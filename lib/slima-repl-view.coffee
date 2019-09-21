@@ -317,10 +317,15 @@ class REPLView extends InfoView
     for pid,marker of @presentationMarkers
       marker.destroy()
     @presentationMarkers = {}
-    #Set the text to the prompt
-    @editor.setText @prompt
-    range = @editor.getBuffer().getRange()
-    @markPrompt(range)
+
+    if @preventUserInput or @reading_for_stdin_callback
+      @editor.setText ''
+      @updateUneditable()
+    else
+      #Set the text to the prompt
+      @editor.setText @prompt
+      range = @editor.getBuffer().getRange()
+      @markPrompt(range)
     @editor.moveToEndOfLine()
 
     marker = @editor.markBufferPosition(new Point(0, 0))
