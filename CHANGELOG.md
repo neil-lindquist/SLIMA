@@ -1,3 +1,9 @@
+## 2.3.2 (2019-09-22)
+* Fix the REPL not getting keyboard focus when the last debugger is closed (#32)
+* Fix the lack of scroll bar when displaying a stack frame's source via source-form
+* Fix the behavior of Clear REPL when the prompt isn't present
+* Fix stack variable names being unnecessarily appended with `#0`
+
 ## 2.3.1 (2019-08-25)
 * Change the inspector contents to be displayed as formatted by swank (#28)
 * Change the behavior when swank requests user input to switch to the REPL tab (#27)
@@ -6,7 +12,6 @@
 * Fix the behavior of `*standard-output*` in multithreaded contexts (#26)
 * Fix some minor bugs with closing the repl
 * Fix the compile file command not loading the file (#29)
-
 
 ## 2.3.0 (2019-08-16)
 * Change the <kbd>q</kbd> key to only close the current frame info tab, instead of quitting all errors
@@ -59,6 +64,7 @@
 * Ensure the cursor is at the bottom of the REPL when printing the prompt or
   REPL output
 * Fix autodoc failing to show functions/macros with 0 argument lambda lists
+
 
 
 ## 1.3.3
