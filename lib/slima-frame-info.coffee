@@ -42,7 +42,7 @@ class FrameInfoView extends InfoView
           if frame.locals? and frame.locals.length > 0
             frame.locals.map (local, i) =>
               $.li {},
-                i + ': ' + local.name + (if (local.id == "0") then "" else ("#"+local.id)) + ' = '
+                i + ': ' + local.name + (if (local.id == 0) then "" else ("#"+local.id)) + ' = '
                 $.a {on:{click:(e) => @inspectVar(i)}}, local.value
           else
             $.li {}, '<No locals>'
