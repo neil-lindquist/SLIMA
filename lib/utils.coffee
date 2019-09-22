@@ -44,7 +44,7 @@ module.exports =
     else if source_location.buffer_type == 'file'
       editor_promise = atom.workspace.open(source_location.file)
     else if source_location.buffer_type == 'source-form'
-      editor = atom.workspace.buildTextEditor()
+      editor = atom.workspace.buildTextEditor({autoHeight: false})
       editor.setText(source_location.source_form)
       #change default title
       editor.getTitle = -> editor.getFileName() ? fallBackTitle
