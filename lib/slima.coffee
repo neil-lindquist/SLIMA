@@ -6,6 +6,7 @@ slime = require './slime-functions'
 SlimaEditor = require './slima-editor'
 SlimeAutocompleteProvider = require './slime-autocomplete'
 SwankStarter = require './swank-starter'
+utils = require './utils'
 
 module.exports = Slima =
   views: null
@@ -101,14 +102,20 @@ module.exports = Slima =
       @swankStart()
 
 
+  setupLinter: (registerIndie) ->
+    @linter = registerIndie(
+      name: 'SLIMA'
+    )
+    @subs.add(@linter)
+
 
   # Sets up a swank client but does not connect
   setupSwank: () ->
     host = atom.config.get 'slima.advancedSettings.swankHostname'
     port = atom.config.get 'slima.advancedSettings.swankPort'
     @swank = new Swank.Client(host, port)
-    @swank.on 'disconnect', =>
-      @swankCleanup
+    @swank.on 'disconnect', @swankCleanup
+    @swank.on 'compiler_notes', @processCompilerNotes
 
     atom.config.onDidChange 'slima.advancedSettings.swankHostname', (newHost)=>
       @swank.host = newHost.newValue
@@ -182,3 +189,38 @@ module.exports = Slima =
     @views.setStatusBar(statusBar)
 
   provideSlimeAutocomplete: -> SlimeAutocompleteProvider
+
+
+  processCompilerNotes: (notes) =>
+    if Slima.linter
+      linter_messages = []
+      try
+        for note in notes
+          message = {}
+          {source_file, source_editor, point} = utils.getSourceLocation(note.location)
+          if source_editor? and note.severity != 'read-error'
+            ast = paredit.parse(source_editor.getText())
+            start_idx = utils.convertPointToIndex(point, source_editor)
+            end_idx = paredit.navigator.forwardSexp(ast, start_idx)
+            position_end = utils.convertIndexToPoint(end_idx, source_editor)
+
+            if position_end.row != point.row
+              position_end = source_editor.getBuffer().rangeForRow(point.row).end
+          else
+            position_end = [point.line, point.col+1]
+
+          message.location = {file: source_file, position: [point, position_end]}
+          message.excerpt = note.message
+          switch note.severity
+            when "note", "redefinition"
+              message.severity = "info"
+            when "style-warning", "warning", "early-deprecation-warning", "late-deprecation-warning", "final-deprecation-warning"
+              message.severity = "warning"
+            else # read-error, error
+              message.severity = "error"
+          linter_messages.push(message)
+      catch error
+        console.warn error
+        atom.notifications.addWarning('Error processing compiler notes', {detail: error.message})
+
+      Slima.linter.setAllMessages(linter_messages)

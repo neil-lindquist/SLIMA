@@ -25,6 +25,54 @@ module.exports =
       setTimeout((-> marker.destroy()), 750)
       ), delay)
 
+  # Computes the file and point of a source location
+  getSourceLocation: (source_location) ->
+
+    loc =
+      source_file: null
+      source_editor: null
+      point: null
+
+    if source_location.buffer_type == 'error'
+      throw source_location.error
+
+    if source_location.buffer_type == 'buffer' or source_location.buffer_type == 'buffer-and-file'
+      # look through editors for an editor with a matching name
+      for editor in atom.workspace.getTextEditors()
+        if editor.getTitle() == source_location.buffer_name
+          loc.source_editor = editor
+          loc.source_file = editor.getPath()
+          break
+      unless loc.source_file
+        if source_location.buffer_type == 'buffer-and-file'
+          loc.source_file = source_location.file
+        else
+          throw Error('No file for buffer source location with title '+source_location.buffer_name)
+    else if source_location.buffer_type == 'file'
+      loc.editor_file = source_location.file
+    else
+      # TODO source-form
+      # TODO zip
+      throw Error('No file for source location of type ' + source_location.buffer_type)
+
+    if source_location.position_type == 'line'
+      row = source_location.position_line
+      col = source_location.position_column ? 0
+      loc.point = new Point(row, col)
+    else if source_location.position_type == 'position'
+      if loc.source_editor
+        loc.point = loc.source_editor.getBuffer().positionForCharacterIndex(source_location.position_offset)
+      else
+        throw Error('Cannot use index position when editor not present')
+    else
+      #TODO function-name
+      #TODO source-path
+      #TODO method
+      throw Error('Unsupported position type '+source_location.position_type)
+
+    return loc
+
+
   # Display a source location
   showSourceLocation: (source_location, fallBackTitle) ->
     if source_location.buffer_type == 'error'

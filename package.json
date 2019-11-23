@@ -25,6 +25,11 @@
     "coffeelint": "~2.1.0"
   },
   "consumedServices": {
+    "linter-indie": {
+      "versions": {
+        "2.0.0": "setupLinter"
+      }
+    },
     "status-bar": {
       "versions": {
         "^1.0.0": "consumeStatusBar"
