@@ -32,24 +32,23 @@ Guide to setting up Atom as your main Lisp editor!
 -------------------------------------------
 By following these instructions, you can use Atom very effectively as your Lisp editor.
 
-1. Install this `slima` package, as well as the `language-lisp` package (syntax highlighting) and the `lisp-paredit` package (proper idiomatic lisp indentation and parenthesis editing)
+1. Install this `SLIMA` package from Atom.  Additionally, it is recommended to install the `language-lisp` package (syntax highlighting) and either the `lisp-paredit` or `parinfer` package or both (parenthesis editing).
 
-2. Install a lisp if you don't already have one (such as SBCL)
+2. Install a Common Lisp if you don't already have one (such as [SBCL](http://sbcl.org/platform-table.html)).
 
-3. Download the `slime` code, which exists in a separate repository. Place it somewhere safe (you'll need it's location in the following step). Note that if you've used Emacs before, you may already have slime somewhere on your computer. Otherwise, you can download it from the [Github Repository](https://github.com/slime/slime/releases).
+3. Download the source code for SLIME, which exists in a separate repository. Place it somewhere safe (you'll need it's location in the following step). Note that if you've used Emacs before, you may already have SLIME somewhere on your computer. Otherwise, you can download it from the [Github Repository](https://github.com/slime/slime/releases).
 
-4. After installing the `slima` package, go to its package preferences page within Atom. Under the "Lisp Process" field, enter the executable for your lisp (ex. `sbcl`. Note that on some platforms you may need the full pathname, such as `/usr/bin/sbcl`). Under the "Slime Path" field, enter the path where you have slime on your computer from the above step.
+4. After installing the `slima` package, go to its package preferences page within Atom. Under the "Lisp Process" field, enter the executable for your lisp (ex. `sbcl`. Note that on some platforms you may need the full pathname, such as `/usr/bin/sbcl`). Under the "Slime Path" field, enter the path where you have SLIME on your computer from the above step.
 
-5. (Optional) Consider adding the following to your Atom keymap file:
+5. (Optional) Consider adding the following to your Atom keymap file.  This will allow the tab key to trigger automatic, correct indentation of your Lisp code (unless there's an autocomplete menu active).
 ```
 'atom-text-editor[data-grammar~="lisp"]:not(.autocomplete-active)':
     'tab': 'lisp-paredit:indent'
 ```
-This will allow the tab key to trigger automatic, correct indentation of your Lisp code (unless there's an autocomplete menu active).
 
 6. (Optional) In Atom's `autocomplete-plus` package, consider changing the "Keymap For Confirming A Suggestion" option from "tab and enter" to just "tab". This makes autocomplete more amenable when using the REPL, so that pressing enter will complete your command rather than triggering autocomplete.
 
-7. (Optional) In Atom's `bracket-matcher` package, consider unchecking the "Autocomplete Brackets" option. The `lisp-paredit` package above will take care of autocompleting parenthesis when you're editing a lisp file. Unchecking this option will prevent single quotes from being autocompleted in pairs, allowing you to define lisp symbols easier (for example, `(setf x 'some-symbol)`).
+7. (Optional) In Atom's `bracket-matcher` package, consider unchecking the "Autocomplete Brackets" option. Both the `lisp-paredit` and `parinfer` packages above will take care of autocompleting parenthesis when you're editing a lisp file. Unchecking this option will prevent single quotes from being autocompleted in pairs, allowing you to define lisp symbols easier (for example, `(setf x 'some-symbol)`).
 
 All done! Futher information on configuring the lisp process can be found in the [project wiki](https://github.com/neil-lindquist/SLIMA/wiki/Controlling-the-Lisp-Process-Lifecycle).
 
@@ -74,6 +73,6 @@ To use the integrated profiler, run `Slime: Profile`. You should see a menu appe
 
 How it works
 --------------
-This package makes use of the superb work from the slime project. Slime started as a way to integrate Lisp with Emacs, a popular text editor for Lisp. It works by starting what is known as a swank server, which is code that runs in Lisp. Emacs then runs separately and connects to the swank server. It's able to make remote procedure calls to the swank server to compile functions, lookup function definitions from your live code, and much more thanks to the fact that Lisp is such a dynamic language.
+This package makes use of the superb work from the SLIME project. SLIME started as a way to integrate Lisp with Emacs, a popular text editor for Lisp. It works by starting what is known as a Swank server, which is code that runs in Lisp. Emacs then runs separately and connects to the Swank server. It's able to make remote procedure calls to the swank server to compile functions, lookup function definitions from your live code, and much more thanks to the fact that Lisp is such a dynamic language.
 
-This package uses the swank server from the slime project unchanged. This package allows Atom to speak the same protocol as Emacs for controlling the swank server and integrating Lisp into the editor.
+This package uses the Swank server from the SLIME project unchanged. This package allows Atom to speak the same protocol as Emacs for controlling the Swank server and integrating Lisp into the editor.
