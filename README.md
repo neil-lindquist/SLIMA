@@ -38,7 +38,7 @@ By following these instructions, you can use Atom very effectively as your Lisp 
 
 3. Download the source code for SLIME, which exists in a separate repository. Place it somewhere safe (you'll need it's location in the following step). Note that if you've used Emacs before, you may already have SLIME somewhere on your computer. Otherwise, you can download it from the [Github Repository](https://github.com/slime/slime/releases).
 
-4. After installing the `slima` package, go to its package preferences page within Atom. Under the "Lisp Process" field, enter the executable for your lisp (ex. `sbcl`. Note that on some platforms you may need the full pathname, such as `/usr/bin/sbcl`). Under the "Slime Path" field, enter the path where you have SLIME on your computer from the above step.
+4. After installing the `slima` package, go to its package preferences page within Atom. Under the "Lisp Process" field, enter the executable for your lisp (ex. `sbcl`. Note that on some platforms you may need the full pathname, such as `/usr/bin/sbcl`). Under the "SLIME Path" field, enter the path where you have SLIME on your computer from the above step.
 
 5. (Optional) Consider adding the following to your Atom keymap file.  This will allow the tab key to trigger automatic, correct indentation of your Lisp code (unless there's an autocomplete menu active).
 ```

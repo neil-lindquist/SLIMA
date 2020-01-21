@@ -17,7 +17,7 @@ module.exports = Slima =
   # Provide configuration options
   config:
     slimePath:
-      title: 'Slime Path'
+      title: 'SLIME Path'
       description: 'Path to where SLIME resides on your computer.'
       type: 'string'
       default: '~/Desktop/slime'
@@ -31,7 +31,7 @@ module.exports = Slima =
       order: 2
 
     autoStart:
-      title: 'Start lisp when Atom opens'
+      title: 'Start Lisp when Atom opens'
       description: 'When checked, a Lisp REPL will automatically open every time you open atom.'
       type: 'boolean'
       default: false
@@ -43,8 +43,8 @@ module.exports = Slima =
       order: 4
       properties:
         showSwankDebug:
-          title: 'Show the swank messages in the JavaScript console'
-          description: 'When enabled, every message coming from the swank server will be shown in the JavaScript console.'
+          title: 'Show the Swank messages in the JavaScript console'
+          description: 'When enabled, every message coming from the Swank server will be shown in the JavaScript console.'
           type: 'boolean'
           default: false
         connectionAttempts:
@@ -59,12 +59,12 @@ module.exports = Slima =
           default: ''
         swankHostname:
           title: 'Swank Hostname'
-          description: 'The hostname of the swank server to connect to'
+          description: 'The hostname of the Swank server to connect to'
           type: 'string'
           default: 'localhost'
         swankPort:
           title: 'Swank Port'
-          description: 'The port used by the swank server to connect to'
+          description: 'The port used by the Swank server to connect to'
           type: 'integer'
           default: 4005
 
