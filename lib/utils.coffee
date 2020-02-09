@@ -1,4 +1,5 @@
 {Range, Point} = require 'atom'
+minibuffer = require './minibuffer'
 
 module.exports =
   lispWordRegex: /^[	 ]*$|[^\s\(\)"',;#%&\|`…]+|[\/\\\(\)"':,\.;<>~!@#\$%\^&\*\|\+=\[\]\{\}`\?\-…]+/g
@@ -44,21 +45,7 @@ module.exports =
     else if source_location.buffer_type == 'file'
       editor_promise = atom.workspace.open(source_location.file)
     else if source_location.buffer_type == 'source-form'
-      editor = atom.workspace.buildTextEditor({autoHeight: false})
-      editor.setText(source_location.source_form)
-      #change default title
-      editor.getTitle = -> editor.getFileName() ? fallBackTitle
-      #change condition for save prompt for unsaved file
-      editor_buffer = editor.getBuffer()
-      editor_buffer.isModified = ->
-        if editor_buffer.file?.existsSync()
-          editor_buffer.buffer.isModified()
-        else
-          editor_buffer.getText() != source_location.source_form
-      #add to active pane
-      activePane = atom.workspace.getActivePane()
-      activePane.addItem(editor)
-      activePane.activateItem(editor)
+      editor = minibuffer.open(fallBackTitle, source_location.source_form, atom.workspace.getActivePane())
       editor_promise = Promise.resolve(editor)
     else
       # TODO zip
