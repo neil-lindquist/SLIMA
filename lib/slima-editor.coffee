@@ -27,8 +27,8 @@ class SlimaEditor
       @compileBuffer()
     @subs.add atom.commands.add @editorElement, 'slime:macroexpand-1': =>
       @macroexpand1()
-    @subs.add atom.commands.add @editorElement, 'slime:macroexpand-all': =>
-      @macroexpandAll()
+    @subs.add atom.commands.add @editorElement, 'slime:macroexpand': =>
+      @macroexpand()
 
     # Pretend we just finished editing, so that way things get up to date
     @stoppedEditingCallback()
@@ -164,7 +164,7 @@ class SlimaEditor
     @macroexpand("macroexpand-1")
 
 
-  macroexpandAll: ->
+  macroexpand: ->
     @macroexpand("macroexpand")
 
 

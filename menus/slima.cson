@@ -51,8 +51,8 @@
               'command': 'slime:macroexpand-1'
             },
             {
-              'label': 'Macroexpand All',
-              'command': 'slime:macroexpand-all'
+              'label': 'Macroexpand',
+              'command': 'slime:macroexpand'
             },
             {
               'label': 'Profile',

@@ -13,14 +13,14 @@
     'alt-c': 'slime:compile-function'
     'alt-k': 'slime:compile-buffer'
     'alt-m': 'slime:macroexpand-1'
-    'alt-shift-m': 'slime:macroexpand-all'
+    'alt-shift-m': 'slime:macroexpand'
 
 'atom-text-editor':
     'ctrl-cmd-.': 'slime:goto-definition'
     'ctrl-cmd-c': 'slime:compile-function'
     'ctrl-cmd-k': 'slime:compile-buffer'
     'ctrl-cmd-m': 'slime:macroexpand-1'
-    'ctrl-cmd-shift-m': 'slime:macroexpand-all'
+    'ctrl-cmd-shift-m': 'slime:macroexpand'
 
     # When in a text editor, don't enable debugger shortcuts
     '0': 'abort!'
