@@ -1,4 +1,5 @@
 {CompositeDisposable, Point, Range} = require 'atom'
+minibuffer = require './minibuffer'
 paredit = require 'paredit.js'
 slime = require './slime-functions'
 Bubble = require './slima-bubble'
@@ -26,9 +27,19 @@ class SlimaEditor
     @subs.add atom.commands.add @editorElement, 'slime:compile-buffer': =>
       @compileBuffer()
     @subs.add atom.commands.add @editorElement, 'slime:macroexpand-1': =>
-      @macroexpand1()
+      @expand(false, true, false)
     @subs.add atom.commands.add @editorElement, 'slime:macroexpand': =>
-      @macroexpand()
+      @expand(true, true, false)
+    @subs.add atom.commands.add @editorElement, 'slime:macroexpand-all': =>
+      @expand('all', true, false)
+    @subs.add atom.commands.add @editorElement, 'slime:compiler-macroexpand-1': =>
+      @expand(false, false, true)
+    @subs.add atom.commands.add @editorElement, 'slime:compiler-macroexpand': =>
+      @expand(true, false, true)
+    @subs.add atom.commands.add @editorElement, 'slime:expand-1': =>
+      @expand(false, true, true)
+    @subs.add atom.commands.add @editorElement, 'slime:expand': =>
+      @expand(true, true, true)
 
     # Pretend we just finished editing, so that way things get up to date
     @stoppedEditingCallback()
@@ -152,21 +163,14 @@ class SlimaEditor
       # Trigger the highlight effect
       utils.highlightRange(Range([0, 0], @convertIndexToPoint(@editor.getText().length - 1)), @editor, delay=250)
 
-  macroexpand: (fun) ->
+  expand: (repeatedly, macros, compiler_macros) ->
     if @swank.connected
       sexp = @getCurrentSexp()
       if sexp
-        console.log(sexp.sexp);
-        @swank.eval("(pprint (" + fun + "'" + sexp.sexp + "))", @pkg)
-
-
-  macroexpand1: ->
-    @macroexpand("macroexpand-1")
-
-
-  macroexpand: ->
-    @macroexpand("macroexpand")
-
+        @swank.expand(sexp.sexp, @pkg, repeatedly, macros, compiler_macros).then (result) ->
+          minibuffer.open("Expansion", result, atom.workspace.getBottomDock().getActivePane())
+    else
+      atom.notifications.addWarning("Not connected to Lisp!")
 
   editorDestroyedCallback: ->
     console.log "Closed!"

@@ -47,12 +47,32 @@
               'command': 'slime:goto-definition'
             },
             {
+              'label': 'Expand',
+              'command': 'slime:expand'
+            }
+            {
+              'label': 'Expand 1',
+              'command': 'slime:expand-1'
+            }
+            {
+              'label': 'Macroexpand',
+              'command': 'slime:macroexpand'
+            },
+            {
               'label': 'Macroexpand 1',
               'command': 'slime:macroexpand-1'
             },
             {
-              'label': 'Macroexpand',
-              'command': 'slime:macroexpand'
+              'label': 'Macroexpand All',
+              'command': 'slime:macroexpand-all'
+            }
+            {
+              'label': 'Compiler Macroexpand',
+              'command': 'slime:compiler-macroexpand'
+            },
+            {
+              'label': 'Compiler Macroexpand 1',
+              'command': 'slime:compiler-macroexpand-1'
             },
             {
               'label': 'Profile',
