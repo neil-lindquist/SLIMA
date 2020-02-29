@@ -150,12 +150,42 @@ class SlimaEditor
       # Trigger the highlight effect
       utils.highlightRange(Range([0, 0], @convertIndexToPoint(@editor.getText().length - 1)), @editor, delay=250)
 
+  expand_in_minibuffer: (minibuffer, repeatedly, macros, compiler_macros) ->
+    index = utils.convertPointToIndex(minibuffer.getCursors()[0].getBufferPosition(), minibuffer)
+    sexp = utils.getCurrentSexp(index, minibuffer.getText())
+    if sexp
+      @swank.expand(sexp.sexp, @pkg, repeatedly, macros, compiler_macros).then (result) ->
+        [start, end] = sexp.range
+        startPoint = utils.convertIndexToPoint(start, minibuffer)
+        endPoint = utils.convertIndexToPoint(end, minibuffer)
+        minibuffer.setTextInBufferRange([startPoint, endPoint], result, {})
+
   expand: (repeatedly, macros, compiler_macros) ->
     if @swank.connected
       sexp = @getCurrentSexp()
       if sexp
-        @swank.expand(sexp.sexp, @pkg, repeatedly, macros, compiler_macros).then (result) ->
-          minibuffer.open("Expansion", result, atom.workspace.getBottomDock().getActivePane())
+        @swank.expand(sexp.sexp, @pkg, repeatedly, macros, compiler_macros).then (result) =>
+          editor = minibuffer.open("Expansion", result, atom.workspace.getBottomDock().getActivePane())
+
+          subs = new CompositeDisposable
+          editor.onDidDestroy () ->
+            subs.dispose()
+
+          editorElement = atom.views.getView(editor)
+          subs.add atom.commands.add editorElement, 'slime:macroexpand-1': =>
+            @expand_in_minibuffer(editor, false, true, false)
+          subs.add atom.commands.add editorElement, 'slime:macroexpand': =>
+            @expand_in_minibuffer(editor, true, true, false)
+          subs.add atom.commands.add editorElement, 'slime:macroexpand-all': =>
+            @expand_in_minibuffer(editor, 'all', true, false)
+          subs.add atom.commands.add editorElement, 'slime:compiler-macroexpand-1': =>
+            @expand_in_minibuffer(editor, false, false, true)
+          subs.add atom.commands.add editorElement, 'slime:compiler-macroexpand': =>
+            @expand_in_minibuffer(editor, true, false, true)
+          subs.add atom.commands.add editorElement, 'slime:expand-1': =>
+            @expand_in_minibuffer(editor, false, true, true)
+          subs.add atom.commands.add editorElement, 'slime:expand': =>
+            @expand_in_minibuffer(editor, true, true, true)
     else
       atom.notifications.addWarning("Not connected to Lisp!")
 
