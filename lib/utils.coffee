@@ -1,19 +1,20 @@
 {Range, Point} = require 'atom'
 minibuffer = require './minibuffer'
+paredit = require 'paredit.js'
 
 module.exports =
   lispWordRegex: /^[	 ]*$|[^\s\(\)"',;#%&\|`…]+|[\/\\\(\)"':,\.;<>~!@#\$%\^&\*\|\+=\[\]\{\}`\?\-…]+/g
 
-  indexToPoint: (index, src) ->
-    substr = src.substring(0, index)
+  convertIndexToPoint: (index, editor) ->
+    substr = editor.getText().substring(0, index)
     row = (substr.match(/\n/g) || []).length
     lineStart = substr.lastIndexOf("\n") + 1
     column = index - lineStart
-    {row: row, column: column}
+    new Point(row, column)
 
-  convertIndexToPoint: (index, editor) ->
-    p = @indexToPoint(index, editor.getText())
-    new Point(p.row, p.column)
+  convertPointToIndex: (point, editor) ->
+    range = new Range(new Point(0, 0), point)
+    return editor.getTextInBufferRange(range).length
 
   highlightRange: (range, editor, delay=1000) ->
     # Highlight the given (Atom) range temporarily and fade out
@@ -66,3 +67,21 @@ module.exports =
         #TODO source-path
         #TODO method
         Promise.reject('Unsupported position type given: "'+source_location.position_type+'"')
+
+
+  getCurrentSexp: (index, text, ast=paredit.parse(text)) ->
+    console.log ast
+    if ast.errors?.length != 0
+      return null #paredit can't parse the expression
+    range = paredit.navigator.sexpRangeExpansion ast, index, index
+    if not range
+      return null
+    [start, end] = range
+    sexp = text[start...end]
+    while sexp.charAt(0) != '('
+      range = paredit.navigator.sexpRangeExpansion ast, start, end
+      if not range
+        return null
+      [start, end] = range
+      sexp = text[start...end]
+    return sexp: sexp, relativeCursor: index - start, range: [start, end]

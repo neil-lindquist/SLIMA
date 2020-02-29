@@ -74,22 +74,9 @@ class SlimaEditor
   # Return a string of the current sexp the user is in. The "deepest" one.
   # If we're not in one, return null.
   getCurrentSexp: ->
-    if @ast.errors?.length != 0
-      return null #paredit can't parse the expression
     index = @getCursorIndex()
     text = @editor.getText()
-    range = paredit.navigator.sexpRangeExpansion @ast, index, index
-    if not range
-      return null
-    [start, end] = range
-    sexp = text[start...end]
-    while sexp.charAt(0) != '('
-      range = paredit.navigator.sexpRangeExpansion @ast, start, end
-      if not range
-        return null
-      [start, end] = range
-      sexp = text[start...end]
-    return sexp: sexp, relativeCursor: index - start
+    return utils.getCurrentSexp(index, text, @ast)
 
   # Return the outermost sexp range!
   getOutermostSexp: ->
@@ -177,16 +164,4 @@ class SlimaEditor
 
   getCursorIndex: ->
     point = @editor.getCursors()[0].getBufferPosition()
-    range = new Range(new Point(0, 0), point)
-    return @editor.getTextInBufferRange(range).length
-
-  convertIndexToPoint: (index) ->
-    p = @indexToPoint(index, @editor.getText())
-    new Point(p.row, p.column)
-
-  indexToPoint: (index, src) ->
-    substr = src.substring(0, index)
-    row = (substr.match(/\n/g) || []).length
-    lineStart = substr.lastIndexOf("\n") + 1
-    column = index - lineStart
-    {row: row, column: column}
+    return utils.convertPointToIndex(point, @editor)
