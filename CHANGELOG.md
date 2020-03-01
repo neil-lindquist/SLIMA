@@ -1,3 +1,10 @@
+## 2.4.0 (2020-03-01)
+* Add support for compiler-macro expansion and general expansion
+* Add support for a codewalking macroexpand
+* Change `macroexpand-all` to `macroexpand` to match SLIME
+* Change some of the descriptions in SLIMA's settings
+* Remove some unnecessary debugging prints
+
 ## 2.3.2 (2019-09-22)
 * Fix the REPL not getting keyboard focus when the last debugger is closed (#32)
 * Fix the lack of scroll bar when displaying a stack frame's source via source-form
