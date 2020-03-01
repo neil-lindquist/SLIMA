@@ -18,7 +18,6 @@ class SlimaEditor
     @subs = new CompositeDisposable
     @subs.add @editor.onDidStopChanging => @stoppedEditingCallback()
     @subs.add @editor.onDidChangeCursorPosition => @cursorMovedCallback()
-    @subs.add @editor.onDidDestroy => @editorDestroyedCallback()
 
     @subs.add atom.commands.add @editorElement, 'slime:goto-definition': =>
       @openDefinition()
@@ -96,7 +95,6 @@ class SlimaEditor
       # (taking into account how Lisp parses word, which is different than many other languages!)
       word = @editor.getSelectedText()
       word = @editor.getWordUnderCursor({wordRegex: utils.lispWordRegex}) if word == ""
-      console.log "Looking up: " + word
 
       @swank.find_definitions(word, @pkg).then (refs) =>
         bubble = new Bubble(atom.workspace.getActiveTextEditor(), refs)
@@ -107,7 +105,6 @@ class SlimaEditor
 
   compileFunction: ->
     # Compile the function under the cursor
-    console.log "Compile function"
     sexp = @getOutermostSexp()
     if sexp
       if @swank.connected
@@ -124,7 +121,6 @@ class SlimaEditor
 
         # Find file's package
         pkg = slime.getEditorPackage(@editor, p_start)
-        console.log("pkg = "+pkg)
 
         # Trigger a compilation
         line_reference = p_start.row + 1
@@ -188,9 +184,6 @@ class SlimaEditor
             @expand_in_minibuffer(editor, true, true, true)
     else
       atom.notifications.addWarning("Not connected to Lisp!")
-
-  editorDestroyedCallback: ->
-    console.log "Closed!"
 
   getCursorIndex: ->
     point = @editor.getCursors()[0].getBufferPosition()

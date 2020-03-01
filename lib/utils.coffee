@@ -70,7 +70,6 @@ module.exports =
 
 
   getCurrentSexp: (index, text, ast=paredit.parse(text)) ->
-    console.log ast
     if ast.errors?.length != 0
       return null #paredit can't parse the expression
     range = paredit.navigator.sexpRangeExpansion ast, index, index
