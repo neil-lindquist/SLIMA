@@ -144,7 +144,7 @@ class SlimaEditor
       @swank.compile_file(path, @pkg, true)
 
       # Trigger the highlight effect
-      utils.highlightRange(Range([0, 0], @convertIndexToPoint(@editor.getText().length - 1)), @editor, delay=250)
+      utils.highlightRange(@editor.getBuffer().getRange(), @editor, delay=250)
 
   expand_in_minibuffer: (minibuffer, repeatedly, macros, compiler_macros) ->
     index = utils.convertPointToIndex(minibuffer.getCursors()[0].getBufferPosition(), minibuffer)
