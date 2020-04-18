@@ -20,9 +20,9 @@ module.exports =
     # Highlight the given (Atom) range temporarily and fade out
     marker = editor.markBufferRange(range, invalidate: 'never')
     decoration = editor.decorateMarker(marker, type: 'highlight', class: 'slime-flash-highlight')
-    setTimeout((=>
+    setTimeout((->
       decoration.setProperties(type: 'highlight', class: 'slime-flash-highlight animated')
-      setTimeout((=> marker.destroy()), 750)
+      setTimeout((-> marker.destroy()), 750)
       ), delay)
 
   # Display a source location
@@ -59,8 +59,7 @@ module.exports =
         col = location.position_column ? 0
         editor.setCursorBufferPosition(new Point(row, col))
       else if source_location.position_type == 'position'
-        position = editor.getBuffer()
-                         .positionForCharacterIndex(source_location.position_offset)
+        position = editor.getBuffer().positionForCharacterIndex(source_location.position_offset)
         editor.setCursorBufferPosition(position)
       else
         #TODO function-name

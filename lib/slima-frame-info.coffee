@@ -78,9 +78,9 @@ class FrameInfoView extends InfoView
             $.button {className:'inline-block-tight btn', on:{click:@inspectInFrame}}, 'Inspect in Frame'
 
   create_nav: (index, frame_description, label) ->
-      $.li {},
-        $.button {className:'inline-block-tight frame-navigation-button btn', on:{click:(event)=>@show_frame index}}, label
-        index+': '+frame_description
+    $.li {},
+      $.button {className:'inline-block-tight frame-navigation-button btn', on:{click:(event)=>@show_frame index}}, label
+      index+': '+frame_description
 
   setup: (@swank, @info, @frame_index, @debugView) =>
     @swank.debug_stack_frame_details(@frame_index, @info.stack_frames, @info.thread, @debugView.replView.pkg).then () =>
@@ -121,7 +121,7 @@ class FrameInfoView extends InfoView
     @swank.debug_return_from_frame(@frame_index, @refs.frameReturnValue.value, @info.thread, @debugView.replView.pkg)
     .then () =>
       @debugView.active = false
-    .catch (error) =>
+    .catch (error) ->
       atom.notifications.addError error.message, dismissable:true
 
   evalInFrame: () =>

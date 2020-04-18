@@ -106,7 +106,7 @@ module.exports = Slima =
   setupSwank: () ->
     host = atom.config.get 'slima.advancedSettings.swankHostname'
     port = atom.config.get 'slima.advancedSettings.swankPort'
-    @swank = new Swank.Client(host, port);
+    @swank = new Swank.Client(host, port)
     @swank.on 'disconnect', =>
       @swankCleanup
 

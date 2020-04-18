@@ -62,12 +62,12 @@ class SwankStarter
     @swank_starter = new tmp.File("swank-starter.lisp")
     @swank_script = @swank_starter.path
     @swank_starter.writeFileSync(
-        "(load \"#{loader_path.replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}\" :verbose t) " +
-        "(funcall (read-from-string \"swank-loader:init\") " +
-                 ":from-emacs t) " +
-        "(funcall (read-from-string \"swank:create-server\") " +
-                 ":port 4005 " +
-                 ":dont-close nil)")
+      "(load \"#{loader_path.replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}\" :verbose t) " +
+      "(funcall (read-from-string \"swank-loader:init\") " +
+               ":from-emacs t) " +
+      "(funcall (read-from-string \"swank:create-server\") " +
+               ":port 4005 " +
+               ":dont-close nil)")
     try
       return fs.statSync(loader_path).isFile()
     catch e

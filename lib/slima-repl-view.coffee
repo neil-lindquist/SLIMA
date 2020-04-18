@@ -121,8 +121,8 @@ class REPLView extends InfoView
           return
 
     # Prevent undo / redo
-    @subs.add atom.commands.add @editorElement, 'core:undo': (event) => event.stopImmediatePropagation()
-    @subs.add atom.commands.add @editorElement, 'core:redo': (event) => event.stopImmediatePropagation()
+    @subs.add atom.commands.add @editorElement, 'core:undo': (event) -> event.stopImmediatePropagation()
+    @subs.add atom.commands.add @editorElement, 'core:redo': (event) -> event.stopImmediatePropagation()
 
     @subs.add atom.commands.add @editorElement, 'editor:newline': (event) => @handleEnter(event)
     @subs.add atom.commands.add @editorElement, 'editor:newline-below': (event) => @handleEnter(event)
@@ -178,24 +178,24 @@ class REPLView extends InfoView
 
     # Add presentation inspection
     @subs.add atom.commands.add @editorElement, 'slime:inspect-presentation-context', {
-        didDispatch: (event) =>
-          clazzes = event.target.classList
-          pid = null
-          for clazz in clazzes
-            match = ///^repl-presentation-(\d+)$///.exec(clazz)
-            if match?
-              pid = Number(match[1])
-              break
-          if pid?
-            @swank.inspect_presentation(pid, @pkg)
-            .then(@inspect)
-        hiddenInCommandPalette: true
-      }
+      didDispatch: (event) =>
+        clazzes = event.target.classList
+        pid = null
+        for clazz in clazzes
+          match = ///^repl-presentation-(\d+)$///.exec(clazz)
+          if match?
+            pid = Number(match[1])
+            break
+        if pid?
+          @swank.inspect_presentation(pid, @pkg)
+          .then(@inspect)
+      hiddenInCommandPalette: true
+    }
 
     @subs.add atom.commands.add @editorElement, 'slime:inspect-presentation', (event) =>
       cursors = @editor.getCursorBufferPositions()
       for cursor in cursors
-        for pid,marker of @presentationMarkers
+        for pid, marker of @presentationMarkers
           if marker.getBufferRange().containsPoint(cursor)
             @swank.inspect_presentation(pid, @pkg)
             .then(@inspect)
@@ -206,7 +206,7 @@ class REPLView extends InfoView
       do (i) =>
         @addDebugCommand 'slime:debug-restart-'+i, (debug) -> debug.activate_restart(i)
 
-    @addMenuCommand 'slime:menu-quit', ((debug) -> debug.quit()), ((frame) => frame.destroy()), (inspector) => inspector.destroy()
+    @addMenuCommand 'slime:menu-quit', ((debug) -> debug.quit()), ((frame) -> frame.destroy()), (inspector) -> inspector.destroy()
     @addMenuCommand 'slime:menu-next', null, ((frame) -> frame.show_frame_up()), ((inspector)->inspector.show_next())
     @addMenuCommand 'slime:menu-previous', null, ((frame) -> frame.show_frame_down()), ((inspector)->inspector.show_previous())
 
@@ -241,7 +241,7 @@ class REPLView extends InfoView
     # Unfortunately, as per https://discuss.atom.io/t/how-to-disable-do-you-want-to-save-dialog/31373
     # there is no built-in API to do this. As such, we must override an API method to trick
     # Atom into thinking it isn't ever modified.
-    @editor.isModified = (() => false)
+    @editor.isModified = (() -> false)
 
 
     # Hide the gutter(s)
@@ -256,32 +256,32 @@ class REPLView extends InfoView
   # registers a command for one or more menus
   addMenuCommand: (name, debugCommand, frameCommand, inspectorCommand) ->
     @subs.add atom.commands.add 'atom-workspace', name, {
-        didDispatch: (event) => @callCurrentMenu(event, debugCommand, frameCommand, inspectorCommand)
-        hiddenInCommandPalette: true
-      }
+      didDispatch: (event) => @callCurrentMenu(event, debugCommand, frameCommand, inspectorCommand)
+      hiddenInCommandPalette: true
+    }
 
   # registers a debug command
   # Note that these commands aren't displayed in the command palette, since they alias buttons
   addDebugCommand: (name, command) ->
     @subs.add atom.commands.add 'atom-workspace', name, {
-        didDispatch: (event) => @callCurrentDebugger(event, command)
-        hiddenInCommandPalette: true
-      }
+      didDispatch: (event) => @callCurrentDebugger(event, command)
+      hiddenInCommandPalette: true
+    }
   # registers a frame info command
   # Note that these commands aren't displayed in the command palette, since they alias buttons
   addFrameInfoCommand: (name, command) ->
     @subs.add atom.commands.add 'atom-workspace', name, {
-        didDispatch: (event) => @callCurrentFrameInfo(event, command)
-        hiddenInCommandPalette: true
-      }
+      didDispatch: (event) => @callCurrentFrameInfo(event, command)
+      hiddenInCommandPalette: true
+    }
 
   moveCursorToFirstCharacterOfLine: (cursor) =>
     screenRow = cursor.getScreenRow()
     editableStart = @uneditableMarker.getBufferRange().end
     if screenRow == @editor.screenPositionForBufferPosition(editableStart).row
       screenLineStart = @editor.clipScreenPosition([screenRow, 0], {
-          skipSoftWrapIndentation:true
-        })
+        skipSoftWrapIndentation:true
+      })
       screenLineBufferRange = @editor.bufferRangeForScreenRange([screenLineStart,
                                                                  [screenRow, Infinity]])
       firstCharacterColumn = editableStart.column
@@ -314,7 +314,7 @@ class REPLView extends InfoView
 
   clearREPL: () ->
     #clear the old presentaiton markers
-    for pid,marker of @presentationMarkers
+    for pid, marker of @presentationMarkers
       marker.destroy()
     @presentationMarkers = {}
 
@@ -329,13 +329,13 @@ class REPLView extends InfoView
     @editor.moveToEndOfLine()
 
     marker = @editor.markBufferPosition(new Point(0, 0))
-    @editor.decorateMarker marker, {type:'line',class:'repl-line'}
+    @editor.decorateMarker marker, {type:'line', class:'repl-line'}
 
 
   # Adds non-user-inputted text to the REPL
   appendText: (text, colorTags=true) ->
     @inputFromUser = false
-    range = @editor.insertText(text, {autoIndent:false,autoIndentNewline:false})
+    range = @editor.insertText(text, {autoIndent:false, autoIndentNewline:false})
     if colorTags
       marker = @editor.markBufferRange(range, {exclusive: true})
       @editor.decorateMarker(marker, {type: 'text', class:'syntax--string syntax--quoted syntax--double syntax--lisp'})
@@ -373,7 +373,7 @@ class REPLView extends InfoView
     @showingPrompt = false
     @editor.moveToBottom()
     @editor.moveToEndOfLine()
-    @appendText('\n',false)
+    @appendText('\n', false)
     if @reading_for_stdin_callback?
       @reading_for_stdin_callback(input+'\n')
       @reading_for_stdin_callback = null
@@ -395,13 +395,13 @@ class REPLView extends InfoView
     @editor.moveToBottom()
     @editor.moveToEndOfLine()
 
-    @editor.insertText("\n", {autoIndent:false,autoIndentNewline:false})
-    range = @editor.insertText(@prompt, {autoIndent:false,autoIndentNewline:false})[0]
+    @editor.insertText("\n", {autoIndent:false, autoIndentNewline:false})
+    range = @editor.insertText(@prompt, {autoIndent:false, autoIndentNewline:false})[0]
     @markPrompt(range)
 
     # Now, mark it
     marker = @editor.markBufferPosition(range.start)
-    @editor.decorateMarker marker, {type:'line',class:'repl-line'}
+    @editor.decorateMarker marker, {type:'line', class:'repl-line'}
 
     @inputFromUser = true
 
@@ -455,11 +455,11 @@ class REPLView extends InfoView
       @closeDebugTab(Number(obj.level))
 
     # Profile functions
-    @swank.on 'profile_command_complete', (msg) =>
+    @swank.on 'profile_command_complete', (msg) ->
       atom.notifications.addSuccess(msg)
 
 
-  y_or_n_p_resolver: (q, err=false) =>
+  y_or_n_p_resolver: (q, err=false) ->
     if err
       err_msg = 'Please enter "y" for yes or "n" for no'
     else
@@ -552,7 +552,7 @@ class REPLView extends InfoView
 
   setupDebugger: () ->
     @dbgv = []
-    process.nextTick =>
+    process.nextTick -> undefined
     @subs.add atom.workspace.addOpener (filePath) =>
       if filePath.match(///^slime://debug/\d+$///)
         level = filePath.slice(14)
@@ -602,7 +602,7 @@ class REPLView extends InfoView
       @inspector.setup(@swank, obj, @)
       atom.workspace.open('slime://inspect/')
 
-  callCurrentMenu: (event, debugCallback, frameCallback, inspectorCallback) =>
+  callCurrentMenu: (event, debugCallback, frameCallback, inspectorCallback) ->
     activeItem = atom.workspace.getActivePaneItem()
     if debugCallback? and activeItem instanceof DebuggerView
       debugCallback(activeItem)
@@ -613,7 +613,7 @@ class REPLView extends InfoView
     else
       event.abortKeyBinding()
 
-  callCurrentDebugger: (event, callback) =>
+  callCurrentDebugger: (event, callback) ->
     activeItem = atom.workspace.getActivePaneItem()
     #TODO consider adding command to frame info views as well
     if activeItem instanceof DebuggerView
@@ -621,14 +621,14 @@ class REPLView extends InfoView
     else
       event.abortKeyBinding()
 
-  callCurrentFrameInfo: (event, callback) =>
+  callCurrentFrameInfo: (event, callback) ->
     activeItem = atom.workspace.getActivePaneItem()
     if activeItem instanceof FrameInfoView and not event.target.classList.contains('debug-text-entry')
       callback(activeItem)
     else
       event.abortKeyBinding()
 
-  callInspector: (event, callback) =>
+  callInspector: (event, callback) ->
     activeItem = atom.workspace.getActivePaneItem()
     if activeItem instanceof InspectorView
       callback(activeItem)
@@ -688,7 +688,7 @@ class REPLView extends InfoView
         addedCommands.add command
 
     historyPath = os.homedir() + path.sep + '.slime-history.eld'
-    stream = fs.createWriteStream(historyPath);
+    stream = fs.createWriteStream(historyPath)
     stream.once 'open', (fd) ->
       stream.write ";; -*- coding: utf-8-unix -*-\n;; History for SLIME REPL. Automatically written.\n;; Edit only if you know what you're doing\n"
       stream.write '(' + outputCommands.join(' ') + ')'

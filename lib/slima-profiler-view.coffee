@@ -53,7 +53,7 @@ class ProfilerView
 
   profile_package_click_handler: ->
     makeDialog("Enter Package", true)
-    .then(([pack,rec_calls,prof_meth]) =>
+    .then(([pack, rec_calls, prof_meth]) =>
       @swank.profile_invoke_toggle_package(pack, rec_calls, prof_meth, @views.repl.pkg))
 
   attach: (@statusBar) ->

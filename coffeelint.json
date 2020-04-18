@@ -18,6 +18,9 @@
     "level" : "warn"
   },
   "missing_fat_arrows" : {
+    "level" : "warn"
+  },
+  "no_empty_functions" : {
     "level" : "error"
   },
   "no_unnecessary_fat_arrows" : {

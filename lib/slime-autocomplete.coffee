@@ -16,7 +16,7 @@ module.exports =
   getSuggestions: ({editor, bufferPosition}) ->
     prefix = @getPrefix(editor, bufferPosition)
     if @swank?.connected and !@disabled and prefix != ""
-      return @swank.autocomplete(prefix, @repl.pkg).then (acs) =>
+      return @swank.autocomplete(prefix, @repl.pkg).then (acs) ->
         return ({text: ac, replacementPrefix: prefix} for ac in acs)
     else
       return new Promise (resolve) ->
@@ -40,12 +40,15 @@ module.exports =
   # (optional): called _after_ the suggestion `replacementPrefix` is replaced
   # by the suggestion `text` in the buffer
   onDidInsertSuggestion: ({editor, triggerPosition, suggestion}) ->
+    undefined
 
   # (optional): called when your provider needs to be cleaned up. Unsubscribe
   # from things, kill any processes, etc.
   dispose: ->
+    undefined
 
   setup: (@swank, @repl) ->
+    undefined
 
   disable: () -> @disabled = true
   enable: () -> @disabled = false

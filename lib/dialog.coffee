@@ -24,10 +24,7 @@ class Dialog
   render: () ->
     $.div {},
       $.label {className:'icon'}, @prompt
-      $(TextEditor, {
-              ref: 'miniEditor',
-              mini: true
-            })
+      $(TextEditor, {ref: 'miniEditor', mini: true})
       if @errorMessage?
         $.div {className:'error-message'}, @errorMessage,
       else
@@ -75,5 +72,5 @@ class Dialog
 
 module.exports =
   makeDialog: (prompt, forpackage, initial_value='', errorMessage=null) ->
-    return new Promise (resolve, reject) =>
+    return new Promise (resolve, reject) ->
       new Dialog(prompt, forpackage, initial_value, errorMessage, resolve, reject)

@@ -96,7 +96,7 @@ class SlimaEditor
       word = @editor.getSelectedText()
       word = @editor.getWordUnderCursor({wordRegex: utils.lispWordRegex}) if word == ""
 
-      @swank.find_definitions(word, @pkg).then (refs) =>
+      @swank.find_definitions(word, @pkg).then (refs) ->
         bubble = new Bubble(atom.workspace.getActiveTextEditor(), refs)
 
     else

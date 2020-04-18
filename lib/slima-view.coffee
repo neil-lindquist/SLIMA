@@ -14,7 +14,7 @@ class SlimaView
       @closeAllREPLs()
 
   # Returns an object that can be retrieved when package is activated
-  serialize: ->
+  serialize: -> undefined
 
   # Tear down any state and detach
   destroy: ->
@@ -28,10 +28,10 @@ class SlimaView
       @profileView.toggle()
 
   showRepl: ->
-      # Start a REPL
-      @repl = new REPLView(@swank)
-      @repl.attach()
-      SlimeAutocompleteProvider.setup @swank, @repl
+    # Start a REPL
+    @repl = new REPLView(@swank)
+    @repl.attach()
+    SlimeAutocompleteProvider.setup @swank, @repl
 
   getElement: ->
     @element
