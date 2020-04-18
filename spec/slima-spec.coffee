@@ -10,10 +10,13 @@ SwankStarter = require '../lib/swank-starter'
 
 # SLIMA's dependancy on running a swank server makes tests harder
 describe "Slima", ->
-  [workspaceElement, activationPromise] = []
+  [workspaceElement] = []
+
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
 
   beforeEach ->
     atom.config.set("slima.slimePath", process.env.TRAVIS_BUILD_DIR+"/slime")
+    atom.config.set("slima.advancedSettings.connectionAttempts", 20)
 
     workspaceElement = atom.views.getView(atom.workspace)
     waitsForPromise ->
