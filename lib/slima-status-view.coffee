@@ -18,6 +18,9 @@ module.exports =
     message: (@msg) =>
       return etch.update @
 
+    getMessage: () =>
+      @msg
+
     # Display prettily-formatted autodocumentation information
     displayAutoDoc: (msg) =>
       # msg is a paredit-parsed structure

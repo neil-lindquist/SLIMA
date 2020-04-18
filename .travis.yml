@@ -1,4 +1,3 @@
-### Project specific config ###
 language: generic
 
 env:
@@ -14,10 +13,18 @@ os:
   - linux
   - osx
 
-### Generic setup follows ###
-script:
+install:
+  # install build-package.sh script
   - curl -s -O https://raw.githubusercontent.com/atom/ci/d6a5e2624f9e51ee2791f7ee0920d3690910e733/build-package.sh
   - chmod u+x build-package.sh
+  # install slime
+  - git clone https://github.com/slime/slime
+  - cd slime
+  - git checkout v2.24
+  - cd ..
+
+script:
+  # run tests
   - ./build-package.sh
 
 notifications:
@@ -37,3 +44,4 @@ addons:
     - fakeroot
     - git
     - libsecret-1-dev
+    - sbcl

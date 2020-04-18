@@ -13,22 +13,33 @@ describe "Slima", ->
   [workspaceElement, activationPromise] = []
 
   beforeEach ->
+    # atom.config.set("slima.slimePath", "C:\\Users\\Neil\\Documents\\coding\\lisp\\Slime-Install\\slime-2.23\\")
+    atom.config.set("slima.slimePath", process.env.TRAVIS_BUILD_DIR+"/slime")
+
     workspaceElement = atom.views.getView(atom.workspace)
-    activationPromise = atom.packages.activatePackage('slima')
+    waitsForPromise ->
+      atom.packages.activatePackage('slima')
 
   describe "when the package is activated", ->
-    beforeEach ->
-      waitsForPromise ->
-        activationPromise
 
     it "instantiates correctly", ->
       expect(Slima.swank).toBeInstanceOf(Swank.Client)
       expect(Slima.views).not.toEqual(null)
       expect(Slima.subs).not.toEqual(null)
 
+      expect(Slima.views.statusView.getMessage()).toMatch(/SLIMA\s*not\s*connected/i)
+
+  describe "start command", ->
+    beforeEach ->
+      waitsForPromise ->
+        atom.commands.dispatch workspaceElement, "slime:start"
+
+    it "Creates a REPL tab", ->
+      expect(Slima.views.statusView.getMessage()).toMatch(/SLIMA\s*connected/i)
+
   describe "swank starter", ->
     it "Doesn't start with an invalid path", ->
-      atom.config.set("slime.slimePath", "/tmp/")
+      atom.config.set("slima.slimePath", "/tmp/")
 
       swankStarter = new SwankStarter
       expect(swankStarter.start()).toEqual(false)
