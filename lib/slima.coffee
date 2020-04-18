@@ -172,7 +172,8 @@ module.exports = Slima =
     @subs.dispose()
     @ases.dispose()
     @views.destroy()
-    @process.destroy()
+    if @process
+      @process.destroy()
 
   serialize: ->
     viewsState: @views.serialize()
