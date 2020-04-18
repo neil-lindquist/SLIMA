@@ -5,7 +5,7 @@ module.exports =
   class StatusView
 
     constructor: ->
-      @msg = 'Slime not connected.'
+      @msg = 'SLIMA not connected.'
       etch.initialize @
 
     update: (props, children) ->

@@ -149,7 +149,7 @@ module.exports = Slima =
     console.log "Slime Connected!!"
     return @swank.initialize().then =>
       atom.notifications.addSuccess('Connected to Lisp!', detail:'Code away!')
-      @views.statusView.message("Slime connected!")
+      @views.statusView.message("SLIMA connected!")
       @views.showRepl()
 
 
