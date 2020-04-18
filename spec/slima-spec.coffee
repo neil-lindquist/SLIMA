@@ -13,7 +13,6 @@ describe "Slima", ->
   [workspaceElement, activationPromise] = []
 
   beforeEach ->
-    # atom.config.set("slima.slimePath", "C:\\Users\\Neil\\Documents\\coding\\lisp\\Slime-Install\\slime-2.23\\")
     atom.config.set("slima.slimePath", process.env.TRAVIS_BUILD_DIR+"/slime")
 
     workspaceElement = atom.views.getView(atom.workspace)
@@ -34,7 +33,11 @@ describe "Slima", ->
       waitsForPromise ->
         atom.commands.dispatch workspaceElement, "slime:start"
 
-    it "Creates a REPL tab", ->
+    it "creates and connects to a swank server", ->
+      expect(Slima.swank.connected).toEqual(true)
+      expect(Slima.process).toBeInstanceOf(SwankStarter)
+
+    it "creates a REPL tab", ->
       expect(Slima.views.statusView.getMessage()).toMatch(/SLIMA\s*connected/i)
 
   describe "swank starter", ->
