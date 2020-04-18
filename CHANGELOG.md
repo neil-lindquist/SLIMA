@@ -1,5 +1,5 @@
 ## 2.4.1 (2020-03-13)
-* Fix error in compile file command
+* Fix error in compile file command (#33)
 
 ## 2.4.0 (2020-03-01)
 * Add support for compiler-macro expansion and general expansion

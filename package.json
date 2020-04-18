@@ -21,6 +21,9 @@
     "swank-client": "^4.2.0",
     "temporary": "1.0.1"
   },
+  "devDependencies": {
+    "coffeelint": "~2.1.0"
+  },
   "consumedServices": {
     "status-bar": {
       "versions": {

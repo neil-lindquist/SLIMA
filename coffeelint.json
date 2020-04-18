@@ -1,0 +1,29 @@
+{
+  "braces_spacing" : {
+    "spaces" : 0,
+    "empty_array_spaces" : 0,
+    "mono_array_spaces" : 0
+  },
+  "bracket_spacing" : {
+    "spaces" : 0,
+    "empty_array_spaces" : 0,
+    "mono_array_spaces" : 0
+  },
+  "line_endings" : {
+    "value" : "unix",
+    "level" : "error"
+  },
+  "max_line_length" : {
+    "value" : 100,
+    "level" : "warn"
+  },
+  "missing_fat_arrows" : {
+    "level" : "error"
+  },
+  "no_unnecessary_fat_arrows" : {
+    "level" : "error"
+  },
+  "spacing_after_comma" : {
+    "level" : "error"
+  }
+}
