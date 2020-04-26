@@ -22,6 +22,8 @@ install:
   - cd slime
   - git checkout v2.24
   - cd ..
+  # precompile slime
+  - sbcl --load slime/swank-loader.lisp --eval "(quit)"
 
 script:
   # run tests
