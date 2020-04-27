@@ -17,7 +17,7 @@ describe "Slima", ->
   beforeEach ->
     atom.config.set("slima.slimePath", process.env.TRAVIS_BUILD_DIR+"/slime")
     atom.config.set("slima.advancedSettings.connectionAttempts", 20)
-    atom.config.set("slima.advancedSettings.showSwankDebug", 20)
+    atom.config.set("slima.advancedSettings.showSwankDebug", true)
 
     workspaceElement = atom.views.getView(atom.workspace)
     waitsForPromise ->
