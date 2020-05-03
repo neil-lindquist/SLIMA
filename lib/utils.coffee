@@ -56,7 +56,7 @@ module.exports =
     editor_promise.then (editor) ->
       if source_location.position_type == 'line'
         row = source_location.position_line
-        col = location.position_column ? 0
+        col = source_location.position_column ? 0
         editor.setCursorBufferPosition(new Point(row, col))
       else if source_location.position_type == 'position'
         position = editor.getBuffer().positionForCharacterIndex(source_location.position_offset)
