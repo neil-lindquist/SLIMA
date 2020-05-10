@@ -38,11 +38,12 @@ module.exports =
           pane.activateItem(editor)
           editor_promise = Promise.resolve(editor)
           break
-      if source_location.buffer_type == 'buffer-and-file'
-        # fall back to file if nessacery
-        editor_promise ?= atom.workspace.open(source_location.file)
-      else
-        editor_promise ?= Promise.reject('No editor named '+source_location.buffer_name)
+      unless editor_promise
+        if source_location.buffer_type == 'buffer-and-file'
+          # fall back to file if nessacery
+          editor_promise ?= atom.workspace.open(source_location.file)
+        else
+          editor_promise ?= Promise.reject('No editor named '+source_location.buffer_name)
     else if source_location.buffer_type == 'file'
       editor_promise = atom.workspace.open(source_location.file)
     else if source_location.buffer_type == 'source-form'
