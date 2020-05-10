@@ -10,6 +10,7 @@
 
 'atom-text-editor[data-grammar~="lisp"]':
     'alt-.': 'slime:goto-definition'
+    'alt-e': 'slime:eval-expression'
     'alt-c': 'slime:compile-function'
     'alt-k': 'slime:compile-buffer'
     'alt-m': 'slime:expand-1'
@@ -17,6 +18,7 @@
 
 'atom-text-editor':
     'ctrl-cmd-.': 'slime:goto-definition'
+    'ctrl-cmd-e': 'slime:eval-expression'
     'ctrl-cmd-c': 'slime:compile-function'
     'ctrl-cmd-k': 'slime:compile-buffer'
     'ctrl-cmd-m': 'slime:expand-1'

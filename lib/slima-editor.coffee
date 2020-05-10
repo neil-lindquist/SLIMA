@@ -21,6 +21,8 @@ class SlimaEditor
 
     @subs.add atom.commands.add @editorElement, 'slime:goto-definition': =>
       @openDefinition()
+    @subs.add atom.commands.add @editorElement, 'slime:eval-expression': =>
+      @compileSexp()
     @subs.add atom.commands.add @editorElement, 'slime:compile-function': =>
       @compileFunction()
     @subs.add atom.commands.add @editorElement, 'slime:compile-buffer': =>
@@ -72,10 +74,10 @@ class SlimaEditor
 
   # Return a string of the current sexp the user is in. The "deepest" one.
   # If we're not in one, return null.
-  getCurrentSexp: ->
+  getCurrentSexp: (ensureList=true) ->
     index = @getCursorIndex()
     text = @editor.getText()
-    return utils.getCurrentSexp(index, text, @ast)
+    return utils.getCurrentSexp(index, text, ensureList, @ast)
 
   # Return the outermost sexp range!
   getOutermostSexp: ->
@@ -102,6 +104,23 @@ class SlimaEditor
     else
       atom.notifications.addWarning("Not connected to Lisp", detail:"Going to a definition requires querying the Lisp image. So connect to it first!")
 
+  compileSexp: ->
+    # Compile the form that ends at the cursor
+    sexp = @getCurrentSexp(false)
+
+    if sexp and @swank.connected
+      p_start = utils.convertIndexToPoint(sexp.range[0], @editor)
+      p_end = utils.convertIndexToPoint(sexp.range[1], @editor)
+
+      # Find file's package
+      pkg = slime.getEditorPackage(@editor, p_start)
+
+      # Trigger a compilation
+      @swank.eval sexp.sexp, @pkg
+
+      # Trigger the highlight effect
+      range = Range(p_start, p_end)
+      utils.highlightRange(range, @editor, delay=250)
 
   compileFunction: ->
     # Compile the function under the cursor

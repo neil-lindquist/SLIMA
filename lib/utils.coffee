@@ -68,7 +68,7 @@ module.exports =
         Promise.reject('Unsupported position type given: "'+source_location.position_type+'"')
 
 
-  getCurrentSexp: (index, text, ast=paredit.parse(text)) ->
+  getCurrentSexp: (index, text, ensureList=true, ast=paredit.parse(text)) ->
     if ast.errors?.length != 0
       return null #paredit can't parse the expression
     range = paredit.navigator.sexpRangeExpansion ast, index, index
@@ -76,7 +76,7 @@ module.exports =
       return null
     [start, end] = range
     sexp = text[start...end]
-    while sexp.charAt(0) != '('
+    while ensureList and sexp.charAt(0) != '('
       range = paredit.navigator.sexpRangeExpansion ast, start, end
       if not range
         return null
