@@ -16,11 +16,15 @@
     "atom": ">=1.13.0 <2.0.0"
   },
   "dependencies": {
-    "paredit.js": "^0.3.6",
+    "atom-package-deps": "5.1.0",
     "etch": "^0.14.0",
+    "paredit.js": "^0.3.6",
     "swank-client": "^4.2.0",
     "temporary": "1.0.1"
   },
+  "package-deps": [
+    "linter:2.0.0"
+  ],
   "devDependencies": {
     "coffeelint": "~2.1.0"
   },
