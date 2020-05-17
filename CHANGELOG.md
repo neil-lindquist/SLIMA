@@ -1,3 +1,11 @@
+## 2.5.0-rc.1 (2020-05-17)
+* Add support for compiler notes (#31)
+* Add command to evaluate a non-toplevel expression (#35)
+* Add coffeelint-enforced style to SLIMA's source code
+* Change a use of "Slime" with "SLIMA"
+* Fix some issues when showing specific types of source locations
+* Fix minor error when deactivating SLIMA without a lisp process
+
 ## 2.4.1 (2020-03-13)
 * Fix error in compile file command (#33)
 
