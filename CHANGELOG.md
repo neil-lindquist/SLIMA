@@ -1,4 +1,4 @@
-## 2.5.0-rc.1 (2020-05-17)
+## 2.5.0 (2020-05-19)
 * Add support for compiler notes (#31)
 * Add command to evaluate a non-toplevel expression (#35)
 * Add coffeelint-enforced style to SLIMA's source code

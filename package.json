@@ -1,7 +1,7 @@
 {
   "name": "slima",
   "main": "./lib/slima",
-  "version": "2.5.0-rc.1",
+  "version": "2.5.0",
   "description": "Interactive Common Lisp development using SLIME!",
   "keywords": [
     "lisp",
@@ -19,7 +19,7 @@
     "atom-package-deps": "5.1.0",
     "etch": "^0.14.0",
     "paredit.js": "^0.3.6",
-    "swank-client": "4.3.0-rc.1",
+    "swank-client": "4.3.0",
     "temporary": "1.0.1"
   },
   "package-deps": [
