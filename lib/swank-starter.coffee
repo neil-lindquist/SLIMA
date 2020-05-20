@@ -24,11 +24,13 @@ class SwankStarter
         return false
       command = @lisp
       args = []
-      args.push 'run' if command.match(/ros/)
-      if not command.match(/clisp|lw/)
+      if command.match(/ros/)
+        args.push 'run'
         args.push '--load'
-      else
-        args.push '-load' if command.match(/lw/)
+      else if command.match(/lw/)
+        args.push '-load'
+      else if not command.match(/clisp/)
+        args.push '--load'
       args.push @swank_script
     else
       command = manualCommand
