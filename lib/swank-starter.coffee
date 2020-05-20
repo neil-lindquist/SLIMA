@@ -64,6 +64,8 @@ class SwankStarter
           @swank_script = @path
           return true
 
+    port = atom.config.get 'slima.advancedSettings.swankPort'
+
     loader_path = "#{@path}#{path.sep}swank-loader.lisp"
     @swank_starter = new tmp.File("swank-starter.lisp")
     @swank_script = @swank_starter.path
@@ -72,7 +74,7 @@ class SwankStarter
       "(funcall (read-from-string \"swank-loader:init\") " +
                ":from-emacs t) " +
       "(funcall (read-from-string \"swank:create-server\") " +
-               ":port 4005 " +
+               ":port #{port} " +
                ":dont-close nil)")
     try
       return fs.statSync(loader_path).isFile()
