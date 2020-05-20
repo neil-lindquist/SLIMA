@@ -26,7 +26,7 @@ module.exports = Slima =
 
     lispName:
       title: 'Lisp Process'
-      description: 'Name of Lisp to run'
+      description: 'Name of Lisp executable to run.  This cannot include any command line arguments'
       type: 'string'
       default: 'sbcl'
       order: 2
@@ -55,7 +55,7 @@ module.exports = Slima =
           default: 5
         swankCommand:
           title: 'Custom Swank Command'
-          description: 'If not blank, used to start the swank server instead of the fields above'
+          description: 'If not blank, used to start the swank server instead of the fields above.  See [the SLIMA wiki](https://github.com/neil-lindquist/SLIMA/wiki) for more information.'
           type: 'string'
           default: ''
         swankHostname:
