@@ -17,10 +17,10 @@ class SwankStarter
     @lisp = atom.config.get 'slima.lispName'
 
     options = {cwd: @cwd}
+    swank_dir_valid = @check_path()
     if manualCommand == ''
-      success = @check_path()
-      if not success
-        atom.notifications.addWarning("Did you set up `slima` as noted in the package's preferences? The \"Slime Path\" directory can't be opened. Please double check it!")
+      if not swank_dir_valid
+        atom.notifications.addWarning("Did you set up `SLIMA` as noted in the package's preferences? The \"Slime Path\" directory can't be opened. Please double check it!")
         return false
       command = @lisp
       args = []
@@ -34,6 +34,10 @@ class SwankStarter
       command = manualCommand
       options.windowsVerbatimArguments = true
       options.shell = true
+      if swank_dir_valid
+        options.env = Object.assign({"SWANK_STARTER": @swank_script}, process.env)
+      else
+        options.env = process.env
       args = []
     @process = new BufferedProcess({
       command: command,
