@@ -11,6 +11,7 @@ paredit = require 'paredit.js'
 
 module.exports =
 class REPLView extends InfoView
+  notDestroyed: true
   pkg: "CL-USER"
   prompt: "> "
   uneditableMarker: null
@@ -641,15 +642,16 @@ class REPLView extends InfoView
     @prompt = "#{@pkg}> "
 
 
-  destroy: ->
-    @saveReplHistory()
-    if @swank.connected
-      if @dbgv.length >= 1
-        @closeDebugTab(1)
-      @inspector?.destroy()
-      @subs.dispose()
-      @swank.quit()
-    fs.unlinkSync(@editor.getPath())
+  destroy: =>
+    if @notDestroyed
+      @notDestroyed = false
+      @saveReplHistory()
+      if @swank.connected
+        if @dbgv.length >= 1
+          @closeDebugTab(1)
+        @inspector?.destroy()
+        @subs.dispose()
+      fs.unlinkSync(@editor.getPath())
 
 
   loadReplHistory: (showWarning=true) ->
@@ -682,7 +684,7 @@ class REPLView extends InfoView
     addedCommands = new Set()
     for i in [@previousCommands.length-1..0]
       command = @previousCommands[i]
-      unless addedCommands.has command
+      if command and not addedCommands.has command
         #only add items once
         outputCommands.push '"' + command.replace(/\\/g, "\\\\").replace(/"/g, "\\\"") + '"'
         addedCommands.add command
