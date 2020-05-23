@@ -5,10 +5,10 @@ SlimeAutocompleteProvider = require './slime-autocomplete'
 
 module.exports =
 class SlimaView
-  constructor: (serializedState, @swank) ->
+  constructor: (serializedState, @Slima) ->
     # Start a status view
     @statusView = new StatusView()
-    @profileView = new ProfileView(@swank, @)
+    @profileView = new ProfileView(@Slima.swank, @)
     # Close any currently-opened REPL's that are leftover in the editor from last time
     process.nextTick =>
       @closeAllREPLs()
@@ -28,10 +28,15 @@ class SlimaView
       @profileView.toggle()
 
   showRepl: ->
-    # Start a REPL
-    @repl = new REPLView(@swank)
-    @repl.attach()
-    SlimeAutocompleteProvider.setup @swank, @repl
+    if @repl
+      # Reconfigure existing repl
+      @repl.clearREPL()
+      @repl.setupRepl()
+    else
+      # Start a new REPL
+      @repl = new REPLView(@Slima, @Slima.swank)
+      @repl.attach()
+      SlimeAutocompleteProvider.setup @Slima.swank, @repl
 
   getElement: ->
     @element

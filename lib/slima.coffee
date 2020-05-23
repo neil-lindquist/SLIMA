@@ -74,13 +74,14 @@ module.exports = Slima =
   activate: (state) ->
     # Setup a swank client instance
     @setupSwank()
-    @views = new SlimaView(state.viewsState, @swank)
+    @views = new SlimaView(state.viewsState, Slima)
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subs = new CompositeDisposable
     @ases = new CompositeDisposable
 
     # Setup connections
     @subs.add atom.commands.add 'atom-workspace', 'slime:start': => @swankStart()
+    @subs.add atom.commands.add 'atom-workspace', 'slime:quit': => @swankQuit()
     @subs.add atom.commands.add 'atom-workspace', 'slime:connect': => @swankConnect()
     @subs.add atom.commands.add 'atom-workspace', 'slime:disconnect': => @swankDisconnect()
     @subs.add atom.commands.add 'atom-workspace', 'slime:restart': => @swankRestart()
@@ -137,6 +138,17 @@ module.exports = Slima =
     atom.notifications.addInfo('Please wait...')
     @tryToConnect 0
 
+  swankDisconnect: () ->
+    if Slima.process
+      atom.notifications.addWarning('Cannot disconnect from Swank server spawned by SLIMA.  Do you mean quit?')
+    else
+      Slima.swank.disconnect()
+
+  swankDisconnectOrQuit: () ->
+    if Slima.process
+      Slima.swankQuit()
+    else
+      Slima.swank.disconnect()
 
   # Start up the profile view
   profileStart: () ->
@@ -160,19 +172,23 @@ module.exports = Slima =
       @views.showRepl()
 
 
-  swankDisconnect: () ->
-    @swank.quit()
-    @swankCleanup()
+  swankQuit: () ->
+    Slima.swank.quit()
+    Slima.swankCleanup()
 
   # releases resources and closes the REPL pane
   swankCleanup: () ->
     atom.notifications.addError("Disconnected from Lisp")
-    @views.statusView.message('Slime not connected.')
-    @views.destroyRepl()
+    Slima.views.statusView.message('Slime not connected.')
+    Slima.views.destroyRepl()
+    Slima.process = null
 
   swankRestart: () ->
-    @swankDisconnect()
-    setTimeout(( => @swankStart()), 500)
+    if Slima.process
+      Slima.swankQuit()
+      setTimeout(( -> Slima.swankStart()), 500)
+    else
+      atom.notifications.addWarning('Only Swank servers created by SLIMA can be restarted')
 
 
   deactivate: ->
@@ -181,6 +197,7 @@ module.exports = Slima =
     @views.destroy()
     if @process
       @process.destroy()
+      @process = null
 
   serialize: ->
     viewsState: @views.serialize()

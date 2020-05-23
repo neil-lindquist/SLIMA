@@ -24,7 +24,7 @@ class REPLView extends InfoView
   cycleIndex: null
   inspector: null
 
-  constructor: (@swank) ->
+  constructor: (@Slima, @swank) ->
     @prompt = @pkg + "> "
     @loadReplHistory()
 
@@ -651,6 +651,7 @@ class REPLView extends InfoView
           @closeDebugTab(1)
         @inspector?.destroy()
         @subs.dispose()
+        @Slima.swankDisconnectOrQuit()
       fs.unlinkSync(@editor.getPath())
 
 

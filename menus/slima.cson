@@ -13,6 +13,10 @@
               'command': 'slime:start'
             },
             {
+              'label': 'Quit',
+              'command': 'slime:quit'
+            },
+            {
               'label': 'Restart',
               'command': 'slime:restart'
             },
