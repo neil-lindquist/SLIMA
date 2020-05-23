@@ -12,7 +12,7 @@ class SlimaEditor
   pkg: null
   mouseMoveTimeout: null
 
-  constructor: (@editor, @statusView, @swank) ->
+  constructor: (@Slima, @editor, @statusView, @swank) ->
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @editorElement = atom.views.getView(@editor)
     @subs = new CompositeDisposable
@@ -44,6 +44,7 @@ class SlimaEditor
       @expand(false, true, true)
     @subs.add atom.commands.add @editorElement, 'slime:expand': =>
       @expand(true, true, true)
+    @subs.add atom.commands.add @editorElement, 'slime:inspect': @inspectString
 
     # Deprecated command
     @subs.add atom.commands.add @editorElement, 'slime:eval-expression', {
@@ -113,6 +114,19 @@ class SlimaEditor
 
     else
       atom.notifications.addWarning("Not connected to Lisp", detail:"Going to a definition requires querying the Lisp image. So connect to it first!")
+
+  inspectString: =>
+    if @swank.connect and @Slima.views.repl
+      word = @editor.getSelectedText()
+      word = @editor.getWordUnderCursor({wordRegex: utils.lispWordRegex}) if word == ""
+
+      pkg = slime.getEditorPackage(@editor, @editor.getCursorBufferPosition())
+
+      @swank.inspect_evaluation("(quote #{word})", pkg)
+      .then(@Slima.views.repl.inspect)
+
+    else
+      atom.notifications.addWarning("Not connected to Lisp", detail:"Inspecting a symbol requires querying the Lisp image. So connect to it first!")
 
   compileSexp: (ensureFunction) ->
     # Compile the form that ends at the cursor

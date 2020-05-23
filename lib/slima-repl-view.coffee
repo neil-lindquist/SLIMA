@@ -8,6 +8,7 @@ FrameInfoView = require './slima-frame-info'
 InspectorView = require './slima-introspection-view'
 {makeDialog} = require './dialog'
 paredit = require 'paredit.js'
+utils = require './utils'
 
 module.exports =
 class REPLView extends InfoView
@@ -193,14 +194,8 @@ class REPLView extends InfoView
       hiddenInCommandPalette: true
     }
 
-    @subs.add atom.commands.add @editorElement, 'slime:inspect-presentation', (event) =>
-      cursors = @editor.getCursorBufferPositions()
-      for cursor in cursors
-        for pid, marker of @presentationMarkers
-          if marker.getBufferRange().containsPoint(cursor)
-            @swank.inspect_presentation(pid, @pkg)
-            .then(@inspect)
-            return
+    @subs.add atom.commands.add @editorElement, 'slime:inspect-presentation', @inspectPresentation
+    @subs.add atom.commands.add @editorElement, 'slime:inspect', @inspectPresentation
 
     #debugger controls
     for i in [0..9]
@@ -628,6 +623,21 @@ class REPLView extends InfoView
       callback(activeItem)
     else
       event.abortKeyBinding()
+
+  inspectPresentation: (event) =>
+    cursors = @editor.getCursorBufferPositions()
+    for cursor in cursors
+      for pid, marker of @presentationMarkers
+        if marker.getBufferRange().containsPoint(cursor)
+          @swank.inspect_presentation(pid, @pkg)
+          .then(@inspect)
+          return
+
+    # No presentation present, just send the current symbol
+    word = @editor.getSelectedText()
+    word = @editor.getWordUnderCursor({wordRegex: utils.lispWordRegex}) if word == ""
+    @swank.inspect_evaluation("(quote #{word})", @pkg)
+    .then(@Slima.views.repl.inspect)
 
   callInspector: (event, callback) ->
     activeItem = atom.workspace.getActivePaneItem()

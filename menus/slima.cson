@@ -102,3 +102,9 @@
       'command': 'slima:copy-debugger-info'
     }
   ]
+  'atom-text-editor[data-grammar~="lisp"]': [
+    {
+      'label': 'Inspect',
+      'command': 'slime:inspect'
+    }
+  ]

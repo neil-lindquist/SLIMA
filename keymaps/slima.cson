@@ -16,6 +16,8 @@
   'alt-k': 'slime:compile-buffer'
   'alt-m': 'slime:expand-1'
   'alt-shift-m': 'slime:expand'
+  
+  'ctrl-i': 'slime:inspect'
 
 'atom-text-editor':
   'ctrl-cmd-.': 'slime:goto-definition'

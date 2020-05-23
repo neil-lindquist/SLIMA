@@ -90,12 +90,12 @@ module.exports = Slima =
     # Keep track of all Lisp editors
     @subs.add atom.workspace.observeTextEditors (editor) =>
       if editor.getGrammar().name.match /Lisp/i
-        ase = new SlimaEditor(editor, @views.statusView, @swank)
+        ase = new SlimaEditor(Slima, editor, @views.statusView, @swank)
         @ases.add ase
       else
         editor.onDidChangeGrammar =>
           if editor.getGrammar().name.match /Lisp/i
-            ase = new SlimaEditor(editor, @views.statusView, @swank)
+            ase = new SlimaEditor(Slima, editor, @views.statusView, @swank)
             @ases.add ase
 
     # If desired, automatically start Swank.
