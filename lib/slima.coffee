@@ -73,70 +73,70 @@ module.exports = Slima =
 
   activate: (state) ->
     # Setup a swank client instance
-    @setupSwank()
-    @views = new SlimaView(state.viewsState, Slima)
+    Slima.setupSwank()
+    Slima.views = new SlimaView(state.viewsState, Slima)
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
-    @subs = new CompositeDisposable
-    @ases = new CompositeDisposable
+    Slima.subs = new CompositeDisposable
+    Slima.ases = new CompositeDisposable
 
     # Setup connections
-    @subs.add atom.commands.add 'atom-workspace', 'slime:start': => @swankStart()
-    @subs.add atom.commands.add 'atom-workspace', 'slime:quit': => @swankQuit()
-    @subs.add atom.commands.add 'atom-workspace', 'slime:connect': => @swankConnect()
-    @subs.add atom.commands.add 'atom-workspace', 'slime:disconnect': => @swankDisconnect()
-    @subs.add atom.commands.add 'atom-workspace', 'slime:restart': => @swankRestart()
-    @subs.add atom.commands.add 'atom-workspace', 'slime:profile': => @profileStart()
+    Slima.subs.add atom.commands.add 'atom-workspace', 'slime:start': => @swankStart()
+    Slima.subs.add atom.commands.add 'atom-workspace', 'slime:quit': => @swankQuit()
+    Slima.subs.add atom.commands.add 'atom-workspace', 'slime:connect': => @swankConnect()
+    Slima.subs.add atom.commands.add 'atom-workspace', 'slime:disconnect': => @swankDisconnect()
+    Slima.subs.add atom.commands.add 'atom-workspace', 'slime:restart': => @swankRestart()
+    Slima.subs.add atom.commands.add 'atom-workspace', 'slime:profile': => @profileStart()
 
     # Keep track of all Lisp editors
-    @subs.add atom.workspace.observeTextEditors (editor) =>
+    Slima.subs.add atom.workspace.observeTextEditors (editor) =>
       if editor.getGrammar().name.match /Lisp/i
         ase = new SlimaEditor(Slima, editor, @views.statusView, @swank)
-        @ases.add ase
+        Slima.ases.add ase
       else
         editor.onDidChangeGrammar =>
           if editor.getGrammar().name.match /Lisp/i
             ase = new SlimaEditor(Slima, editor, @views.statusView, @swank)
-            @ases.add ase
+            Slima.ses.add ase
 
     # If desired, automatically start Swank.
     if atom.config.get('slima.autoStart')
-      @swankStart()
+      Slima.swankStart()
 
 
   setupLinter: (registerIndie) ->
-    @linter = registerIndie(
+    Slima.linter = registerIndie(
       name: 'SLIMA'
     )
-    @subs.add(@linter)
+    Slima.subs.add(Slima.linter)
 
 
   # Sets up a swank client but does not connect
   setupSwank: () ->
     host = atom.config.get 'slima.advancedSettings.swankHostname'
     port = atom.config.get 'slima.advancedSettings.swankPort'
-    @swank = new Swank.Client(host, port)
-    @swank.on 'disconnect', @swankCleanup
-    @swank.on 'compiler_notes', @processCompilerNotes
+    Slima.swank = new Swank.Client(host, port)
+    Slima.swank.on 'disconnect', Slima.swankCleanup
+    Slima.swank.on 'compiler_notes', Slima.processCompilerNotes
 
-    atom.config.onDidChange 'slima.advancedSettings.swankHostname', (newHost)=>
-      @swank.host = newHost.newValue
-    atom.config.onDidChange 'slima.advancedSettings.swankPort', (newPort)=>
-      @swank.port = newPort.newValue
+    atom.config.onDidChange 'slima.advancedSettings.swankHostname', (newHost) ->
+      Slima.swank.host = newHost.newValue
+    atom.config.onDidChange 'slima.advancedSettings.swankPort', (newPort) ->
+      Slima.swank.port = newPort.newValue
 
 
   # Start a swank server and then connect to it
   swankStart: () ->
     # Start a new process
-    @process = new SwankStarter
-    if @process.start()
-      @swank.process = @process
+    Slima.process = new SwankStarter
+    if Slima.process.start()
+      Slima.swank.process = Slima.process
       # Try and connect if successful!
-      @swankConnect()
+      Slima.swankConnect()
 
   # Connect the to a running swank client
   swankConnect: () ->
     atom.notifications.addInfo('Please wait...')
-    @tryToConnect 0
+    Slima.tryToConnect 0
 
   swankDisconnect: () ->
     if Slima.process
@@ -152,8 +152,8 @@ module.exports = Slima =
 
   # Start up the profile view
   profileStart: () ->
-    if @swank.connected and @views.repl
-      @views.profileView.toggle()
+    if Slima.swank.connected and Slima.views.repl
+      Slima.views.profileView.toggle()
     else
       atom.notifications.addWarning("Cannot profile without the REPL")
 
@@ -161,15 +161,15 @@ module.exports = Slima =
     if i > atom.config.get 'slima.advancedSettings.connectionAttempts'
       atom.notifications.addWarning("Couldn't connect to Lisp! Did you start a Lisp swank server?\n\nIf this is your first time running `slima`, this is normal. Try running `slime:connect` in a minute or so once it's finished compiling.")
       return false
-    promise = @swank.connect()
-    promise.then (=> @swankConnected()), ( => setTimeout ( => @tryToConnect(i + 1)), 200)
+    promise = Slima.swank.connect()
+    promise.then Slima.swankConnected, ( -> setTimeout ( -> Slima.tryToConnect(i + 1)), 200)
 
   swankConnected: () ->
     console.log "Slime Connected!!"
-    return @swank.initialize().then =>
+    return Slima.swank.initialize().then ->
       atom.notifications.addSuccess('Connected to Lisp!', detail:'Code away!')
-      @views.statusView.message("SLIMA connected!")
-      @views.showRepl()
+      Slima.views.statusView.message("SLIMA connected!")
+      Slima.views.showRepl()
 
 
   swankQuit: () ->
@@ -192,23 +192,23 @@ module.exports = Slima =
 
 
   deactivate: ->
-    @subs.dispose()
-    @ases.dispose()
-    @views.destroy()
-    if @process
-      @process.destroy()
-      @process = null
+    Slima.subs.dispose()
+    Slima.ases.dispose()
+    Slima.views.destroy()
+    if Slima.process
+      Slima.process.destroy()
+      Slima.process = null
 
   serialize: ->
-    viewsState: @views.serialize()
+    viewsState: Slima.views.serialize()
 
   consumeStatusBar: (statusBar) ->
-    @views.setStatusBar(statusBar)
+    Slima.views.setStatusBar(statusBar)
 
   provideSlimeAutocomplete: -> SlimeAutocompleteProvider
 
 
-  processCompilerNotes: (notes) =>
+  processCompilerNotes: (notes) ->
     if Slima.linter
       linter_messages = []
       try
