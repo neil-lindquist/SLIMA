@@ -71,6 +71,13 @@
   'ctrl-down':'core:move-down'
   'ctrl-up':'core:move-up'
 
+  # General introspection commands that could be used from the REPL
+  'alt-.': 'slime:goto-definition'
+  'alt-e': 'slime:eval-last-expression'
+  'alt-shift-e': 'slime:eval-function'
+  'alt-m': 'slime:expand-1'
+  'alt-shift-m': 'slime:expand'
+
 'atom-workspace':
   #general menus
   'q': 'slime:menu-quit'
