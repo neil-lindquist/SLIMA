@@ -21,8 +21,11 @@ class SlimaEditor
 
     @subs.add atom.commands.add @editorElement, 'slime:goto-definition': =>
       @openDefinition()
-    @subs.add atom.commands.add @editorElement, 'slime:eval-expression': =>
-      @compileSexp()
+    @subs.add atom.commands.add @editorElement, 'slime:eval-last-expression': =>
+      @compileSexp(false)
+
+    @subs.add atom.commands.add @editorElement, 'slime:eval-function': =>
+      @compileSexp(true)
     @subs.add atom.commands.add @editorElement, 'slime:compile-function': =>
       @compileFunction()
     @subs.add atom.commands.add @editorElement, 'slime:compile-buffer': =>
@@ -41,6 +44,13 @@ class SlimaEditor
       @expand(false, true, true)
     @subs.add atom.commands.add @editorElement, 'slime:expand': =>
       @expand(true, true, true)
+
+    # Deprecated command
+    @subs.add atom.commands.add @editorElement, 'slime:eval-expression', {
+      didDispatch: () ->
+        atom.notifications.addError('Command slime:eval-expression has been renamed slime:eval-last-expression')
+      hiddenInCommandPalette: true
+    }
 
     # Pretend we just finished editing, so that way things get up to date
     @stoppedEditingCallback()
@@ -104,9 +114,9 @@ class SlimaEditor
     else
       atom.notifications.addWarning("Not connected to Lisp", detail:"Going to a definition requires querying the Lisp image. So connect to it first!")
 
-  compileSexp: ->
+  compileSexp: (ensureFunction) ->
     # Compile the form that ends at the cursor
-    sexp = @getCurrentSexp(false)
+    sexp = @getCurrentSexp(ensureFunction)
 
     if sexp and @swank.connected
       p_start = utils.convertIndexToPoint(sexp.range[0], @editor)
