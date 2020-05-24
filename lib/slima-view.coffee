@@ -28,9 +28,8 @@ class SlimaView
       @profileView.toggle()
 
   showRepl: ->
-    if @repl
+    if @repl and @repl.notDestroyed
       # Reconfigure existing repl
-      @repl.clearREPL()
       @repl.setupRepl()
     else
       # Start a new REPL
