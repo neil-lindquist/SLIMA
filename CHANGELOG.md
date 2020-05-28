@@ -1,3 +1,15 @@
+## 2.6.0-rc.1 (2020-05-27)
+* Change the name of `slime:eval-expression` to `slime:eval-last-expression`
+* Add command to inspect source forms
+* Add some missing keystrokes to REPL
+* Add function to evaluate a function call
+* Add function to quit the swank server (#39)
+* Add `SWANK_STARTER` environmental variable for custom swank server commands
+* Fix `slime:disconnect` quitting the swank server instead of disconnecting (#39)
+* Fix bugs related to history files
+* Fix SLIMA-spawned Swank servers not use the port setting (#40)
+* Fix a failure to load large inspectors (#37)
+
 ## 2.5.0 (2020-05-19)
 * Add support for compiler notes (#31)
 * Add command to evaluate a non-toplevel expression (#35)
