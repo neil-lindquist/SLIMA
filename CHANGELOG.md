@@ -1,4 +1,4 @@
-## 2.6.0-rc.1 (2020-05-27)
+## 2.6.0 (2020-05-27)
 * Change the name of `slime:eval-expression` to `slime:eval-last-expression`
 * Add command to inspect source forms
 * Add some missing keystrokes to REPL
