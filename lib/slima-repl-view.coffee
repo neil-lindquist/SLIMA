@@ -190,7 +190,6 @@ class REPLView extends InfoView
             break
         if pid?
           @swank.inspect_presentation(pid, @pkg)
-          .then(@inspect)
       hiddenInCommandPalette: true
     }
 
@@ -637,7 +636,7 @@ class REPLView extends InfoView
     word = @editor.getSelectedText()
     word = @editor.getWordUnderCursor({wordRegex: utils.lispWordRegex}) if word == ""
     @swank.inspect_evaluation("(quote #{word})", @pkg)
-    .then(@Slima.views.repl.inspect)
+    .then(@inspect)
 
   callInspector: (event, callback) ->
     activeItem = atom.workspace.getActivePaneItem()
