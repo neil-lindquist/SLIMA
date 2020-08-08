@@ -77,7 +77,7 @@ module.exports = Slima =
     Slima.views = new SlimaView(state.viewsState, Slima)
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     Slima.subs = new CompositeDisposable
-    Slima.ases = new CompositeDisposable
+    Slima.slimaEditors = []
 
     # Setup connections
     Slima.subs.add atom.commands.add 'atom-workspace', 'slime:start': => @swankStart()
@@ -90,13 +90,18 @@ module.exports = Slima =
     # Keep track of all Lisp editors
     Slima.subs.add atom.workspace.observeTextEditors (editor) =>
       if editor.getGrammar().name.match /Lisp/i
-        ase = new SlimaEditor(Slima, editor, @views.statusView, @swank)
-        Slima.ases.add ase
+        slimaEditor = new SlimaEditor(Slima, editor, @views.statusView, @swank)
+        Slima.slimaEditors.push slimaEditor
       else
         editor.onDidChangeGrammar =>
           if editor.getGrammar().name.match /Lisp/i
-            ase = new SlimaEditor(Slima, editor, @views.statusView, @swank)
-            Slima.ases.add ase
+            slimaEditor = new SlimaEditor(Slima, editor, @views.statusView, @swank)
+            Slima.slimaEditors.push slimaEditor
+          else
+            index = Slima.slimaEditors.findIndex((se) -> se.editor == editor)
+            if index != -1
+              Slima.slimaEditors[index].dispose()
+              Slima.slimaEditors.splice(index, 1)
 
     # If desired, automatically start Swank.
     if atom.config.get('slima.autoStart')
@@ -193,7 +198,7 @@ module.exports = Slima =
 
   deactivate: ->
     Slima.subs.dispose()
-    Slima.ases.dispose()
+    Slima.slimaEditors.forEach((slimaEditor) -> slimaEditor.dispose())
     Slima.views.destroy()
     if Slima.process
       Slima.process.destroy()
