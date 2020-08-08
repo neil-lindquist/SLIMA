@@ -96,7 +96,7 @@ module.exports = Slima =
         editor.onDidChangeGrammar =>
           if editor.getGrammar().name.match /Lisp/i
             ase = new SlimaEditor(Slima, editor, @views.statusView, @swank)
-            Slima.ses.add ase
+            Slima.ases.add ase
 
     # If desired, automatically start Swank.
     if atom.config.get('slima.autoStart')
