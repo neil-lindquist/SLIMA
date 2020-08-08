@@ -1,7 +1,7 @@
 {
   "name": "slima",
   "main": "./lib/slima",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "Interactive Common Lisp development using SLIME!",
   "keywords": [
     "lisp",

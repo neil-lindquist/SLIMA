@@ -1,3 +1,6 @@
+## 2.6.1 (2020-08-08)
+* Fix bugs related to changing grammar to and from Lisp
+
 ## 2.6.0 (2020-05-27)
 * Change the name of `slime:eval-expression` to `slime:eval-last-expression`
 * Add command to inspect source forms
