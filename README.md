@@ -37,7 +37,7 @@ By following these instructions, you can use Atom very effectively as your Lisp 
 
 2. Install a Common Lisp if you don't already have one (such as [SBCL](http://sbcl.org/platform-table.html)).
 
-3. Download the source code for SLIME, which exists in a separate repository. Place it somewhere safe (you'll need it's location in the following step). Note that if you've used Emacs before, you may already have SLIME somewhere on your computer. Otherwise, you can download it from the [Github Repository](https://github.com/slime/slime/releases).
+3. Download the source code for SLIME, which exists in a separate repository. Place it somewhere safe (you'll need it's location in the following step). Note that if you've used Emacs before, you may already have SLIME somewhere on your computer. Otherwise, you can download it from the [Github Repository](https://github.com/slime/slime/releases).  Additionally, SLIMA doesn't work with versions of SLIME older than v2.23.
 
 4. After installing the `slima` package, go to its package preferences page within Atom. Under the "Lisp Process" field, enter the executable for your lisp (ex. `sbcl`. Note that on some platforms you may need the full pathname, such as `/usr/bin/sbcl`). Under the "SLIME Path" field, enter the path where you have SLIME on your computer from the above step.  Detailed information is available in [the SLIMA wiki](https://github.com/neil-lindquist/SLIMA/wiki/Configuring-the-Lisp-Process).
 
