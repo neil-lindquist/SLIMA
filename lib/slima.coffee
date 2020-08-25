@@ -131,12 +131,21 @@ module.exports = Slima =
 
   # Start a swank server and then connect to it
   swankStart: () ->
-    # Start a new process
-    Slima.process = new SwankStarter
-    if Slima.process.start()
-      Slima.swank.process = Slima.process
-      # Try and connect if successful!
-      Slima.swankConnect()
+    # If we've already launched a swank server
+    if Slima.process
+      console.log Slima.process
+      # If that process is still alive
+      if Slima.process.process
+        atom.notifications.addWarning('Swank server already running.  Do you mean `slime:restart`?')
+      else
+        Slima.swankRestart()
+    else
+      # Start a new process
+      Slima.process = new SwankStarter
+      if Slima.process.start()
+        Slima.swank.process = Slima.process
+        # Try and connect if successful!
+        Slima.swankConnect()
 
   # Connect the to a running swank client
   swankConnect: () ->
@@ -145,7 +154,7 @@ module.exports = Slima =
 
   swankDisconnect: () ->
     if Slima.process
-      atom.notifications.addWarning('Cannot disconnect from Swank server spawned by SLIMA.  Do you mean quit?')
+      atom.notifications.addWarning('Cannot disconnect from a Swank server spawned by SLIMA.  Do you mean `slime:quit`?')
     else
       Slima.swank.disconnect()
 
