@@ -100,12 +100,12 @@ class SwankStarter
     return ""
 
   exit_callback: (code) =>
-    @swank_starter?.unlink()
+    @swank_starter?.unlink((err)->if err then throw err)
     @swank_starter = null
     console.log "Lisp process exited: #{code}"
     @process = null
 
   destroy: () =>
-    @swank_starter?.unlink()
+    @swank_starter?.unlink((err)->if err then throw err)
     @swank_starter = null
     @process?.kill()
