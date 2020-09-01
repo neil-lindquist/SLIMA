@@ -183,6 +183,7 @@ module.exports = Slima =
   swankConnected: () ->
     console.log "Slime Connected!!"
     return Slima.swank.initialize().then ->
+      Slima.connected = true
       atom.notifications.addSuccess('Connected to Lisp!', detail:'Code away!')
       Slima.views.statusView.message("SLIMA connected!")
       Slima.views.showRepl()
@@ -194,7 +195,9 @@ module.exports = Slima =
 
   # releases resources and closes the REPL pane
   swankCleanup: () ->
-    atom.notifications.addError("Disconnected from Lisp")
+    if Slima.connected
+      atom.notifications.addError("Disconnected from Lisp")
+    Slima.connected = false
     Slima.views.statusView.message('Slime not connected.')
     Slima.views.destroyRepl()
     Slima.process = null
