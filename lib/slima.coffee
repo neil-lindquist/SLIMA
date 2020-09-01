@@ -133,12 +133,12 @@ module.exports = Slima =
   swankStart: () ->
     # If we've already launched a swank server
     if Slima.process
-      console.log Slima.process
       # If that process is still alive
       if Slima.process.process
         atom.notifications.addWarning('Swank server already running.  Do you mean `slime:restart`?')
       else
-        Slima.swankRestart()
+        Slima.swankQuit()
+        setTimeout(( -> Slima.swankStart()), 500)
     else
       # Start a new process
       Slima.process = new SwankStarter
@@ -198,11 +198,11 @@ module.exports = Slima =
     Slima.process = null
 
   swankRestart: () ->
-    if Slima.process
+    if !Slima.process?.process and Slima.swank.is_connected()
+      atom.notifications.addWarning('Only Swank servers created by SLIMA can be restarted')
+    else
       Slima.swankQuit()
       setTimeout(( -> Slima.swankStart()), 500)
-    else
-      atom.notifications.addWarning('Only Swank servers created by SLIMA can be restarted')
 
 
   deactivate: ->
