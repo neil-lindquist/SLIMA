@@ -128,13 +128,7 @@ module.exports = Slima =
     atom.config.onDidChange 'slima.advancedSettings.swankPort', (newPort) ->
       Slima.swank.port = newPort.newValue
 
-  swankStartProcess: () ->
-      # Start a new process
-      Slima.process = new SwankStarter
-      if Slima.process.start()
-        Slima.swank.process = Slima.process
-        # Try and connect if successful!
-        Slima.swankConnect()
+  ### User level commands for Swank lifecycle ###
 
   # Start a swank server and then connect to it
   swankStart: () ->
@@ -154,11 +148,22 @@ module.exports = Slima =
     atom.notifications.addInfo('Please wait...')
     Slima.tryToConnect 0
 
+  swankRestart: () ->
+    if !Slima.process?.process and Slima.swank.is_connected()
+      atom.notifications.addWarning('Only Swank servers created by SLIMA can be restarted')
+    else
+      Slima.swankQuit()
+      setTimeout(( -> Slima.swankStartProcess()), 500)
+
   swankDisconnect: () ->
     if Slima.process
       atom.notifications.addWarning('Cannot disconnect from a Swank server spawned by SLIMA.  Do you mean `slime:quit`?')
     else
       Slima.swank.disconnect()
+
+  swankQuit: () ->
+    Slima.swank.quit()
+    Slima.swankCleanup()
 
   swankDisconnectOrQuit: () ->
     if Slima.process
@@ -172,6 +177,16 @@ module.exports = Slima =
       Slima.views.profileView.toggle()
     else
       atom.notifications.addWarning("Cannot profile without the REPL")
+
+  ### Internal functions for swank lifecycle ###
+
+  swankStartProcess: () ->
+      # Start a new process
+      Slima.process = new SwankStarter
+      if Slima.process.start()
+        Slima.swank.process = Slima.process
+        # Try and connect if successful!
+        Slima.swankConnect()
 
   tryToConnect: (i) ->
     if i > atom.config.get 'slima.advancedSettings.connectionAttempts'
@@ -188,11 +203,6 @@ module.exports = Slima =
       Slima.views.statusView.message("SLIMA connected!")
       Slima.views.showRepl()
 
-
-  swankQuit: () ->
-    Slima.swank.quit()
-    Slima.swankCleanup()
-
   # releases resources and closes the REPL pane
   swankCleanup: () ->
     if Slima.connected
@@ -201,14 +211,6 @@ module.exports = Slima =
     Slima.views.statusView.message('Slime not connected.')
     Slima.views.destroyRepl()
     Slima.process = null
-
-  swankRestart: () ->
-    if !Slima.process?.process and Slima.swank.is_connected()
-      atom.notifications.addWarning('Only Swank servers created by SLIMA can be restarted')
-    else
-      Slima.swankQuit()
-      setTimeout(( -> Slima.swankStartProcess()), 500)
-
 
   deactivate: ->
     Slima.subs.dispose()
@@ -225,7 +227,6 @@ module.exports = Slima =
     Slima.views.setStatusBar(statusBar)
 
   provideSlimeAutocomplete: -> SlimeAutocompleteProvider
-
 
   processCompilerNotes: (notes) ->
     if Slima.linter
