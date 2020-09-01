@@ -105,7 +105,7 @@ module.exports = Slima =
 
     # If desired, automatically start Swank.
     if atom.config.get('slima.autoStart')
-      Slima.swankStart()
+      Slima.swankStartProcess()
 
 
   setupLinter: (registerIndie) ->
@@ -128,6 +128,13 @@ module.exports = Slima =
     atom.config.onDidChange 'slima.advancedSettings.swankPort', (newPort) ->
       Slima.swank.port = newPort.newValue
 
+  swankStartProcess: () ->
+      # Start a new process
+      Slima.process = new SwankStarter
+      if Slima.process.start()
+        Slima.swank.process = Slima.process
+        # Try and connect if successful!
+        Slima.swankConnect()
 
   # Start a swank server and then connect to it
   swankStart: () ->
@@ -138,14 +145,9 @@ module.exports = Slima =
         atom.notifications.addWarning('Swank server already running.  Do you mean `slime:restart`?')
       else
         Slima.swankQuit()
-        setTimeout(( -> Slima.swankStart()), 500)
+        setTimeout(( -> Slima.swankStartProcess()), 500)
     else
-      # Start a new process
-      Slima.process = new SwankStarter
-      if Slima.process.start()
-        Slima.swank.process = Slima.process
-        # Try and connect if successful!
-        Slima.swankConnect()
+      Slima.swankStartProcess()
 
   # Connect the to a running swank client
   swankConnect: () ->
@@ -202,7 +204,7 @@ module.exports = Slima =
       atom.notifications.addWarning('Only Swank servers created by SLIMA can be restarted')
     else
       Slima.swankQuit()
-      setTimeout(( -> Slima.swankStart()), 500)
+      setTimeout(( -> Slima.swankStartProcess()), 500)
 
 
   deactivate: ->
