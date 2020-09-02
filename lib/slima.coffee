@@ -181,12 +181,12 @@ module.exports = Slima =
   ### Internal functions for swank lifecycle ###
 
   swankStartProcess: () ->
-      # Start a new process
-      Slima.process = new SwankStarter
-      if Slima.process.start()
-        Slima.swank.process = Slima.process
-        # Try and connect if successful!
-        Slima.swankConnect()
+    # Start a new process
+    Slima.process = new SwankStarter
+    if Slima.process.start()
+      Slima.swank.process = Slima.process
+      # Try and connect if successful!
+      Slima.swankConnect()
 
   tryToConnect: (i) ->
     if i > atom.config.get 'slima.advancedSettings.connectionAttempts'
