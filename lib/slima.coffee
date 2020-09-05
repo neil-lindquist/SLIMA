@@ -170,7 +170,6 @@ module.exports = Slima =
 
   swankQuit: () ->
     Slima.swank.quit()
-    Slima.swankCleanup()
 
   swankDisconnectOrQuit: () ->
     if Slima.process

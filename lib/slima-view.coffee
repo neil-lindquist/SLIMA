@@ -23,7 +23,11 @@ class SlimaView
 
 
   destroyRepl: ->
-    @repl?.destroy()
+    if @repl
+      @repl.editor.moveToBottom()
+      @repl.editor.moveToEndOfLine()
+      @repl.appendText('\n\n;;;; Lisp instance killed\n', false)
+      @repl.destroy()
     if @profileView.enabled
       @profileView.toggle()
 
