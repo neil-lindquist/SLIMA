@@ -38,10 +38,17 @@ module.exports = Slima =
       default: false
       order: 1
 
+    clearOnRestart:
+      title: 'Clear the REPL when restarting Lisp'
+      description: 'When checked, the Lisp REPL will be cleared when the Lisp session is restarted.'
+      type: 'boolean'
+      default: true
+      order: 4
+
     advancedSettings:
       title: 'Advanced Settings'
       type: 'object'
-      order: 4
+      order: 5
       properties:
         showSwankDebug:
           title: 'Show the Swank messages in the JavaScript console'

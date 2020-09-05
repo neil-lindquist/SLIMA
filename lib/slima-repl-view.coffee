@@ -78,8 +78,11 @@ class REPLView extends InfoView
   setupRepl: () =>
     # Make sure it's marked with the special REPL class - helps some of our keybindings!
     @editorElement.classList.add('slime-repl')
-    # Clear the REPL
-    @clearREPL()
+    if atom.config.get 'slima.clearOnRestart'
+      # Clear the REPL
+      @clearREPL()
+    else
+      @insertPrompt(false)
     # Attach event handlers
     @subs.add atom.commands.add @editorElement, 'core:backspace': (event) =>
       if @preventUserInput
@@ -384,13 +387,14 @@ class REPLView extends InfoView
 
 
 
-  insertPrompt: () ->
+  insertPrompt: (force_newline=true) ->
     @inputFromUser = false
 
     @editor.moveToBottom()
     @editor.moveToEndOfLine()
 
-    @editor.insertText("\n", {autoIndent:false, autoIndentNewline:false})
+    if force_newline or not @editor.getCursorBufferPosition().isEqual([0, 0])
+      @editor.insertText("\n", {autoIndent:false, autoIndentNewline:false})
     range = @editor.insertText(@prompt, {autoIndent:false, autoIndentNewline:false})[0]
     @markPrompt(range)
 
