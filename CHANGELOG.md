@@ -1,3 +1,8 @@
+## 2.7.0 (2020-09-05)
+* Add option to retain REPL content on Lisp restart (#45)
+* Fix `slime:restart` and `slime:start` refusing to start a new Lisp session in some situations (#45)
+* Refactor the organization of some internals
+
 ## 2.6.1 (2020-08-08)
 * Fix bugs related to changing grammar to and from Lisp
 
