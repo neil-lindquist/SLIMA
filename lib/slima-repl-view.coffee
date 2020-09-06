@@ -304,7 +304,7 @@ class REPLView extends InfoView
     range = @editor.getBuffer().getRange()
     @uneditableMarker = @editor.markBufferRange(range, {exclusive: true})
 
-  markPrompt: (promptRange) ->
+  markPrompt: (promptRange) =>
     @updateUneditable()
     syntaxRange = new Range(promptRange.start, [promptRange.end.row, promptRange.end.column-1])
     syntaxMarker = @editor.markBufferRange(syntaxRange, {exclusive: true})
@@ -316,6 +316,7 @@ class REPLView extends InfoView
       marker.destroy()
     @presentationMarkers = {}
 
+    @inputFromUser = false
     if @preventUserInput or @reading_for_stdin_callback
       @editor.setText ''
       @updateUneditable()
@@ -325,6 +326,7 @@ class REPLView extends InfoView
       range = @editor.getBuffer().getRange()
       @markPrompt(range)
     @editor.moveToEndOfLine()
+    @inputFromUser = true
 
     marker = @editor.markBufferPosition(new Point(0, 0))
     @editor.decorateMarker marker, {type:'line', class:'repl-line'}
@@ -387,7 +389,7 @@ class REPLView extends InfoView
 
 
 
-  insertPrompt: (force_newline=true) ->
+  insertPrompt: (force_newline=true) =>
     @inputFromUser = false
 
     @editor.moveToBottom()
@@ -659,11 +661,11 @@ class REPLView extends InfoView
     if @notDestroyed
       @notDestroyed = false
       @saveReplHistory()
+      @subs.dispose()
       if @swank.connected
         if @dbgv.length >= 1
           @closeDebugTab(1)
         @inspector?.destroy()
-        @subs.dispose()
         @Slima.swankDisconnectOrQuit()
       fs.unlinkSync(@editor.getPath())
 
