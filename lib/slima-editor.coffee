@@ -183,11 +183,17 @@ class SlimaEditor
         atom.notifications.addWarning("Please save this file before compiling.")
         return false
 
-      # Trigger a compilation
-      @swank.compile_file(path, @pkg, true)
+      if @editor.isModified
+        save_promise = @editor.save()
+      else
+        save_promise = Promise.resolve(null)
 
-      # Trigger the highlight effect
-      utils.highlightRange(@editor.getBuffer().getRange(), @editor, delay=250)
+      save_promise.then () =>
+        # Trigger a compilation
+        @swank.compile_file(path, @pkg, true)
+
+        # Trigger the highlight effect
+        utils.highlightRange(@editor.getBuffer().getRange(), @editor, delay=250)
 
   expand_in_minibuffer: (minibuffer, repeatedly, macros, compiler_macros) ->
     index = utils.convertPointToIndex(minibuffer.getCursors()[0].getBufferPosition(), minibuffer)
