@@ -168,7 +168,7 @@ class SlimaEditor
         # Trigger a compilation
         line_reference = p_start.row + 1
         col_reference = p_start.column + 1
-        @swank.compile_string(sexp.sexp, title, path, sexp.start, line_reference, col_reference, pkg)
+        @swank.compile_string(sexp.sexp, title, utils.toSwankPath(path), sexp.start, line_reference, col_reference, pkg)
 
         # Trigger the highlight effect
         range = Range(p_start, p_end)
@@ -190,7 +190,7 @@ class SlimaEditor
 
       save_promise.then () =>
         # Trigger a compilation
-        @swank.compile_file(path, @pkg, true)
+        @swank.compile_file(utils.toSwankPath(path), @pkg, true)
 
         # Trigger the highlight effect
         utils.highlightRange(@editor.getBuffer().getRange(), @editor, delay=250)

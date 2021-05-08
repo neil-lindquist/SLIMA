@@ -55,26 +55,43 @@ module.exports = Slima =
           description: 'When enabled, every message coming from the Swank server will be shown in the JavaScript console.'
           type: 'boolean'
           default: false
+          order: 1
         connectionAttempts:
           title: 'Number of connection attempts to make with the swank server (0.2s per attempt)'
           description: 'If Lisp takes a while to load, then increasing the number of attempts may help (for advanced users using docker)'
           type: 'integer'
           default: 5
+          order: 2
         swankCommand:
           title: 'Custom Swank Command'
           description: 'If not blank, used to start the swank server instead of the fields above.  See [the SLIMA wiki](https://github.com/neil-lindquist/SLIMA/wiki) for more information.'
           type: 'string'
           default: ''
+          order: 3
         swankHostname:
           title: 'Swank Hostname'
           description: 'The hostname of the Swank server to connect to'
           type: 'string'
           default: 'localhost'
+          order: 4
         swankPort:
           title: 'Swank Port'
           description: 'The port used by the Swank server to connect to'
           type: 'integer'
           default: 4005
+          order: 5
+        atomFilePrefix:
+          title: 'Atom File Prefix'
+          description: 'When file paths are sent to the swank server, any path that starts with this prefix is changed to start with the Swank file prefix'
+          type: 'string'
+          default: ''
+          order: 6
+        swankFilePrefix:
+          title: 'Swank File Prefix'
+          description: 'When file paths are recieved from the swank server, any path that starts with this prefix is changed to start with the Atom file prefix'
+          type: 'string'
+          default: ''
+          order: 7
 
 
 

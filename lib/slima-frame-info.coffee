@@ -2,7 +2,7 @@
 InfoView = require './slima-info-view'
 etch = require 'etch'
 $ = etch.dom
-{showSourceLocation} = require './utils'
+utils = require './utils'
 
 module.exports =
 class FrameInfoView extends InfoView
@@ -104,7 +104,7 @@ class FrameInfoView extends InfoView
   display_source: () =>
     frame_index = @frame_index
     @swank.debug_frame_source(frame_index, @info.thread, @debugView.replView.pkg)
-    .then (srcloc) -> showSourceLocation(srcloc, 'Frame ' + frame_index + ' Source')
+    .then (srcloc) -> utils.showSourceLocation(srcloc, 'Frame ' + frame_index + ' Source')
     .catch (error) ->
       atom.notifications.addError 'Cannot show frame source: '+error
 

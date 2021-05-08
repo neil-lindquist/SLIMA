@@ -5,6 +5,24 @@ paredit = require 'paredit.js'
 module.exports =
   lispWordRegex: /^[	 ]*$|[^\s\(\)"',;#%&\|`…]+|[\/\\\(\)"':,\.;<>~!@#\$%\^&\*\|\+=\[\]\{\}`\?\-…]+/g
 
+  toSwankPath: (atomPath) ->
+    atomPrefix  = atom.config.get('slima.advancedSettings.atomFilePrefix')
+
+    if atomPath.replace(/\\/g, '/').startsWith(atomPrefix.replace(/\\/g, '/'))
+      swankPrefix = atom.config.get('slima.advancedSettings.swankFilePrefix')
+      return swankPrefix + atomPath.substring(atomPrefix.length)
+    else
+      return atomPath
+
+  fromSwankPath: (swankPath) ->
+    swankPrefix = atom.config.get('slima.advancedSettings.swankFilePrefix')
+
+    if swankPath.replace(/\\/g, '/').startsWith(swankPrefix.replace(/\\/g, '/'))
+      atomPrefix  = atom.config.get('slima.advancedSettings.atomFilePrefix')
+      return atomPrefix + swankPath.substring(swankPrefix.length)
+    else
+      return swankPath
+
   convertIndexToPoint: (index, editor) ->
     substr = editor.getText().substring(0, index)
     row = (substr.match(/\n/g) || []).length
@@ -45,11 +63,11 @@ module.exports =
           break
       unless loc.source_file
         if source_location.buffer_type == 'buffer-and-file'
-          loc.source_file = source_location.file
+          loc.source_file = @fromSwankPath(source_location.file)
         else
           throw Error('No file for buffer source location with title '+source_location.buffer_name)
     else if source_location.buffer_type == 'file'
-      loc.editor_file = source_location.file
+      loc.editor_file = @fromSwankPath(source_location.file)
     else
       # TODO source-form
       # TODO zip
@@ -89,11 +107,11 @@ module.exports =
       unless editor_promise
         if source_location.buffer_type == 'buffer-and-file'
           # fall back to file if nessacery
-          editor_promise ?= atom.workspace.open(source_location.file)
+          editor_promise ?= atom.workspace.open(@fromSwankPath(source_location.file))
         else
           editor_promise ?= Promise.reject('No editor named '+source_location.buffer_name)
     else if source_location.buffer_type == 'file'
-      editor_promise = atom.workspace.open(source_location.file)
+      editor_promise = atom.workspace.open(@fromSwankPath(source_location.file))
     else if source_location.buffer_type == 'source-form'
       editor = minibuffer.open(fallBackTitle, source_location.source_form, atom.workspace.getActivePane())
       editor_promise = Promise.resolve(editor)
