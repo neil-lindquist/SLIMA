@@ -1,3 +1,7 @@
+## 2.8.0 (2021-06-20)
+* Change the compile-file command to save the file, if modified
+* Add the ability to use different pathnames between Atom and Swank (#51)
+
 ## 2.7.0 (2020-09-05)
 * Add option to retain REPL content on Lisp restart (#45)
 * Fix `slime:restart` and `slime:start` refusing to start a new Lisp session in some situations (#45)
