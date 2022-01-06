@@ -1,3 +1,8 @@
+## 2.8.1 (2022-01-06)
+* Fix two bugs with the open definition command
+  * A bad use of `@` causing an error (#52)
+  * Moving the selector up from the top entry behaving incorrectly
+
 ## 2.8.0 (2021-06-20)
 * Change the compile-file command to save the file, if modified
 * Add the ability to use different pathnames between Atom and Swank (#51)
