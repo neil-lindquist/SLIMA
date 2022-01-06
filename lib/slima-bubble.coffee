@@ -21,36 +21,34 @@ class Bubble
       item: @element
     })
 
+    active_view = atom.views.getView(atom.workspace.getActiveTextEditor())
+
     # Add subscriptions for important key events, and to close
-    @subs.add atom.commands.add(atom.views.getView(atom.workspace.getActiveTextEditor()), 'core:move-down': (event) =>
+    @subs.add atom.commands.add(active_view, 'core:move-down': (event) =>
       @selIndex = (@selIndex + 1) % @reference.length
       etch.update @
       event.stopImmediatePropagation()
     )
-    @subs.add atom.commands.add(atom.views.getView(atom.workspace.getActiveTextEditor()), 'core:move-up': (event) =>
+    @subs.add atom.commands.add(active_view, 'core:move-up': (event) =>
       @selIndex = (@selIndex - 1) % @reference.length
       etch.update @
       event.stopImmediatePropagation()
     )
-    @subs.add atom.commands.add(atom.views.getView(atom.workspace.getActiveTextEditor()), 'core:cancel': (event) =>
-      @destroy()
-    )
-    @subs.add atom.commands.add(atom.views.getView(atom.workspace.getActiveTextEditor()), 'editor:newline': (event) =>
+
+    destroy_func = (event) => @destroy()
+    @subs.add atom.commands.add(active_view, 'core:cancel': destroy_func)
+    @subs.add @editor.onDidChangeCursorPosition(destroy_func)
+
+    open_func = (event)=>
       # Confirmed! Open that tab!
-      utils.showSourceLocation(@reference[@selIndex].location, 'Source for '+@reference[@selIndex].label)
+      utils.showSourceLocation(@reference[@selIndex].location,
+                               'Source for '+@reference[@selIndex].label)
       @destroy()
       event.stopImmediatePropagation()
-    )
-    # TODO - better way to handle this? Priorities? If lisp-paredit exists and getss it first, then enter happens
-    @subs.add atom.commands.add(atom.views.getView(atom.workspace.getActiveTextEditor()), 'lisp-paredit:newline': (event) =>
-      # Confirmed! Open that tab!
-      utils.showSourceLocation(@reference[@selIndex].location)
-      @destroy()
-      event.stopImmediatePropagation()
-    )
-    @subs.add @editor.onDidChangeCursorPosition( (event) =>
-      @destroy()
-    )
+    @subs.add atom.commands.add(active_view, 'editor:newline': open_func)
+    # If lisp-paredit exists and gets it first, then enter happens
+    # TODO - better way to handle it? Priorities?
+    @subs.add atom.commands.add(active_view, 'lisp-paredit:newline': open_func)
 
   update: ->
     etch.update @
