@@ -1,7 +1,7 @@
 etch = require 'etch'
 $ = etch.dom
 {CompositeDisposable, Range, Point} = require 'atom'
-{showSourceLocation} = require './utils'
+utils = require './utils'
 
 module.exports =
 class Bubble
@@ -37,14 +37,14 @@ class Bubble
     )
     @subs.add atom.commands.add(atom.views.getView(atom.workspace.getActiveTextEditor()), 'editor:newline': (event) =>
       # Confirmed! Open that tab!
-      showSourceLocation(@reference[@selIndex].location, 'Source for '+@reference[@selIndex].label)
+      utils.showSourceLocation(@reference[@selIndex].location, 'Source for '+@reference[@selIndex].label)
       @destroy()
       event.stopImmediatePropagation()
     )
     # TODO - better way to handle this? Priorities? If lisp-paredit exists and getss it first, then enter happens
     @subs.add atom.commands.add(atom.views.getView(atom.workspace.getActiveTextEditor()), 'lisp-paredit:newline': (event) =>
       # Confirmed! Open that tab!
-      showSourceLocation(@reference[@selIndex].location)
+      utils.showSourceLocation(@reference[@selIndex].location)
       @destroy()
       event.stopImmediatePropagation()
     )
