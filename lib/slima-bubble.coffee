@@ -30,7 +30,7 @@ class Bubble
       event.stopImmediatePropagation()
     )
     @subs.add atom.commands.add(active_view, 'core:move-up': (event) =>
-      @selIndex = (@selIndex - 1) % @reference.length
+      @selIndex = (@selIndex - 1) %% @reference.length
       etch.update @
       event.stopImmediatePropagation()
     )
