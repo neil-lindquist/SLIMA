@@ -5,6 +5,11 @@
 
 The Superior Lisp Interactive Mode for Atom.  This package allows you to interactively develop Common Lisp code, helping turn Atom into a full-featured Lisp IDE.  SLIMA uses the same Swank backend as Emacs's SLIME to control the Lisp process.  This is a fork of [atom-slime](https://github.com/sjlevine/atom-slime).
 
+Because [Github abandoning Atom](https://github.blog/2022-06-08-sunsetting-atom/), the future of SLIMA is uncertain.  I'm currently watching the community forks to see whether enough of a community forms to keep Atom maintained.
+* https://github.com/pulsar-edit/pulsar
+* https://github.com/atom-community/atom
+
+
 ![screenshot](https://raw.githubusercontent.com/neil-lindquist/slima/master/media/slima-screenshot.png)
 
 Current features of this package:
