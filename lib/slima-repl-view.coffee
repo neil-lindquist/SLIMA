@@ -236,7 +236,7 @@ class REPLView extends InfoView
       @destroy()
 
     # Prevent the "do you want to save?" dialog from popping up when the REPL window is closed.
-    # Unfortunately, as per https://discuss.atom.io/t/how-to-disable-do-you-want-to-save-dialog/31373
+    # Unfortunately, per https://discuss.atom.io/t/how-to-disable-do-you-want-to-save-dialog/31373
     # there is no built-in API to do this. As such, we must override an API method to trick
     # Atom into thinking it isn't ever modified.
     @editor.isModified = (() -> false)
@@ -496,7 +496,7 @@ class REPLView extends InfoView
         @editor.setCursorBufferPosition([0, 0])
         @appendText("\n", colorTags=false)
         row_repl = 1
-      # Compute the cursor position to the last character on the line above the REPL (we know it exists!)
+      # move the cursor to the last character on the line above the prompt (we know it exists!)
       p_before_cursor = Point(row_repl - 1, @editor.lineTextForBufferRow(row_repl - 1).length)
       @editor.setCursorBufferPosition(p_before_cursor, {autoScroll: false})
       @appendText(msg)
@@ -581,7 +581,7 @@ class REPLView extends InfoView
     debug.setup(@swank, obj, @)
 
   showDebugTab: (level) ->
-    # A slight pause is needed before showing for when an error occurs immediatly after resolving another error
+    # A slight pause is needed when an error occurs immediatly after resolving another error
     setTimeout(() =>
       if level == 1
         atom.workspace.open('slime://debug/'+level)
@@ -623,9 +623,9 @@ class REPLView extends InfoView
       event.abortKeyBinding()
 
   callCurrentFrameInfo: (event, callback) ->
-    activeItem = atom.workspace.getActivePaneItem()
-    if activeItem instanceof FrameInfoView and not event.target.classList.contains('debug-text-entry')
-      callback(activeItem)
+    item = atom.workspace.getActivePaneItem()
+    if item instanceof FrameInfoView and not event.target.classList.contains('debug-text-entry')
+      callback(item)
     else
       event.abortKeyBinding()
 
@@ -725,6 +725,8 @@ class REPLView extends InfoView
     historyPath = os.homedir() + path.sep + '.slime-history.eld'
     stream = fs.createWriteStream(historyPath)
     stream.once 'open', (fd) ->
-      stream.write ";; -*- coding: utf-8-unix -*-\n;; History for SLIME REPL. Automatically written.\n;; Edit only if you know what you're doing\n"
+      stream.write ";; -*- coding: utf-8-unix -*-\n"
+      stream.write ";; History for SLIME REPL. Automatically written.\n"
+      stream.write ";; Edit only if you know what you're doing\n"
       stream.write '(' + outputCommands.join(' ') + ')'
       stream.end()
