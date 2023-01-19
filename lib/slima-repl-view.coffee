@@ -640,7 +640,7 @@ class REPLView extends InfoView
       row_repl = prompt_end.row
       # Edge case: if the row is the last line, insert a new line right above then continue.
       if row_repl == 0
-        return Point([0, 0])
+        return Point(0, 0)
       else
         # Compute the cursor position as the last character on the line above the prompt
         return Point(row_repl - 1, @editor.lineTextForBufferRow(row_repl - 1).length)
