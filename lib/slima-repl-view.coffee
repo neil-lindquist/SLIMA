@@ -438,9 +438,9 @@ class REPLView extends InfoView
     @presentation_starts = {}
     @presentationMarkers = {}
     @swank.on 'presentation_start', (pid) =>
-      @presentation_starts[pid] = @editor.getBuffer().getRange().end
+      @presentation_starts[pid] = @getPointForPresentation()
     @swank.on 'presentation_end', (pid) =>
-      presentation_end = @editor.getBuffer().getRange().end
+      presentation_end = @getPointForPresentation()
       range = new Range(@presentation_starts[pid], presentation_end)
       marker = @editor.markBufferRange(range, {exclusive: true})
       @editor.decorateMarker(marker, {type: 'text', class:'syntax--lisp repl-presentation repl-presentation-'+pid.toString()})
@@ -628,6 +628,23 @@ class REPLView extends InfoView
       callback(activeItem)
     else
       event.abortKeyBinding()
+
+  getPointForPresentation: ->
+    # However, we need to make sure we're not interfering with the cursor!
+    if not @showingPrompt
+      # A command is being run, no prompt is in the way - so get the last position of the buffer
+      return @editor.getBuffer().getRange().end
+    else
+      # There's a prompt in the way - so go to the line before the prompt
+      prompt_end = @uneditableMarker.getBufferRange().end
+      row_repl = prompt_end.row
+      # Edge case: if the row is the last line, insert a new line right above then continue.
+      if row_repl == 0
+        return Point([0, 0])
+      else
+        # Compute the cursor position as the last character on the line above the prompt
+        return Point(row_repl - 1, @editor.lineTextForBufferRow(row_repl - 1).length)
+
 
   inspectPresentation: (event) =>
     cursors = @editor.getCursorBufferPositions()
