@@ -1,3 +1,7 @@
+## 2.8.2 (2023-01-30)
+* Change README now that Pulsar has replaced Atom
+* Fix handling of presentations when the REPL prompt is present (#55)
+
 ## 2.8.1 (2022-01-06)
 * Fix two bugs with the open definition command
   * A bad use of `@` causing an error (#52)
