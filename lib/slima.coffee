@@ -2,7 +2,6 @@
 Swank = require 'swank-client'
 SlimaView = require './slima-view'
 paredit = require 'paredit.js'
-slime = require './slime-functions'
 SlimaEditor = require './slima-editor'
 SlimeAutocompleteProvider = require './slime-autocomplete'
 SwankStarter = require './swank-starter'
