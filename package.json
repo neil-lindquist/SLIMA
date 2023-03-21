@@ -19,7 +19,7 @@
     "atom-package-deps": "6.0.0",
     "etch": "0.14.0",
     "paredit.js": "0.3.6",
-    "swank-client": "4.5.0",
+    "swank-client": "4.5.1",
     "temporary": "1.1.0"
   },
   "package-deps": [
