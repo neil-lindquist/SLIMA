@@ -1,3 +1,7 @@
+## 2.8.3 (2023-03-20)
+* Fix hang with newer versions of Swank (#58)
+* Fix out of date content in the README
+
 ## 2.8.2 (2023-01-30)
 * Change README now that Pulsar has replaced Atom
 * Fix handling of presentations when the REPL prompt is present (#55)
