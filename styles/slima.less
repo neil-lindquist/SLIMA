@@ -103,7 +103,7 @@ bubble-multiline-message {
   margin-top: 4px;
   padding: @spacing;
   color: @bubble-inline-fg;
-  border-radius: @component-border-radius * 1.5;
+  border-radius: (@component-border-radius * 1.5);
   border-top-left-radius: 0;
   background: @bubble-inline-bg;
   box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
@@ -125,7 +125,7 @@ bubble-multiline-message {
   a {
     color: @bubble-inline-link;
     &:last-of-type {
-      padding-right: @spacing * 1.5; // a bit extra space for visual pleasing
+      padding-right: (@spacing * 1.5); // a bit extra space for visual pleasing
     }
   }
 
@@ -145,8 +145,6 @@ bubble-multiline-message {
 
 
 .slime-object {
-
-
 }
 
 .slime-object-introspected {
