@@ -50,9 +50,16 @@ By following these instructions, you can use Pulsar very effectively as your Lis
     'tab': 'lisp-paredit:indent'
 ```
 
-6. (Optional) In Pulsar's `autocomplete-plus` package, consider changing the "Keymap For Confirming A Suggestion" option from "tab and enter" to just "tab". This makes autocomplete more amenable when using the REPL, so that pressing enter will complete your command rather than triggering autocomplete.
+6. (Optional) Consider adding the following to your config.cson file.  This will allow Pulsar to recognize .asd files as being lisp sources.
+```
+core:
+  customFileTypes:
+    'source.lisp': ['asd']
+```
 
-7. (Optional) In Pulsar's `bracket-matcher` package, consider unchecking the "Autocomplete Brackets" option. Both the `lisp-paredit` and `parinfer` packages above will take care of autocompleting parenthesis when you're editing a lisp file. Unchecking this option will prevent single quotes from being autocompleted in pairs, allowing you to define lisp symbols easier (for example, `(setf x 'some-symbol)`).
+7. (Optional) In Pulsar's `autocomplete-plus` package, consider changing the "Keymap For Confirming A Suggestion" option from "tab and enter" to just "tab". This makes autocomplete more amenable when using the REPL, so that pressing enter will complete your command rather than triggering autocomplete.
+
+8. (Optional) In Pulsar's `bracket-matcher` package, consider unchecking the "Autocomplete Brackets" option. Both the `lisp-paredit` and `parinfer` packages above will take care of autocompleting parenthesis when you're editing a lisp file. Unchecking this option will prevent single quotes from being autocompleted in pairs, allowing you to define lisp symbols easier (for example, `(setf x 'some-symbol)`).
 
 All done! Futher information on configuring the lisp process can be found in the [project wiki](https://github.com/neil-lindquist/SLIMA/wiki/Controlling-the-Lisp-Process-Lifecycle).
 
