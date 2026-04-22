@@ -669,7 +669,7 @@ class REPLView extends InfoView
       event.abortKeyBinding()
 
   # Set the package and prompt
-  setPackage: (pkg) =>
+  setPackage: (pkg, pkg_nickname) =>
     @pkg = pkg
     @prompt = "#{@pkg}> "
 
